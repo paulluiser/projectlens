@@ -1,0 +1,112 @@
+{
+  "month": "2026-09",
+  "label": "September 2026",
+  "name": "September",
+  "title": "September delivery review",
+  "coverLine": "Every commitment delivered",
+  "source": "SIMSDotNet Monthly Planning Summary, September 2026 (v4)",
+  "progress": {
+    "completed": 26,
+    "planned": 26,
+    "carryOver": 0,
+    "projectCompleted": 99,
+    "total": 188,
+    "hours": 566.75,
+    "workstreams": [
+      [
+        "Documentation",
+        6
+      ],
+      [
+        "Frontend",
+        5
+      ],
+      [
+        "Backend",
+        5
+      ],
+      [
+        "Printouts",
+        5
+      ]
+    ],
+    "reporting": [
+      [
+        "Jira updates",
+        90
+      ],
+      [
+        "Daily email updates",
+        92
+      ],
+      [
+        "Timelogs completed",
+        96
+      ]
+    ],
+    "hoursNote": "The deck lists 3,309.00 running hours on slide 5 and 3,309.25 on slide 1. The September total on slide 5 is 566.75 hours."
+  },
+  "wins": [
+    {
+      "value": "100%",
+      "title": "Initial AP development",
+      "detail": "Completed the initial Accounts Payable requirements."
+    },
+    {
+      "value": "31/31",
+      "title": "Bugs closed",
+      "detail": "Closed every identified bug, minor and major."
+    },
+    {
+      "value": "Started",
+      "title": "Inventory development",
+      "detail": "Kicked off the Inventory module group."
+    }
+  ],
+  "blockers": [
+    {
+      "title": "Inclement weather",
+      "impact": "Weather affected team plans and required schedule adjustments.",
+      "response": "The team recalibrated the plan."
+    }
+  ],
+  "next": {
+    "month": "October 2026",
+    "items": [
+      {
+        "day": "15",
+        "date": "2026-10-15",
+        "title": "Close AP backlog for handoff",
+        "owner": "Paul"
+      },
+      {
+        "day": "15",
+        "date": "2026-10-15",
+        "title": "Automate repetitive work",
+        "owner": "Paul",
+        "detail": "Target a 30% reduction in hours spent on repetitive tasks."
+      },
+      {
+        "day": "26",
+        "date": "2026-10-26",
+        "title": "Pilot AI-assisted development",
+        "owner": "Paul",
+        "detail": "Create a basic UI with AI assistance."
+      },
+      {
+        "day": "29",
+        "date": "2026-10-29",
+        "title": "Integrate four AR modules",
+        "owner": "KC, Franco, Jess",
+        "detail": "Trip Ticket, SI, CR, and Check Clearing."
+      }
+    ],
+    "milestones": [
+      "Hand off Accounts Payable.",
+      "Reach 50% of initial Accounts Receivable development.",
+      "Target 70% integration of AR modules through the four-module commitment.",
+      "Complete the Inventory SRS as part of October’s priorities."
+    ],
+    "support": "Additional backend support."
+  }
+}
