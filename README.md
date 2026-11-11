@@ -19,7 +19,7 @@ Each report lives in `data/projects/<project>/<YYYY-MM>/report.json`. The projec
 
 To add a month, copy the September JSON as a starting point, add the month to the catalog, and register the new report import in `src/lib/reports.mjs`. The October entry currently links to the plan in the September review while awaiting October results.
 
-The canonical chapter route is `/landing/projects/<project>/<YYYY-MM>/<contents>`. For example, `/landing/projects/simsdotnet/2026-09/progress` opens the September progress chapter. Earlier `/reports` links redirect to the corresponding new route.
+The landing page introduces Project Lens. Open the report library to choose a project and month. The canonical chapter route is `/landing/projects/<project>/<YYYY-MM>/<contents>`. For example, `/landing/projects/simsdotnet/2026-09/progress` opens the September progress chapter. Earlier `/reports` links redirect to the corresponding new route.
 
 For cross-device editing, connect the Git repository to a shared remote. Commit and push report edits from any device with repository access. Connect that repository to Vercel to deploy updates on push. Readers can open the same deployment URL from any device.
 

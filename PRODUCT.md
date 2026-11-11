@@ -16,7 +16,7 @@ React, shadcn/ui, Tailwind CSS, Three.js, and Framer Motion. The prototype will 
 
 ## Product requirements
 
-1. The landing page introduces Project Lens and provides a direct path to the September 2026 review for SIMSDotNet.
+1. The landing page introduces Project Lens and illustrates the four review chapters with generic labels. Project names, dates, and figures appear after entering the report library.
 2. The four report chapters are Progress, Accomplishments, Blockers, and Next Month. The last chapter names the incoming month explicitly. Show the most important evidence as charts, diagrams drawn in the interface, and short labels. Put supporting detail one action away.
 3. Use /landing for the home page, /landing/projects for the library, and /landing/projects/<project>/<month>/<contents> for chapter links. The library lets visitors choose a project and a month. A project/month pair identifies a report independently of the selected chapter. Opening a shared link, refreshing, and using browser Back or Forward preserve the selected context.
 4. The same review supports previous and next controls and keyboard arrows for presenting. A chapter list supports direct jumps while browsing. Moving between chapters carries a shared visual element forward and animates entering and exiting content. Reduced motion gives the same controls and information with immediate changes.
@@ -32,7 +32,7 @@ React, shadcn/ui, Tailwind CSS, Three.js, and Framer Motion. The prototype will 
 
 - The site renders its graphs and illustrations from HTML, CSS, and Three.js geometry. Visual assets are removed.
 
-- A presenter can open the September review from the landing page, visit all four chapters, and return to the library using mouse or keyboard.
+- A presenter can open the library from the landing page, select the September review, and visit all four chapters using mouse or keyboard.
 - A reader can open a chapter directly from a shared URL, inspect the underlying figures, and discover October’s planned work inside the September report.
 - The interface is legible at phone and desktop widths. Report content and navigation remain usable with reduced motion or unavailable WebGL.
 - `npm run build` produces the static site in `dist/` with URL fallback configured for Vercel.

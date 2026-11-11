@@ -9,7 +9,8 @@ import {
   BlockersCopy, ChapterGraphic, ChapterDetails, PlanCopy, ProgressCopy, ProgressVisual, WinsCopy,
 } from './Chapters'
 import { LensOptic } from './LensOptic'
-import { chapters, findReport, projectPath, projects, projectsPath, reportPath, stepChapter } from '@/lib/reports.mjs'
+import { findReport, projects } from '@/lib/reports.mjs'
+import { chapters, projectPath, projectsPath, reportPath, stepChapter } from '@/lib/routes.mjs'
 import { easing, fade, useReducedMotion } from '@/lib/motion'
 
 const copyByChapter = {
@@ -24,7 +25,7 @@ function ChapterPane(props) {
   return <motion.div inert={!isPresent} {...props} />
 }
 
-function ChapterNavigation({ project, report, activeId, reduced }) {
+function ChapterNavigation({ project, month, activeId, reduced }) {
   const nav = useRef(null)
   const [indicator, setIndicator] = useState(null)
 
@@ -47,10 +48,10 @@ function ChapterNavigation({ project, report, activeId, reduced }) {
 
   return (
     <div className="chapter-navigation">
-      <span className="report-period"><CalendarDays size={16} /> {report.label}</span>
+      <span className="report-period"><CalendarDays size={16} /> {month.label}</span>
       <nav ref={nav} aria-label="Report chapters" className="chapter-nav">
         {chapters.map((entry) => (
-          <Link key={entry.id} to={reportPath(project.id, report.month, entry.id)}
+          <Link key={entry.id} to={reportPath(project.id, month.id, entry.id)}
             aria-current={entry.id === activeId ? 'page' : undefined}>
             {entry.label}
           </Link>
@@ -81,10 +82,10 @@ export function Report() {
   if (!report) return <ReportUnavailable project={project} month={month} />
   const chapterIndex = chapters.findIndex((chapter) => chapter.id === chapterId)
   if (chapterIndex === -1) return <Navigate replace to={reportPath(projectId, monthId)} />
-  return <ReportReader key={`${projectId}:${monthId}`} project={project} report={report} chapterIndex={chapterIndex} />
+  return <ReportReader key={`${projectId}:${monthId}`} project={project} month={month} report={report} chapterIndex={chapterIndex} />
 }
 
-function ReportReader({ project, report, chapterIndex }) {
+function ReportReader({ project, month, report, chapterIndex }) {
   const reduced = useReducedMotion()
   const isPresent = useIsPresent()
   const navigate = useNavigate()
@@ -96,8 +97,8 @@ function ReportReader({ project, report, chapterIndex }) {
   const previous = stepChapter(chapter.id, -1)
   const next = stepChapter(chapter.id, 1)
   const direction = chapterIndex >= lastIndex.current ? 1 : -1
-  const nextPath = next ? reportPath(project.id, report.month, next) : null
-  const previousPath = previous ? reportPath(project.id, report.month, previous) : null
+  const nextPath = next ? reportPath(project.id, month.id, next) : null
+  const previousPath = previous ? reportPath(project.id, month.id, previous) : null
   const focusChapter = useCallback((node) => {
     if (!node || focusedChapter.current === chapter.id) return
     focusedChapter.current = chapter.id
@@ -109,12 +110,12 @@ function ReportReader({ project, report, chapterIndex }) {
   }, [chapter.id])
 
   useEffect(() => {
-    document.title = `${chapter.label} · ${project.name} · ${report.label}`
+    document.title = `${chapter.label} · ${project.name} · ${month.label}`
     if (lastIndex.current !== chapterIndex) {
       window.scrollTo({ top: 0, behavior: 'instant' })
     }
     lastIndex.current = chapterIndex
-  }, [chapter.label, chapterIndex, project.name, report.label])
+  }, [chapter.label, chapterIndex, project.name, month.label])
 
   useEffect(() => {
     if (!isPresent) return
@@ -159,7 +160,7 @@ function ReportReader({ project, report, chapterIndex }) {
         </Button>
       </div>
 
-      <ChapterNavigation project={project} report={report} activeId={chapter.id} reduced={reduced} />
+      <ChapterNavigation project={project} month={month} activeId={chapter.id} reduced={reduced} />
 
       <div className="chapter-grid">
         <AnimatePresence mode="wait" custom={direction} initial={false}>

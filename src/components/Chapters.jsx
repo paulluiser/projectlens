@@ -76,14 +76,12 @@ export function PlanCopy({ report }) {
   )
 }
 
-export function ProgressVisual({ report, reduced, monthly = false }) {
-  const { completed, planned, projectCompleted, total: projectTotal } = report.progress
-  const done = monthly ? completed : projectCompleted
-  const total = monthly ? planned : projectTotal
+export function ProgressVisual({ report, reduced }) {
+  const { projectCompleted: done, total } = report.progress
   const percentage = new Intl.NumberFormat('en', { maximumFractionDigits: 1 }).format(total ? done / total * 100 : 0)
   return (
     <div className="progress-visual">
-      <div className="stage-label"><span className="status-dot" /> {monthly ? 'Monthly delivery' : 'Project completion'}</div>
+      <div className="stage-label"><span className="status-dot" /> Project completion</div>
       <div className="chart-area">
         <motion.div className="progress-ring" aria-hidden="true"
           initial={{ '--arc': reduced ? `${percentage}%` : '0%' }}

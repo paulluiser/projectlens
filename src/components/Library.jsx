@@ -4,7 +4,8 @@ import { ArrowRight, ArrowUpRight, CalendarDays, Layers3 } from 'lucide-react'
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { fade, useReducedMotion } from '@/lib/motion'
-import { featured, projectPath, projects, projectsPath, reportPath } from '@/lib/reports.mjs'
+import { featured, projects } from '@/lib/reports.mjs'
+import { projectPath, projectsPath, reportPath } from '@/lib/routes.mjs'
 
 function Filter({ label, value, options, onChange }) {
   const id = label.toLowerCase()
@@ -32,6 +33,7 @@ export function Library() {
   const navigate = useNavigate()
   const projectId = pathProject ?? params.get('project')
   const project = projects.find((entry) => entry.id === projectId)
+  const unknownProject = Boolean(pathProject && !project)
   const visibleProjects = project ? [project] : projects
   const months = [...new Map(visibleProjects.flatMap((entry) => entry.months.map((month) => [month.id, month.label])))]
     .sort(([first], [second]) => second.localeCompare(first))
@@ -41,7 +43,18 @@ export function Library() {
     .filter((item) => !month || item.id === month)
     .map((item) => ({ project: entry, month: item })))
 
-  useEffect(() => { document.title = 'Report library · Project Lens' }, [])
+  useEffect(() => {
+    document.title = `${unknownProject ? 'Project unavailable' : 'Report library'} · Project Lens`
+  }, [unknownProject])
+
+  if (unknownProject) {
+    return (
+      <main id="main-content" tabIndex={-1} className="site-width missing-page">
+        <h1>Project unavailable</h1>
+        <Link to={projectsPath} className="text-link">Back to the report library <ArrowRight size={16} /></Link>
+      </main>
+    )
+  }
 
   function updateFilter(field, value) {
     const next = new URLSearchParams(params)

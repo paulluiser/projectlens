@@ -1,7 +1,8 @@
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 import { test } from 'node:test'
-import { chapters, findReport, reportPath, stepChapter } from '../src/lib/reports.mjs'
+import { findReport, projects } from '../src/lib/reports.mjs'
+import { chapters, reportPath, stepChapter } from '../src/lib/routes.mjs'
 
 test('September review keeps October plans separate from the October report', () => {
   const report = findReport('simsdotnet', '2026-09')
@@ -27,4 +28,13 @@ test('chapter paths can be shared and sequential navigation respects the endpoin
 test('the versioned JSON file provides the rendered report content', () => {
   const source = new URL('../data/projects/simsdotnet/2026-09/report.json', import.meta.url)
   assert.deepEqual(findReport('simsdotnet', '2026-09'), JSON.parse(readFileSync(source, 'utf8')))
+})
+
+test('each published report matches the month in its catalog entry', () => {
+  for (const project of projects) {
+    for (const month of project.months.filter((entry) => entry.report)) {
+      assert.equal(month.report.month, month.id, project.id)
+      assert.equal(month.report.label, month.label, project.id)
+    }
+  }
 })

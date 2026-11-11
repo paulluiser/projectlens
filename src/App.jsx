@@ -3,10 +3,9 @@ import { AnimatePresence, MotionConfig, motion, useIsPresent } from 'framer-moti
 import { Aperture, ArrowDownRight, ArrowUpRight, Layers3 } from 'lucide-react'
 import { Link, NavLink, Navigate, Route, Routes, useLocation, useParams } from 'react-router-dom'
 import { Home } from './components/Home'
-import { featured, landingPath, projectsPath, reportPath } from './lib/reports.mjs'
+import { landingPath, projectsPath, reportPath } from './lib/routes.mjs'
 import { fade, useReducedMotion } from './lib/motion'
 
-const latest = reportPath(featured.project.id, featured.report.month)
 const Library = lazy(() => import('./components/Library').then(({ Library }) => ({ default: Library })))
 const Report = lazy(() => import('./components/Report').then(({ Report }) => ({ default: Report })))
 
@@ -22,9 +21,6 @@ function Header() {
           <NavLink className="header-link" to={projectsPath} end>
             <Layers3 size={16} /> <span>Report library</span>
           </NavLink>
-          <Link className="header-action" to={latest}>
-            <span>Latest review</span> <ArrowUpRight size={16} />
-          </Link>
         </nav>
       </div>
     </header>

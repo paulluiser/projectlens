@@ -44,7 +44,7 @@ components:
 
 A minimalist report with typography, charts, and diagrams carrying the content. Cloud Grey gives the typography and charts room. Jet Black frames the illustrations and dense data. Electric Violet directs the eye to the active chapter, a measured value, or the main action.
 
-The landing page pairs the Project Lens wordmark with an interactive report chart. The review uses a consistent stage for charts, milestone graphics, a blocker and response diagram, and a plan timeline. The selected chapter marker travels across the navigation. Visitors set the pace with links and keys.
+The landing page pairs the Project Lens wordmark with an interactive diagram of a monthly review. The diagram uses generic chapter labels and descriptions. Report pages use a consistent stage for charts, milestone graphics, a blocker and response diagram, and a plan timeline. The selected chapter marker travels across the navigation. Visitors set the pace with links and keys.
 
 ## Colors
 
