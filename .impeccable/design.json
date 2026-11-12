@@ -4,53 +4,47 @@
   "title": "Project Lens design system",
   "extensions": {
     "colorMeta": {
-      "background": {
+      "cloud": {
         "role": "neutral",
-        "displayName": "Cloud Grey"
+        "displayName": "Cloud Grey, 60%"
       },
-      "foreground": {
+      "jet": {
         "role": "neutral",
-        "displayName": "Jet Black"
+        "displayName": "Jet Black, 30%"
       },
-      "primary": {
+      "violet": {
         "role": "primary",
-        "displayName": "Electric Violet"
+        "displayName": "Electric violet, 10%"
       }
     },
     "motion": [
       {
-        "name": "ease-out",
-        "value": "cubic-bezier(.22, 1, .36, 1)",
-        "purpose": "Page and chapter transitions."
-      },
-      {
         "name": "control",
-        "value": "160ms",
-        "purpose": "Button, link, and control feedback."
+        "value": "120ms",
+        "purpose": "Hover and selected feedback for compact Jira controls."
       },
       {
         "name": "chapter",
         "value": "390ms",
-        "purpose": "Incoming chapter content and shared navigation marker."
-      },
-      {
-        "name": "preview",
-        "value": "340ms",
-        "purpose": "Transitions between chapter descriptions in the landing walkthrough."
+        "purpose": "Chapter transitions and moving tab underline."
       }
     ],
     "breakpoints": [
       {
         "name": "compact-desktop",
-        "value": "1060px"
+        "value": "1050px"
       },
       {
-        "name": "stacked",
+        "name": "mobile-sidebar",
         "value": "760px"
       },
       {
-        "name": "phone",
-        "value": "460px"
+        "name": "stacked-owner",
+        "value": "440px"
+      },
+      {
+        "name": "compact-mobile",
+        "value": "380px"
       }
     ]
   },
@@ -58,19 +52,20 @@
     {
       "name": "Primary action",
       "kind": "button",
-      "refersTo": "button-primary",
-      "description": "Opens a review or advances the chapter.",
+      "description": "Opens the project directory or advances the chapter.",
       "html": "<button class=\"action\">Browse projects</button>",
-      "css": ".action { min-height: 44px; padding-inline: 17px; border: 0; border-radius: 100px; background: var(--primary, #6125eb); color: var(--primary-foreground, #fff); font: 620 13px Geist, sans-serif; cursor: pointer; transition: background-color .16s; } .action:hover { background: #4e14d0; } .action:focus-visible { outline: 2px solid var(--ring, #6125eb); outline-offset: 4px; }"
+      "css": ".action { min-height: 32px; padding-inline: 10px; border: 0; border-radius: 4px; background: var(--primary, #6125eb); color: #fff; font: 550 14px system-ui, sans-serif; cursor: pointer; } .action:hover { background: #4e14d0; } .action:focus-visible { outline: 2px solid #6125eb; outline-offset: 2px; }"
     }
   ],
   "narrative": {
-    "northStar": "A minimalist monthly review led by charts and diagrams",
-    "overview": "Cloud Grey gives the text and charts room. Jet Black frames the illustrations. Electric Violet marks the active chapter, a measured value, or a primary action.",
+    "northStar": "Compact Jira workspace with the Project Lens palette",
+    "overview": "Cloud Grey reading surfaces, Jet Black navigation and text, and electric violet highlights use the requested 60/30/10 visual weighting.",
     "keyCharacteristics": [
-      "Large editorial headings",
-      "Data-driven diagrams",
-      "Steady chapter navigation"
+      "Dense grouping and content-sized panels",
+      "Atlassian core icons",
+      "Project breadcrumbs and horizontal tabs",
+      "Deadline groups with visible owners and targets",
+      "Product-only landing page"
     ]
   }
 }

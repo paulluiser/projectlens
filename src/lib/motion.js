@@ -18,6 +18,6 @@ export function fade(reduced, distance = 12) {
     initial: { opacity: reduced ? 1 : 0, y: reduced ? 0 : distance },
     animate: { opacity: 1, y: 0 },
     exit: { opacity: reduced ? 1 : 0, y: reduced ? 0 : -distance / 2 },
-    transition: { duration: reduced ? 0 : 0.34, ease: easing },
+    transition: { duration: reduced ? 0 : 0.22, ease: easing },
   }
 }
