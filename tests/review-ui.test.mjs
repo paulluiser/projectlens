@@ -9,12 +9,13 @@ import { createRequire } from 'node:module'
 import { JSDOM } from 'jsdom'
 import { createServer as createViteServer } from 'vite'
 import { createHandlers } from '../server/workspace.mjs'
+import { fixtureProjects } from './fixture-projects.mjs'
 test('review cycle: recovery, carry-forward, private draft, publish, comparison, sharing and presentation', async () => {
 const projectRoot = fileURLToPath(new URL('../', import.meta.url))
 const require = createRequire(new URL('../package.json', import.meta.url))
 require.extensions['.css'] = () => {}
 const directory = await mkdtemp(join(tmpdir(), 'lens-component-data-'))
-const handlers = createHandlers({ env: { LENS_DATA_FILE: join(directory, 'workspace.json') } })
+const handlers = createHandlers({ env: { LENS_DATA_FILE: join(directory, 'workspace.json') }, projects: fixtureProjects })
 const server = createHttpServer((req,res) => {
   if (req.url === '/api/workspace') return handlers.workspace(req,res)
   if (req.url === '/api/session') return handlers.session(req,res)

@@ -4,6 +4,7 @@ import { mkdtemp, readFile, rm } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { createHandlers } from '../server/workspace.mjs'
+import { fixtureProjects } from './fixture-projects.mjs'
 
 const report = JSON.parse(await readFile(new URL('../data/projects/simsdotnet/2026-09/report.json', import.meta.url)))
 function reportFor(upcomingMonth) {
@@ -12,7 +13,7 @@ function reportFor(upcomingMonth) {
 async function fixture(t, extra = {}) {
   const dir = await mkdtemp(join(tmpdir(), 'lens-'))
   t.after(() => rm(dir, { recursive: true, force: true }))
-  return createHandlers({ env: { LENS_DATA_FILE: join(dir, 'workspace.json'), ...extra } })
+  return createHandlers({ env: { LENS_DATA_FILE: join(dir, 'workspace.json'), ...extra }, projects: fixtureProjects })
 }
 async function call(handler, method = 'GET', body, headers = {}) {
   const req = { method, body, headers: { host: 'localhost:5173', origin: 'http://localhost:5173', ...headers } }
@@ -90,7 +91,7 @@ test('validation rejects invalid data without changing state', async t => {
 
 test('password sessions reject bad passwords, tampering, expiry, and missing origin', async t => {
   let now = Date.now(); const h0 = await fixture(t, {LENS_EDITOR_PASSWORD:'secret'})
-  const h = createHandlers({env:h0.env,now:()=>now})
+  const h = createHandlers({env:h0.env,now:()=>now,projects:fixtureProjects})
   const {body} = await call(h.workspace)
   assert.equal(body.canEdit,false)
   assert.equal((await mutate(h,'createProject',body.version,{name:'Locked'})).status,401)
@@ -136,7 +137,7 @@ test('private blob initialization and updates use conditional writes to preserve
       return {etag:String(revision)}
     },
   }
-  const h = createHandlers({env:{VERCEL:'1', BLOB_READ_WRITE_TOKEN:'fake-token',LENS_EDITOR_PASSWORD:'secret'},blob})
+  const h = createHandlers({env:{VERCEL:'1', BLOB_READ_WRITE_TOKEN:'fake-token',LENS_EDITOR_PASSWORD:'secret'},blob,projects:fixtureProjects})
   const login = await call(h.session,'POST',{password:'secret'})
   assert.match(login.headers['set-cookie'],/Secure/)
   const cookie = login.headers['set-cookie'].split(';')[0]
@@ -205,7 +206,7 @@ test('action dates must fall in the next calendar month', async t => {
 
 test('drafts remain private until publishing and later edits preserve the published snapshot', async t => {
   const base = await fixture(t, {LENS_EDITOR_PASSWORD:'secret'})
-  const h = createHandlers({env:base.env,now:()=>Date.parse('2026-11-11T08:00:00Z')})
+  const h = createHandlers({env:base.env,now:()=>Date.parse('2026-11-11T08:00:00Z'),projects:fixtureProjects})
   const login = await call(h.session,'POST',{password:'secret'})
   const headers = {cookie:login.headers['set-cookie'].split(';')[0]}
   const post = (action,state,data,monthId='2026-12') => call(h.workspace,'POST',{action,expectedVersion:state.version,data,projectId:'simsdotnet',monthId},headers)
@@ -288,4 +289,14 @@ test('editing a seeded publication creates a draft and preserves the published r
   assert.equal(month.draft.title,'Unpublished revision')
   assert.equal(month.draft.presenterNotes,'')
   assert.deepEqual(month.draft.carryForward,[])
+})
+
+test('the shipped seed publishes every project and report in the catalog', async () => {
+  const { seedProjects } = await import('../server/seed.mjs')
+  const catalog = JSON.parse(await readFile(new URL('../data/projects/catalog.json', import.meta.url)))
+  assert.deepEqual(seedProjects.map(project => project.id), catalog.map(project => project.id))
+  for (const project of seedProjects) for (const month of project.months) {
+    assert.ok(month.report, `${project.id} ${month.id} has a report`)
+    assert.equal(month.report.month, month.id)
+  }
 })

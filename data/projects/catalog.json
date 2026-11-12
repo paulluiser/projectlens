@@ -3,8 +3,37 @@
     "id": "simsdotnet",
     "name": "SIMSDotNet",
     "months": [
-      { "id": "2026-09", "label": "September 2026" },
-      { "id": "2026-10", "label": "October 2026" }
+      {
+        "id": "2026-09",
+        "label": "September 2026"
+      },
+      {
+        "id": "2026-10",
+        "label": "October 2026",
+        "publishedAt": "2026-11-12T05:31:28.931Z"
+      }
+    ]
+  },
+  {
+    "id": "performance-management-system-pms",
+    "name": "PMS",
+    "months": [
+      {
+        "id": "2026-10",
+        "label": "October 2026",
+        "publishedAt": "2026-11-12T05:31:46.262Z"
+      }
+    ]
+  },
+  {
+    "id": "hrdotnet-mobile",
+    "name": "HRDotNet Mobile",
+    "months": [
+      {
+        "id": "2026-10",
+        "label": "October 2026",
+        "publishedAt": "2026-11-12T06:06:09.356Z"
+      }
     ]
   }
 ]

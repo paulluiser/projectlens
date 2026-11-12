@@ -1,0 +1,108 @@
+{
+  "month": "2026-10",
+  "label": "October 2026",
+  "name": "October",
+  "title": "SIMSDotNet Monthly Report",
+  "coverLine": "Accounts Receivable, Accounts Payable, and Master File work closed out",
+  "presenterNotes": "Cumulative project completion uses September’s 99 completed out of 188 tracked tasks, plus 36 completed in October. Running hours use the September hours slide as the baseline (3,309.00 hours).",
+  "carryForward": [],
+  "progress": {
+    "completed": 36,
+    "planned": 28,
+    "carryOver": 0,
+    "projectCompleted": 135,
+    "total": 188,
+    "hours": 1115,
+    "runningHours": 4424,
+    "workstreams": [
+      [
+        "Documentation",
+        null
+      ],
+      [
+        "Frontend",
+        null
+      ],
+      [
+        "Backend",
+        null
+      ],
+      [
+        "Printouts",
+        null
+      ]
+    ],
+    "reporting": [
+      [
+        "Jira updates",
+        93
+      ],
+      [
+        "Daily email updates",
+        91
+      ],
+      [
+        "Time logs completed",
+        96
+      ]
+    ]
+  },
+  "wins": [
+    {
+      "value": "6 modules",
+      "title": "Completed Accounts Receivable modules",
+      "detail": "Sales Order, Delivery Receipt, Trip Ticket, Sales Invoice, Collection Receipt, and Check Clearing."
+    },
+    {
+      "value": "Closed",
+      "title": "Closed out Accounts Payable"
+    },
+    {
+      "value": "Completed",
+      "title": "Completed the Master File backlog"
+    }
+  ],
+  "blockers": [
+    {
+      "title": "Learning curve for AI-assisted workflows",
+      "impact": "The team faced a learning curve while adopting AI-assisted workflows.",
+      "response": "Additional training sessions and exploration of the platform."
+    }
+  ],
+  "next": {
+    "month": "November 2026",
+    "items": [
+      {
+        "day": "12",
+        "date": "2026-11-12",
+        "title": "Integrate the Sales Return and Supplier Credit/Debit modules.",
+        "owner": "Franco, KC, Jess"
+      },
+      {
+        "day": "20",
+        "date": "2026-11-20",
+        "title": "Wrap up the successful pilot of AI-assisted development in the team’s workflow.",
+        "owner": "Paul"
+      },
+      {
+        "day": "23",
+        "date": "2026-11-23",
+        "title": "Complete end-to-end testing across all modules in the Accounts Receivable group.",
+        "owner": "Rica"
+      },
+      {
+        "day": "25",
+        "date": "2026-11-25",
+        "title": "Close out Accounts Receivable.",
+        "owner": "Paul"
+      },
+      {
+        "day": "30",
+        "date": "2026-11-30",
+        "title": "Begin development of the Inventory module group and complete the Item Transfer and Item Adjustment modules.",
+        "owner": "Franco, KC, Jess"
+      }
+    ],
+    "milestones": []
+  }
+}

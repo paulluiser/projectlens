@@ -1,0 +1,82 @@
+{
+  "month": "2026-10",
+  "label": "October 2026",
+  "name": "October",
+  "title": "PMS Monthly Report",
+  "coverLine": "Requirements, design, and technical onboarding",
+  "presenterNotes": "October is the first recorded month in Project Lens. The cumulative figures use the 18 completed tasks and 30 hours recorded in October as their starting point.",
+  "carryForward": [],
+  "progress": {
+    "completed": 18,
+    "planned": 14,
+    "carryOver": 0,
+    "projectCompleted": 18,
+    "total": 122,
+    "hours": 30,
+    "runningHours": 30,
+    "workstreams": [],
+    "reporting": [
+      [
+        "Jira updates",
+        100
+      ],
+      [
+        "Daily email updates",
+        100
+      ],
+      [
+        "Time logs completed",
+        100
+      ]
+    ]
+  },
+  "wins": [
+    {
+      "value": "Completed",
+      "title": "Gathered, consolidated, and froze requirements"
+    },
+    {
+      "value": "Completed",
+      "title": "Created the system UI and workflows"
+    },
+    {
+      "value": "Completed",
+      "title": "Created the product requirements document"
+    },
+    {
+      "value": "Completed",
+      "title": "Completed technical onboarding for the team"
+    }
+  ],
+  "blockers": [
+    {
+      "title": "Learning curve and fast project pace",
+      "impact": "The team faced a learning curve while keeping up with the pace of the project.",
+      "response": "The team adjusted how it worked and used the available tools."
+    }
+  ],
+  "next": {
+    "month": "November 2026",
+    "items": [
+      {
+        "day": "5",
+        "date": "2026-11-05",
+        "title": "Complete the database schema and its foundation.",
+        "owner": "Vin"
+      },
+      {
+        "day": "13",
+        "date": "2026-11-13",
+        "title": "Complete the Users and Authentication module.",
+        "owner": "Miguel, Vin"
+      },
+      {
+        "day": "27",
+        "date": "2026-11-27",
+        "title": "Complete the Templates, Reviews, and Cycles module bundle.",
+        "owner": "Miguel, Vin"
+      }
+    ],
+    "milestones": []
+  }
+}

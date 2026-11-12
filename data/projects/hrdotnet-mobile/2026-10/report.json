@@ -1,0 +1,93 @@
+{
+  "month": "2026-10",
+  "label": "October 2026",
+  "name": "October",
+  "title": "HRDotNet Mobile Monthly Report",
+  "coverLine": "Application integration and bug fixes",
+  "presenterNotes": "October is the first recorded month in Project Lens. The cumulative completion figure uses the 22 tasks completed in October as its starting point.",
+  "carryForward": [],
+  "progress": {
+    "completed": 22,
+    "planned": 22,
+    "carryOver": 0,
+    "projectCompleted": 22,
+    "total": 88,
+    "hours": 120.75,
+    "runningHours": 120.75,
+    "workstreams": [
+      [
+        "Frontend integration",
+        null
+      ],
+      [
+        "Documentation",
+        null
+      ]
+    ],
+    "reporting": [
+      [
+        "Jira updates",
+        100
+      ],
+      [
+        "Daily email updates",
+        100
+      ],
+      [
+        "Time logs completed",
+        100
+      ]
+    ]
+  },
+  "wins": [
+    {
+      "value": "Completed",
+      "title": "Integrated all application modules"
+    },
+    {
+      "value": "Completed",
+      "title": "Established the system peripherals"
+    },
+    {
+      "value": "Completed",
+      "title": "Fixed known bugs"
+    }
+  ],
+  "blockers": [
+    {
+      "title": "Adjustment period for the newly onboarded developer",
+      "impact": "The newly onboarded developer needed time to get up to speed.",
+      "response": "Structured onboarding and iterative orientation."
+    }
+  ],
+  "next": {
+    "month": "November 2026",
+    "items": [
+      {
+        "day": "6",
+        "date": "2026-11-06",
+        "title": "Produce the first APK build of the app.",
+        "owner": "Miguel"
+      },
+      {
+        "day": "25",
+        "date": "2026-11-25",
+        "title": "Complete end-to-end QA testing.",
+        "owner": "Rose"
+      },
+      {
+        "day": "30",
+        "date": "2026-11-30",
+        "title": "Fix issues identified during QA testing.",
+        "owner": "Miguel"
+      },
+      {
+        "day": "30",
+        "date": "2026-11-30",
+        "title": "Develop the backend for geolocation and notifications.",
+        "owner": "Jose"
+      }
+    ],
+    "milestones": []
+  }
+}

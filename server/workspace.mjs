@@ -8,7 +8,6 @@ const MAX_BODY = 1024 * 1024
 const BLOB_PATH = 'project-lens/workspace.json'
 const COOKIE = 'lens_editor'
 const queues = new Map()
-const seed = { projects: seedProjects, version: createHash('sha256').update(JSON.stringify(seedProjects)).digest('hex') }
 const failure = (status, message) => Object.assign(new Error(message), { status })
 const validId = value => typeof value === 'string' && /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(value) && value.length <= 100
 const validMonth = value => typeof value === 'string' && /^\d{4}-(0[1-9]|1[0-2])$/.test(value) && Number(value.slice(0,4)) >= 1900
@@ -159,7 +158,8 @@ async function bodyOf(req) {
   return object(body,'Request')
 }
 
-export function createHandlers({ env = process.env, blob = vercelBlob, now = Date.now } = {}) {
+export function createHandlers({ env = process.env, blob = vercelBlob, now = Date.now, projects = seedProjects } = {}) {
+  const seed = { projects, version: createHash('sha256').update(JSON.stringify(projects)).digest('hex') }
   const production = env.VERCEL === '1'
   const storageReady = !production || Boolean(env.BLOB_READ_WRITE_TOKEN)
   const authRequired = Boolean(env.LENS_EDITOR_PASSWORD)
