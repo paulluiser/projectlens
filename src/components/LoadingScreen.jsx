@@ -10,8 +10,8 @@ export function SidebarSkeleton() {
   return <div className="sidebar-skeleton" aria-hidden="true"><Bone /><Bone /></div>
 }
 
-export function ContourLoader() {
-  return <span className="contour-loader" aria-hidden="true" />
+export function OrbLoader() {
+  return <span className="orb-loader" aria-hidden="true" />
 }
 
 export function LoadingScreen({ onRetry }) {
@@ -27,7 +27,7 @@ export function LoadingScreen({ onRetry }) {
     return () => clearTimeout(timer)
   }, [attempt, pathname])
   return <main id="main-content" tabIndex={-1} className="site-width loading-screen" data-loading-layout={report ? 'report' : 'directory'}>
-    <div className="loading-caption" role="status" aria-live="polite"><ContourLoader />{report ? 'Loading monthly review…' : 'Loading projects…'}</div>
+    <div className="loading-caption" role="status" aria-live="polite"><OrbLoader />{report ? 'Loading monthly review…' : 'Loading projects…'}</div>
     <div className="loading-shape" aria-hidden="true" aria-busy="true">
       {report && <Bone className="skeleton-crumb" />}
       <div className="skeleton-heading"><div><Bone className="skeleton-title" /><Bone className="skeleton-subtitle" /></div><Bone className="skeleton-button" /></div>

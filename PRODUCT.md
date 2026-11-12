@@ -33,7 +33,7 @@ React, shadcn/ui, Tailwind CSS, Three.js, and Framer Motion. The prototype will 
 
 ## Interface
 
-Use a clear reporting workspace with familiar sidebar navigation, breadcrumbs, chapter tabs, and labelled controls. The November 12, 2026 redesign replaces the macOS look with a survey-sheet world: white map paper, contour hairlines, survey blue actions, and semantic green, ochre, and red feedback. Progress is drawn as an elevation profile of the project route. Keep Atlassian core icons consistent throughout. The landing page introduces Project Lens with an illustrative contour terrain and loads report data only after navigation to a project surface.
+Use a clear reporting workspace with familiar sidebar navigation, breadcrumbs, chapter tabs, and labelled controls. The November 2026 audit relaxes the previous strict Jira match and 60/30/10 color allocation under the user’s override permission. Use a macOS-inspired toolbar, Finder-style navigation, light reading surfaces, system blue actions, and semantic green, amber, and red feedback. Keep Atlassian core icons consistent throughout. The landing page introduces Project Lens and loads report data only after navigation to a project surface.
 
 ## Deployment decisions
 

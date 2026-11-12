@@ -2,7 +2,7 @@ import { lazy, Suspense, useEffect, useRef, useState, useSyncExternalStore } fro
 import { AnimatePresence, MotionConfig, motion, useIsPresent } from 'framer-motion'
 import { ArrowDownRightIcon, ProjectsIcon, HomeIcon, SidebarIcon, SearchIcon } from '@/components/ui/icons'
 import { Link, NavLink, Navigate, Route, Routes, useLocation, useNavigate, useParams } from 'react-router-dom'
-import { LoadingScreen, ContourLoader, SidebarSkeleton } from './components/LoadingScreen'
+import { LoadingScreen, OrbLoader, SidebarSkeleton } from './components/LoadingScreen'
 import { Home } from './components/Home'
 import { ProjectBrand } from './components/ProjectBrand'
 import { Overview } from './components/Overview'
@@ -131,7 +131,7 @@ function WorkspaceEntry() {
   return (
     <AnimatePresence initial={false}>
       {!workspace && !error && <motion.div className="workspace-entry-veil" role="status" exit={{ opacity: 0 }} transition={{ duration: .25 }}>
-        <ContourLoader /><span>Opening workspace…</span>
+        <OrbLoader /><span>Opening workspace…</span>
       </motion.div>}
     </AnimatePresence>
   )

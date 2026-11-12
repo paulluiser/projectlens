@@ -33,7 +33,7 @@ function ProgressChapter({ report, project, reduced }) {
   const elapsed = useMetricReveal(reduced)
   return <>
     <div className="progress-bento">
-      <section className="workspace-panel chapter-stage"><ProgressVisual report={report} project={project} reduced={reduced} elapsed={elapsed} /></section>
+      <section className="workspace-panel chapter-stage"><ProgressVisual report={report} reduced={reduced} elapsed={elapsed} /></section>
       <section className="workspace-panel progress-month">
         <h2>{report.coverLine}</h2>
         <TaskComparison report={report} reduced={reduced} elapsed={elapsed} />
@@ -44,24 +44,6 @@ function ProgressChapter({ report, project, reduced }) {
     </div>
     <CommitmentOutcomes report={report} />
   </>
-}
-
-// Concentric contours around the project summit; rings already climbed are drawn in contour orange.
-function ContourRings({ completion, reduced }) {
-  const rings = 10
-  const climbed = Math.round(completion / 100 * rings)
-  return <svg className="presentation-orbit" viewBox="0 0 200 200" aria-hidden="true">
-    {Array.from({ length: rings }, (_, index) => {
-      const radius = 96 - index * 9
-      const points = Array.from({ length: 40 }, (_, step) => {
-        const angle = step / 40 * Math.PI * 2
-        const wobble = 1 + .06 * Math.sin(angle * 3 + index * .7) + .04 * Math.cos(angle * 5 - index)
-        return `${(100 + Math.cos(angle) * radius * wobble).toFixed(1)} ${(100 + Math.sin(angle) * radius * wobble).toFixed(1)}`
-      })
-      return <motion.path key={index} d={`M${points.join('L')}Z`} data-walked={index < climbed || undefined}
-        initial={reduced ? false : { opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: reduced ? 0 : index * .04 }} />
-    })}
-  </svg>
 }
 
 function ChapterNavigation({ project, month, activeId, suffix }) {
@@ -98,7 +80,6 @@ function ChapterNavigation({ project, month, activeId, suffix }) {
             <Link key={entry.id} to={reportPath(project.id, month.id, entry.id) + suffix}
               aria-current={entry.id === activeId ? 'page' : undefined}>
               <Icon label="" /> {entry.label}
-              {entry.id === activeId && <motion.span className="chapter-marker" layoutId="chapter-marker" transition={{ duration: .3, ease: easing }} aria-hidden="true" />}
             </Link>
           )
         })}
@@ -253,7 +234,7 @@ function ReportReader({ project, month, report, chapterIndex, preview }) {
             </Button>
           </motion.header>
           <motion.div className="presentation-reading" {...fade(reduced, 8)}>
-            <ContourRings completion={completion} reduced={reduced} />
+            <div className="presentation-orbit" style={{ '--coverage': `${completion}%` }} aria-hidden="true" />
             <div className="presentation-figure">
               <strong>{total ? `${completion}%` : '—'}</strong>
               <span>Project completion</span>
