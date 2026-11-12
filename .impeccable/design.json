@@ -1,76 +1,26 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-11-11T07:05:14.495Z",
+  "generatedAt": "2026-11-12T00:00:00.000Z",
   "title": "Project Lens design system",
   "extensions": {
     "colorMeta": {
-      "background": {
-        "role": "neutral",
-        "displayName": "Cloud Grey"
-      },
-      "foreground": {
-        "role": "neutral",
-        "displayName": "Jet Black"
-      },
-      "primary": {
-        "role": "primary",
-        "displayName": "Electric Violet"
-      }
+      "survey": { "role": "primary", "displayName": "Survey blue" },
+      "contour": { "role": "accent", "displayName": "Contour sienna" },
+      "ink": { "role": "neutral", "displayName": "Map ink" },
+      "ground": { "role": "neutral", "displayName": "Sheet ground" }
     },
+    "shadows": [
+      { "name": "sheet", "value": "0 1px 2px #1a24200f, 0 12px 32px -8px #1a242029", "purpose": "Popovers, drawers, toasts." }
+    ],
     "motion": [
-      {
-        "name": "ease-out",
-        "value": "cubic-bezier(.22, 1, .36, 1)",
-        "purpose": "Page and chapter transitions."
-      },
-      {
-        "name": "control",
-        "value": "160ms",
-        "purpose": "Button, link, and control feedback."
-      },
-      {
-        "name": "chapter",
-        "value": "390ms",
-        "purpose": "Incoming chapter content and shared navigation marker."
-      },
-      {
-        "name": "preview",
-        "value": "340ms",
-        "purpose": "Transitions between chapter descriptions in the landing walkthrough."
-      }
+      { "name": "feedback", "value": "120ms", "purpose": "Hover and pressed feedback." },
+      { "name": "enter", "value": "220ms", "purpose": "Dialogs, route and chapter content." },
+      { "name": "exit", "value": "130ms", "purpose": "Dialog and popover exit." },
+      { "name": "route-draw", "value": "900ms", "purpose": "Progress route profile drawing in." }
     ],
     "breakpoints": [
-      {
-        "name": "compact-desktop",
-        "value": "1060px"
-      },
-      {
-        "name": "stacked",
-        "value": "760px"
-      },
-      {
-        "name": "phone",
-        "value": "460px"
-      }
-    ]
-  },
-  "components": [
-    {
-      "name": "Primary action",
-      "kind": "button",
-      "refersTo": "button-primary",
-      "description": "Opens a review or advances the chapter.",
-      "html": "<button class=\"action\">Browse projects</button>",
-      "css": ".action { min-height: 44px; padding-inline: 17px; border: 0; border-radius: 100px; background: var(--primary, #6125eb); color: var(--primary-foreground, #fff); font: 620 13px Geist, sans-serif; cursor: pointer; transition: background-color .16s; } .action:hover { background: #4e14d0; } .action:focus-visible { outline: 2px solid var(--ring, #6125eb); outline-offset: 4px; }"
-    }
-  ],
-  "narrative": {
-    "northStar": "A minimalist monthly review led by charts and diagrams",
-    "overview": "Cloud Grey gives the text and charts room. Jet Black frames the illustrations. Electric Violet marks the active chapter, a measured value, or a primary action.",
-    "keyCharacteristics": [
-      "Large editorial headings",
-      "Data-driven diagrams",
-      "Steady chapter navigation"
+      { "name": "phone", "value": "760px" },
+      { "name": "tablet", "value": "1050px" }
     ]
   }
 }

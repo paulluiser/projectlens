@@ -1,91 +1,89 @@
 ---
 name: Project Lens
-description: A minimalist monthly project review with interactive charts and diagrams.
+description: A survey-sheet reporting workspace. Each monthly review reads as a route across a map.
 colors:
-  background: "#ECECEF"
-  foreground: "#141318"
-  primary: "#6125EB"
-  primary-foreground: "#FFFFFF"
-  accent-on-dark: "#B59AFF"
-  surface: "#F7F7F9"
-  muted-foreground: "#595761"
-  border: "#D5D4DA"
+  paper: "#FFFFFF"
+  ground: "#F3F5F2"
+  margin: "#E9EEE8"
+  ink: "#1A2420"
+  ink-soft: "#4B5953"
+  contour: "#B4542A"
+  contour-soft: "#E8C9B6"
+  grid: "#E3E8E2"
+  border: "#D4DBD3"
+  line-strong: "#B8C2BB"
+  control-line: "#C3CCC5"
+  control-line-hover: "#A4AFA8"
+  margin-hover: "#DDE4DC"
+  selection: "#CFE1F3"
+  survey: "#135FA8"
+  survey-deep: "#0E4B86"
+  water: "#E2EDF7"
+  water-light: "#F2F7FB"
+  contour-wash: "#F8E9E1"
+  ochre-ink: "#5C4A2A"
+  mark-violet: "#4A3F8F"
+  mark-violet-wash: "#ECEAF6"
+  woodland: "#2C6A3C"
+  woodland-wash: "#E5EFE2"
+  ochre: "#855800"
+  ochre-wash: "#FBEFD6"
+  map-red: "#B3261E"
+  night: "#11201B"
+  night-raised: "#1A2D26"
+  night-contour: "#E08A5C"
 typography:
-  display:
-    fontFamily: "Instrument Sans Variable, sans-serif"
-    fontWeight: 650
-    letterSpacing: "-0.052em"
-  body:
-    fontFamily: "Geist Variable, sans-serif"
-    fontSize: "16px"
-    lineHeight: 1.5
+  display: { fontFamily: "Source Sans 3 Variable", fontSize: "86px", fontWeight: 700, lineHeight: 1, letterSpacing: "-0.045em" }
+  presentation: { fontFamily: "Source Sans 3 Variable", fontSize: "112px", fontWeight: 650, lineHeight: 0.98 }
+  page-title: { fontFamily: "Source Sans 3 Variable", fontSize: "32px", fontWeight: 650, lineHeight: 1.15 }
+  reading: { fontFamily: "Source Sans 3 Variable", fontSize: "52px", fontWeight: 650, lineHeight: 1 }
+  section: { fontFamily: "Source Sans 3 Variable", fontSize: "17px", fontWeight: 650, lineHeight: 1.3 }
+  body: { fontFamily: "Source Sans 3 Variable", fontSize: "15px", fontWeight: 400, lineHeight: 1.55 }
+  label: { fontFamily: "Source Sans 3 Variable", fontSize: "13px", fontWeight: 600, lineHeight: 1.4 }
 rounded:
-  surface: "12px"
-  illustration: "16px"
-  action: "100px"
-spacing:
-  xs: "8px"
-  sm: "12px"
-  md: "16px"
-  lg: "24px"
-  xl: "48px"
-  xxl: "64px"
+  indicator: "2px"
+  bar: "3px"
+  chip: "4px"
+  control: "6px"
+  mark: "7px"
+  inner: "8px"
+  panel: "10px"
+  dialog: "12px"
 components:
-  button-primary:
-    backgroundColor: "{colors.primary}"
-    textColor: "{colors.primary-foreground}"
-    rounded: "{rounded.action}"
-    height: "44px"
+  button-primary: { backgroundColor: "{colors.survey}", textColor: "{colors.paper}", rounded: "{rounded.control}", height: "38px" }
+  button-outline: { backgroundColor: "{colors.paper}", textColor: "{colors.ink}", rounded: "{rounded.control}", height: "38px" }
+  panel: { backgroundColor: "{colors.paper}", rounded: "{rounded.panel}" }
+  chip-success: { backgroundColor: "{colors.woodland-wash}", textColor: "{colors.woodland}", rounded: "{rounded.chip}" }
 ---
 
 # Project Lens design system
 
-## Overview
+A monthly review is a surveyed route. Each report is a sheet of a survey map: where the project stood, what ground it covered, where it crossed hard terrain, and the route ahead. The world lends type, palette, density and one signature move. Layout, navigation and controls stay familiar: sidebar, header search, breadcrumbs, chapter tabs, tables and dialogs.
 
-A minimalist report with typography, charts, and diagrams carrying the content. Cloud Grey gives the typography and charts room. Jet Black frames the illustrations and dense data. Electric Violet directs the eye to the active chapter, a measured value, or the main action.
+## Palette and state
 
-The landing page pairs the Project Lens wordmark with an interactive diagram of a monthly review. The diagram uses generic chapter labels and descriptions. Report pages use a consistent stage for charts, milestone graphics, a blocker and response diagram, and a plan timeline. The selected chapter marker travels across the navigation. Visitors set the pace with links and keys.
+White map paper on a cool ground. Ink carries text; ink-soft carries supporting text (6.7:1 on ground). Survey blue is the only action and selection color. Contour sienna draws hairlines, summit lines and section icons, never body text. Woodland green marks completion, ochre marks carry-over and blockers, map red is reserved for destructive confirmation. State color always comes with a text label or icon. The presentation index switches to a night sheet with contour-orange rings.
 
-## Colors
+## Type
 
-| Token | Use |
-| --- | --- |
-| `background` | Cloud Grey, about 60% of the overall composition. Canvas and reading areas. |
-| `foreground` | Jet Black, about 30%. Text, illustration frames, and chart surfaces. |
-| `primary` | Electric Violet, about 10%. Main actions, active controls, and selected data. |
-| `primary-foreground` | Button text on violet. |
-| `accent-on-dark` | Links, chart marks, and focus outlines on dark surfaces. |
-| `surface` | Cards, menus, and supporting figures. |
-| `muted-foreground` | Secondary labels on light surfaces. |
-| `border` | Dividers and container edges. |
+Source Sans 3 (self-hosted variable) for everything. It is humanist and close to cartographic lettering, with tabular figures for every quantity. Display sizes use tight negative tracking; labels stay in sentence case. No eyebrows or all-caps labels.
 
-## Typography
+## Signature: the route
 
-Use Instrument Sans for display and Geist for interface and figures. Scale home and chapter headings with the viewport. Use tabular numerals in comparisons and limit prose to about 65 characters per line.
+- **Progress chapter**: completed tasks drawn as an elevation profile. One station per published month (starting at the end of the previous month), a contour-hatched fill under the walked ground, a you-are-here marker, a dashed remaining climb, and a sienna summit line at the project total. The chart width follows its panel so axis labels stay readable on phones. The figure is also stated in text, and the SVG carries an accessible summary.
+- **Landing**: a live Three.js contour terrain. A route is draped over the hills, with one numbered pin per chapter. The map key below selects a pin. Without WebGL, an SVG contour drawing remains. The landing page shows generic chapter labels only and never loads project data.
+- **Presentation index**: concentric contours around the project summit, with climbed rings drawn in contour orange.
+- **Chapter tabs**: a single survey-blue marker slides between tabs (shared layout element).
+- **Brand mark**: two contours and a trig point, drawn inline.
 
 ## Layout
 
-Use a 4 px spacing base. Cap desktop content at 1,312 px. Stack the composition at 760 px and switch to 16 px side gutters at 460 px. Give desktop chapters a consistent stage height so controls stay in place when the presenter advances.
+56px header with translucent paper, 232px sage sidebar (208px under 1050px, overlay drawer under 760px). Gutters are 40px on desktop and 16px on phones. Panels are white with a 1px border and 10px radius; tables sit inside one bordered panel and stack as labelled records on phones. Accomplishments use summit marks; blockers use ochre-washed blocks paired with green responses.
 
-## Shapes
+## Motion
 
-Use small radii for charts and content frames, pill shapes for compact actions, and one-pixel rules for section boundaries. Use shadows for overlays. Draw illustrations from geometric marks, connectors, and icons. Keep labels, dates, and figures in HTML.
+One authored moment per surface: the landing reveal plus terrain, and the route drawing itself on Progress. Route and content transitions run 220–240ms. Dialogs enter in 220ms and exit in 130ms. Reduced motion removes the terrain drift, pin pulse, route drawing and panel entrances, and keeps every control and figure.
 
-## Components
+## Retained behavior
 
-- **Buttons and links.** Violet for the main action, outlined secondary actions, and underlined text links where they appear in prose. Give icon-only controls accessible names and at least a 44 px hit area.
-- **Selectors.** Label project and month controls. Keep months without a report visible with an explicit availability message.
-- **Chapter navigation.** Show the four chapter names, current chapter, and previous and next actions. Use a moving accent line and a readable selected state.
-- **Charts and timelines.** Put the value and unit on the visual. Use names and values alongside color. Put workstream counts, owners, and targets in supporting detail.
-- **Details.** Expand inline with an explicit label and a visible expanded state. Keep reading order and keyboard focus predictable.
-
-### Motion
-
-| Interaction | Duration | Treatment |
-| --- | --- | --- |
-| Hover and press | 120–180 ms | Color, border, icon position, and short press feedback. |
-| Controls and details | 180–260 ms | Compact fade and translation on entry and exit. |
-| Chapter content | 280–460 ms | Outgoing content recedes. Incoming content arrives in the navigation direction. |
-| Shared stage | 390–450 ms | Keep the chart frame anchored while its contents change. Move the chapter indicator along the navigation. |
-
-Persistent chrome stays stable between chapters. Play an entrance and an exit when UI mounts or leaves. Pause the Three.js scene when offscreen, and render a static illustration for reduced motion or unavailable WebGL. Use `prefers-reduced-motion` to remove travel, scale, and timing dependencies throughout the interface.
+Skeletons are shaped like the content they replace and stop pulsing after three cycles. A slow load adds a retry action after ten seconds. Dialogs share `ModalHeader` and `src/styles/forms.css`. The header holds compact, expand and close controls, and section shortcuts and the action footer sit outside the scroll area. Phone editors use the visible viewport height. Drafts, previews, publishing, sharing and presentation keep the behavior described in PRODUCT.md.

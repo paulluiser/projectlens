@@ -1,0 +1,92 @@
+/* Survey sheet: white map paper, contour sienna, survey blue, woodland green. */
+:root {
+  color-scheme: light;
+  --font-ui: "Source Sans 3 Variable", "Source Sans 3", system-ui, sans-serif;
+
+  /* World */
+  --paper: #ffffff;
+  --ground: #f3f5f2;
+  --margin: #e9eee8;
+  --ink: #1a2420;
+  --ink-soft: #4b5953;
+  --contour: #b4542a;
+  --contour-soft: #e8c9b6;
+  --grid: #e3e8e2;
+  --survey: #135fa8;
+  --survey-deep: #0e4b86;
+  --water: #e2edf7;
+  --woodland: #2c6a3c;
+  --woodland-wash: #e5efe2;
+  --ochre: #855800;
+  --ochre-wash: #fbefd6;
+  --map-red: #b3261e;
+
+  --line-strong: #b8c2bb;
+  --control-line: #c3ccc5;
+  --control-line-hover: #a4afa8;
+  --water-light: #f2f7fb;
+  --selection: #cfe1f3;
+  --margin-hover: #dde4dc;
+  --contour-wash: #f8e9e1;
+  --ochre-ink: #5c4a2a;
+  --mark-violet: #4a3f8f;
+  --mark-violet-wash: #eceaf6;
+
+  /* Roles (consumed by components and the shadcn theme) */
+  --background: var(--ground);
+  --foreground: var(--ink);
+  --card: var(--paper);
+  --card-foreground: var(--ink);
+  --popover: var(--paper);
+  --popover-foreground: var(--ink);
+  --primary: var(--survey);
+  --primary-hover: var(--survey-deep);
+  --primary-foreground: #fff;
+  --secondary: #e4e9e3;
+  --secondary-foreground: var(--ink);
+  --muted: #eef2ed;
+  --muted-foreground: var(--ink-soft);
+  --accent: var(--water);
+  --accent-foreground: var(--survey-deep);
+  --destructive: var(--map-red);
+  --destructive-surface: #fbeceb;
+  --destructive-hover: #8e1e17;
+  --success: var(--woodland);
+  --success-surface: var(--woodland-wash);
+  --warning: var(--ochre);
+  --warning-surface: var(--ochre-wash);
+  --warning-border: #c49a4a;
+  --border: #d4dbd3;
+  --input: #7b8781;
+  --ring: var(--survey);
+
+  /* Surfaces */
+  --toolbar: #f6f8f5;
+  --sidebar: var(--margin);
+  --field-surface: #fcfdfc;
+  --sheet-header: var(--paper);
+  --disabled-surface: #e7ebe6;
+  --disabled-text: #4f5b55;
+  --drawer-scrim: #1a242066;
+  --dialog-scrim: #1a242080;
+  --sheet-shadow: 0 1px 2px #1a24200f, 0 12px 32px -8px #1a242029;
+  --focus-on-dark: #a9cff5;
+
+  /* Night sheet (presentation) */
+  --night: #11201b;
+  --night-raised: #1a2d26;
+  --night-text: #f2f6f3;
+  --night-muted: #b4c3bc;
+  --night-rule: #ffffff26;
+  --night-contour: #e08a5c;
+
+  /* Layout and motion */
+  --header-height: 56px;
+  --sidebar-width: 232px;
+  --radius-control: 6px;
+  --radius-panel: 10px;
+  --motion-enter: 220ms;
+  --motion-exit: 130ms;
+  --motion-feedback: 120ms;
+  --motion-ease: cubic-bezier(.22, 1, .36, 1);
+}

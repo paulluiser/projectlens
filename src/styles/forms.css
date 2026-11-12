@@ -1,0 +1,122 @@
+/* Shared dialog and form system. Layout rules live here, not in page overrides. */
+.editor-overlay { position: fixed; inset: 0; z-index: 60; background: var(--dialog-scrim); }
+.editor-dialog { --dialog-gutter: 24px; position: fixed; z-index: 61; top: 50%; left: 50%; display: flex; flex-direction: column; width: min(480px, calc(100% - 32px)); max-height: min(900px, calc(100dvh - 48px)); min-height: 0; overflow: hidden; transform: translate(-50%, -50%); border: 1px solid var(--border); border-radius: 12px; background: var(--card); color: var(--foreground); box-shadow: 0 2px 4px #1a242014, 0 24px 64px -12px #1a242047; }
+.editor-dialog.wide { width: min(840px, calc(100% - 48px)); }
+.dialog-header { position: relative; flex: none; border-bottom: 1px solid var(--border); padding: 20px var(--dialog-gutter) 18px; background: var(--sheet-header); }
+.dialog-window-controls { position: absolute; top: 12px; right: 12px; display: flex; gap: 2px; }
+.window-control { display: grid; width: 32px; height: 32px; place-items: center; border-radius: var(--radius-control); color: var(--ink-soft); transition: background-color var(--motion-feedback), color var(--motion-feedback); }
+.window-control:hover:not(:disabled) { background: var(--muted); color: var(--ink); }
+.window-control[aria-pressed=true] { background: var(--water); color: var(--survey-deep); }
+.window-control > span { display: grid; place-items: center; }
+.window-control svg { width: 14px; height: 14px; }
+.window-control i { width: 10px; height: 1.5px; background: currentColor; }
+.window-control:focus-visible { outline: 2px solid var(--ring); outline-offset: -2px; }
+.window-control:disabled { cursor: not-allowed; opacity: .45; }
+.window-close { order: 3; }
+.editor-dialog:has(.dialog-header[data-window-size=compact]) { top: calc(var(--visible-viewport-top, 0px) + var(--visible-viewport-height, 100dvh) / 2); left: 50%; width: min(640px, calc(100% - 24px)); height: auto; max-height: calc(var(--visible-viewport-height, 100dvh) * .8); transform: translate(-50%, -50%); border-radius: 12px; }
+.editor-dialog:not(.wide):has(.dialog-header[data-window-size=compact]) { width: min(400px, calc(100% - 24px)); }
+.editor-dialog:has(.dialog-header[data-window-size=expanded]) { top: var(--visible-viewport-top, 0px); left: 0; width: 100%; height: var(--visible-viewport-height, 100dvh); max-height: none; transform: none; border-radius: 0; }
+.editor-dialog:has(.dialog-header[data-window-size=expanded]) :is(.editor-form-fields, .dialog-body > *) { max-width: 1000px; margin-inline: auto; width: 100%; }
+.editor-heading { display: flex; align-items: flex-start; gap: 14px; padding-right: 108px; }
+.dialog-heading-copy { flex: 1; min-width: 0; }
+.dialog-symbol { display: grid; flex: none; place-items: center; width: 40px; height: 40px; border-radius: 8px; background: var(--water); color: var(--survey-deep); }
+.dialog-destructive .dialog-symbol { background: var(--destructive-surface); color: var(--destructive); }
+.editor-heading h2 { min-width: 0; margin-top: 0; font-size: 22px; font-weight: 650; line-height: 1.3; overflow-wrap: anywhere; }
+.editor-description { max-width: 65ch; margin-top: 4px; color: var(--muted-foreground); font-size: 14px; line-height: 1.5; }
+.editor-form { display: flex; flex-direction: column; flex: 1 1 auto; min-height: 0; min-width: 0; overflow: hidden; }
+.editor-scroll, .dialog-body { flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain; scrollbar-gutter: stable; padding: 24px var(--dialog-gutter); }
+.editor-form-fields { display: grid; min-width: 0; gap: 24px; margin: 0; border: 0; padding: 0; }
+.editor-field { display: flex; flex-direction: column; align-self: start; min-width: 0; gap: 8px; font-size: 14px; line-height: 1.45; }
+.field-label, .editor-field > span { color: var(--foreground); font-weight: 600; }
+.field-optional { color: var(--muted-foreground); font-size: 13px; font-weight: 400; }
+.field-required { color: var(--destructive); }
+.editor-field input, .editor-field textarea, .editor-field select { box-sizing: border-box; width: 100%; min-width: 0; min-height: 44px; margin: 0; border: 1px solid var(--input); border-radius: var(--radius-control); padding: 8px 12px; background: var(--field-surface); color: var(--foreground); font: inherit; font-size: 14px; line-height: 1.45; transition: border-color var(--motion-feedback), background-color var(--motion-feedback); }
+.editor-field textarea { min-height: 96px; resize: vertical; }
+.editor-field select { padding-right: 28px; }
+.editor-field input:hover:not(:disabled):not([readonly]), .editor-field textarea:hover:not(:disabled), .editor-field select:hover:not(:disabled) { border-color: var(--muted-foreground); }
+.editor-field :is(input, textarea, select):focus-visible { border-color: var(--primary); outline: 2px solid var(--ring); outline-offset: 2px; }
+.editor-field :is(input, textarea, select):disabled { background: var(--disabled-surface); color: var(--disabled-text); cursor: not-allowed; opacity: 1; }
+.editor-field input[readonly] { background: var(--muted); color: var(--muted-foreground); }
+.editor-field input::placeholder, .editor-field textarea::placeholder { color: var(--muted-foreground); opacity: 1; }
+.editor-field [aria-invalid=true] { border-color: var(--destructive); }
+.editor-field [aria-invalid=true]:focus-visible { outline-color: var(--destructive); border-color: var(--destructive); }
+.field-hint, .field-error { font-size: 13px; line-height: 1.5; overflow-wrap: anywhere; }
+.field-hint { color: var(--muted-foreground); }
+.field-error { color: var(--destructive); }
+.editor-grid, .editor-row-fields { display: grid; min-width: 0; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.editor-metrics { grid-template-columns: repeat(3, minmax(0, 1fr)); margin-top: 12px; }
+.editor-metrics input { font-variant-numeric: tabular-nums; }
+.editor-section-heading { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
+.editor-section-heading h3, .report-editor section > h3 { font-size: 16px; font-weight: 650; }
+.editor-rows, .carry-editor { border-top: 1px solid var(--border); padding-top: 24px; }
+.editor-empty { padding: 8px 12px; border-radius: 8px; background: var(--toolbar); color: var(--muted-foreground); font-size: 13px; }
+.editor-list-row { display: flex; align-items: flex-start; gap: 12px; margin-top: 12px; border: 1px solid var(--border); border-radius: 8px; padding: 16px; background: var(--background); animation: row-enter .16s var(--motion-ease); }
+.editor-row-fields { flex: 1; }
+.editor-row-fields .editor-field:has(textarea) { grid-column: 1 / -1; }
+.remove-row { width: 36px; height: 36px; margin-top: 20px; }
+.remove-row:hover { color: var(--destructive); background: var(--destructive-surface); }
+.editor-footer { flex: none; display: flex; justify-content: flex-end; align-items: center; gap: 12px; border-top: 1px solid var(--border); padding: 16px var(--dialog-gutter); background: var(--toolbar); }
+.editor-footer .action { min-height: 40px; min-width: 88px; }
+.editor-error { flex: 0 1 auto; overflow: auto; max-height: 25dvh; display: grid; gap: 8px; margin: 16px var(--dialog-gutter) 0; border: 1px solid var(--destructive); border-radius: 6px; padding: 12px; background: var(--destructive-surface); color: var(--destructive-hover); font-size: 13px; overflow-wrap: anywhere; }
+.editor-scroll .editor-error, .dialog-body .editor-error { margin: 16px 0 0; }
+.editor-error .text-link { color: inherit; text-decoration: underline; }
+.recovery-notice { display: flex; flex-wrap: wrap; gap: 12px; border: 1px solid var(--warning-border); border-radius: 6px; padding: 12px; background: var(--warning-surface); color: var(--warning); font-size: 13px; }
+.recovery-notice > p { flex-basis: 100%; }
+.editor-scroll > .recovery-notice { margin-bottom: 20px; }
+.editor-dialog > .recovery-notice { flex: 0 1 auto; max-height: 30dvh; overflow: auto; margin: 16px var(--dialog-gutter); }
+.recovery-notice .text-link { color: inherit; text-decoration: underline; }
+.editor-section-nav { display: flex; flex: none; gap: 4px; overflow-x: auto; border-bottom: 1px solid var(--border); padding: 8px var(--dialog-gutter); background: var(--toolbar); }
+.editor-section-nav button { flex: none; min-height: 40px; border-radius: 8px; padding: 8px 12px; color: var(--foreground); font-size: 14px; font-weight: 550; }
+.editor-section-nav button:hover { background: var(--muted); }
+.editor-section-nav button[aria-current] { background: var(--accent); color: var(--accent-foreground); font-weight: 650; }
+.report-editor [id] { scroll-margin-top: 8px; }
+.carry-entry { display: grid; gap: 12px; margin-top: 16px; border-top: 1px solid var(--border); padding-top: 16px; }
+.carry-entry p { color: var(--muted-foreground); font-size: 13px; }
+.carry-entry .action, .carry-entry > .text-link { justify-self: start; }
+.delete-confirm[data-slot=button] { background: var(--destructive); color: var(--primary-foreground); }
+.delete-confirm[data-slot=button]:hover { background: var(--destructive-hover); }
+.dialog-destructive .editor-heading h2 { color: var(--destructive); }
+.editor-dialog[data-state=open] { animation: dialog-enter var(--motion-enter) var(--motion-ease); }
+.editor-dialog[data-state=closed] { animation: dialog-exit var(--motion-exit) ease-in; }
+.editor-overlay[data-state=open] { animation: surface-enter .18s ease-out; }
+.editor-overlay[data-state=closed] { animation: surface-exit var(--motion-exit) ease-in; }
+@media (max-width: 760px), (max-height: 500px) and (pointer: coarse) and (max-width: 1050px) {
+  .editor-dialog { --dialog-gutter: 20px; top: calc(var(--visible-viewport-top, 0px) + var(--visible-viewport-height, 100dvh) / 2); width: min(480px, calc(100% - 24px)); max-height: calc(var(--visible-viewport-height, 100dvh) - 24px); }
+  .editor-dialog.wide { top: var(--visible-viewport-top, 0px); left: 0; width: 100%; height: var(--visible-viewport-height, 100dvh); max-height: var(--visible-viewport-height, 100dvh); transform: none; border-radius: 0; }
+  .editor-heading { gap: 12px; }
+  .dialog-header { padding-bottom: 16px; }
+  .editor-heading h2 { font-size: 20px; }
+  .remove-row, .window-control { width: 44px; height: 44px; }
+  .editor-description { font-size: 14px; }
+  .editor-field :is(input, textarea, select) { min-height: 46px; font-size: 16px; }
+  .editor-grid, .editor-row-fields { grid-template-columns: minmax(0, 1fr); gap: 16px; }
+  .editor-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .editor-list-row { padding: 12px; gap: 8px; }
+  .editor-footer { padding-bottom: max(16px, env(safe-area-inset-bottom)); }
+  .editor-footer > .action { flex: 1; min-width: 0; min-height: 44px; white-space: normal; }
+  .editor-section-nav button { min-height: 44px; }
+  .recovery-notice .text-link, .carry-entry > .text-link { min-height: 44px; padding-block: 8px; }
+  .editor-dialog.wide[data-state=open] { animation-name: mobile-editor-enter; }
+  .editor-dialog.wide[data-state=closed] { animation-name: mobile-editor-exit; }
+}
+.editor-dialog:has(.dialog-header[data-window-size=compact])[data-state=closed] { animation-name: dialog-exit; }
+.editor-dialog:has(.dialog-header[data-window-size=expanded])[data-state=closed] { animation-name: mobile-editor-exit; }
+@media (prefers-reduced-motion: reduce) {
+  .editor-dialog[data-state], .editor-dialog:has(.dialog-header[data-window-size])[data-state=closed], .editor-overlay[data-state], .editor-list-row { animation: none; }
+  .editor-field :is(input, textarea, select) { transition: none; }
+}
+
+@media (max-width: 760px), (max-height: 500px) and (pointer: coarse) and (max-width: 1050px) {
+  .editor-dialog { --dialog-gutter: max(20px, env(safe-area-inset-left), env(safe-area-inset-right)); }
+  .dialog-header { max-height: calc(var(--visible-viewport-height, 100dvh) * .4); overflow-y: auto; }
+}
+
+.editor-dialog.wide { width: min(1040px, calc(100% - 48px)); }
+.editor-dialog.wide .editor-scroll { scrollbar-gutter: auto; }
+.form-page:not([hidden]) { display: grid; align-content: start; gap: 20px; min-width: 0; }
+.form-page > .editor-rows:first-child { border-top: 0; padding-top: 0; }
+.form-page .editor-section-heading { margin-bottom: 8px; }
+@media (max-width: 760px), (max-height: 500px) and (pointer: coarse) and (max-width: 1050px) {
+  .editor-dialog.wide { width: 100%; }
+  .editor-heading { padding-right: 140px; }
+}
