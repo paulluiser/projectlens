@@ -62,7 +62,7 @@ Unsaved forms keep a recovery copy in this browser's local storage. Closing a ch
 
 In **Present**, arrow keys navigate chapters, Escape exits, and **Finish review** opens the end screen.
 
-The automated suite includes a JSDOM component/API review-cycle check using temporary server JSON, with no mutation of the sample workspace. This checks interactions and persistence, not browser layout. Live Blob and rendered visual verification remain outstanding.
+The automated suite includes a JSDOM component/API review-cycle check using temporary server JSON, with no mutation of the sample workspace. This checks interactions and persistence, not browser layout. Live Blob verification remains separate from the local suite. Rendered desktop and mobile-width verification is recorded in docs/ui-ux-audit-2026-11-19.md.
 
 The `@vercel/cli-config` Zod dependency is overridden to 4.6.6 to address the constrained-collection memory advisory without downgrading the Blob SDK. `npm audit` reports zero vulnerabilities after this override.
 

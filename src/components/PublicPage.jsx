@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { overviewPath } from '@/lib/routes.mjs'
-import { CalendarIcon, ChartIcon, ChecklistIcon, PeopleIcon, ProgressIcon, TargetIcon } from '@/components/ui/icons'
+import { ArrowRightIcon, CalendarIcon, ChartIcon, ChecklistIcon, PeopleIcon, ProgressIcon, TargetIcon } from '@/components/ui/icons'
 
 export const workflow = [
   { title: 'Plan', section: 'how-it-works', Icon: CalendarIcon, summary: 'Set monthly priorities', detail: 'Assign owners and deadlines to the work that needs to happen next.' },
@@ -54,11 +54,11 @@ export function PublicPage({ section, pageLabel }) {
       {description && <p>{description}</p>}
     </header>
     <List className="public-details" aria-label={pageLabel}>
-      {items.map(({ title, Icon, detail }) => <li key={title}>
-        <span className="public-detail-icon" aria-hidden="true"><Icon label="" /></span>
+      {items.map(({ title, detail, Icon }, index) => <li key={title}>
+        <span className="public-detail-number" aria-hidden="true">{workflowPage ? `0${index + 1}` : <Icon label="" />}</span>
         <div><h2>{title}</h2><p>{detail}</p></div>
       </li>)}
     </List>
-    <Button asChild className="public-explore"><Link to={overviewPath}>Explore</Link></Button>
+    <div className="public-page-action"><p>Put the review into practice.</p><Button asChild className="public-explore"><Link to={overviewPath}>Explore <ArrowRightIcon label="" /></Link></Button></div>
   </div>
 }

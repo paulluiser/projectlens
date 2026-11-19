@@ -19,7 +19,6 @@ function workspaceApi(env) {
 
 export default defineConfig(({ mode }) => ({
   plugins: [react(), tailwindcss(), workspaceApi({ ...loadEnv(mode, process.cwd(), ''), ...process.env })],
-  optimizeDeps: { include: ['three'] },
   resolve: {
     alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) },
   },

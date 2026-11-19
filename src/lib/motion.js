@@ -13,11 +13,11 @@ export function useReducedMotion() {
   return useSyncExternalStore(subscribeToMotionPreference, () => motionPreference.matches)
 }
 
-export function fade(reduced, distance = 12) {
+export function fade(reduced, distance = 4) {
   return {
     initial: { opacity: reduced ? 1 : 0, y: reduced ? 0 : distance },
     animate: { opacity: 1, y: 0 },
     exit: { opacity: reduced ? 1 : 0, y: reduced ? 0 : -distance / 2 },
-    transition: { duration: reduced ? 0 : 0.22, ease: easing },
+    transition: { duration: reduced ? 0 : 0.16, ease: easing },
   }
 }

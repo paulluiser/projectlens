@@ -1,0 +1,799 @@
+/* Delivery reports: readable documents with clear navigation and honest data. */
+.report-shell {
+  --report-ink: #20252b;
+  --report-muted: #606970;
+  --report-rule: #dde2e6;
+  --report-blue: #2563a6;
+  color: var(--report-ink);
+  padding-top: 32px;
+  padding-bottom: 48px;
+}
+.report-shell .report-header {
+  padding-bottom: 24px;
+  border-color: var(--report-rule);
+}
+.report-shell .report-crumb {
+  font-size: 13px;
+  color: var(--report-muted);
+}
+.report-shell .report-workflow {
+  margin-top: 18px;
+  gap: 12px;
+  color: var(--report-muted);
+  font-size: 12px;
+}
+.report-shell .report-context {
+  margin-top: 12px;
+  gap: 20px;
+}
+.report-shell .report-title {
+  gap: 12px;
+}
+.report-shell .report-title h1 {
+  font-size: clamp(24px, 2.4vw, 32px);
+  line-height: 1.2;
+  letter-spacing: -0.035em;
+}
+.report-shell .report-period {
+  margin-left: 6px;
+}
+.report-shell .report-period select {
+  min-height: 40px;
+  border: 1px solid #b5bec6;
+  border-radius: 6px;
+  padding-inline: 10px;
+  color: var(--report-ink);
+  background: #fff;
+  font-size: 13px;
+}
+.report-shell .report-workbench {
+  margin-top: 0;
+  gap: 32px;
+}
+.report-shell .report-rail {
+  border-bottom: 1px solid var(--report-rule);
+}
+.report-shell .chapter-navigation {
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+.report-shell .chapter-nav {
+  gap: 24px;
+}
+.report-shell .chapter-nav a {
+  min-height: 56px;
+  padding: 0 2px;
+  border-radius: 0;
+  border-bottom: 2px solid transparent;
+  color: var(--report-muted);
+  font-size: 13px;
+  transition: none;
+}
+.report-shell .chapter-nav a:hover {
+  color: var(--report-ink);
+  background: transparent;
+}
+.report-shell .chapter-nav a[aria-current] {
+  color: var(--report-blue);
+  border-bottom-color: var(--report-blue);
+  background: transparent;
+  font-weight: 650;
+}
+.report-shell .chapter-nav a > span {
+  width: 16px;
+}
+.report-shell .chapter-content {
+  margin: 0;
+}
+.report-shell .workspace-panel {
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+.report-shell :is(h2, h3) {
+  line-height: 1.4;
+  letter-spacing: -0.015em;
+}
+.report-shell h2 {
+  font-size: 17px;
+  font-weight: 650;
+}
+.report-shell h3 {
+  font-size: 15px;
+}
+.report-shell .panel-heading {
+  gap: 9px;
+}
+.report-shell .panel-heading > span:first-child {
+  color: var(--report-muted);
+}
+.report-shell .progress-bento {
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: 40px;
+  row-gap: 0;
+}
+.report-shell .progress-bento > * {
+  animation: none;
+}
+.report-shell .progress-bento .chapter-stage {
+  grid-column: span 5;
+  padding: 0 36px 30px 0;
+  border-right: 1px solid var(--report-rule);
+  background: transparent;
+}
+.report-shell .progress-bento .status-overview {
+  padding: 0;
+}
+.report-shell .progress-month {
+  grid-column: span 7;
+  padding: 0 0 30px;
+}
+.report-shell .report-month-summary {
+  margin-top: 6px;
+  max-width: 68ch;
+  color: var(--report-muted);
+  font-size: 14px;
+  line-height: 1.6;
+}
+.report-shell .status-body {
+  display: block;
+}
+.report-shell .completion-reading {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 20px;
+}
+.report-shell .completion-reading strong {
+  font-size: 32px;
+  line-height: 1.2;
+  font-weight: 600;
+  letter-spacing: -0.035em;
+  font-variant-numeric: tabular-nums;
+}
+.report-shell .completion-reading > span {
+  color: var(--report-muted);
+  font-size: 13px;
+}
+.report-shell .completion-track {
+  height: 8px;
+  margin: 16px 0 20px;
+  border-radius: 2px;
+  background: #e9edf0;
+}
+.report-shell .completion-track > span {
+  display: block;
+  height: 100%;
+  background: var(--report-blue);
+  border-radius: inherit;
+}
+.report-shell .status-legend {
+  gap: 8px;
+  font-size: 13px;
+}
+.report-shell .status-legend dt {
+  color: var(--report-muted);
+}
+.report-shell .status-legend dd {
+  font-weight: 600;
+}
+.report-shell .task-comparison {
+  margin: 20px 0 0;
+}
+.report-shell .task-comparison figcaption {
+  color: var(--report-muted);
+  font-size: 13px;
+  font-weight: 500;
+}
+.report-shell .task-track {
+  height: 8px;
+  border-radius: 2px;
+  background: #e9edf0;
+}
+.report-shell .task-fill,
+.report-shell .task-fill[data-over-plan="true"] {
+  background: var(--report-blue);
+}
+.report-shell .task-target {
+  border-color: var(--report-ink);
+}
+.report-shell .task-key {
+  margin-top: 10px;
+}
+.report-shell .task-key dt {
+  color: var(--report-muted);
+  font-size: 13px;
+}
+.report-shell .progress-bento .summary-metrics {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+  margin-top: 24px;
+  background: transparent;
+}
+.report-shell .progress-bento .metric-card {
+  display: block;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+.report-shell .metric-card > div {
+  gap: 4px;
+  flex-direction: column;
+}
+.report-shell .progress-bento .metric-card dt {
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--report-muted);
+}
+.report-shell .progress-bento .metric-card dd {
+  font-size: 21px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+.report-shell .progress-detail {
+  grid-column: span 6;
+  padding: 26px 0;
+  border-top: 1px solid var(--report-rule);
+}
+.report-shell .progress-detail :is(.compliance-bars, .workstream-counts) {
+  margin-top: 18px;
+}
+.report-shell .compliance-bars {
+  gap: 12px;
+}
+.report-shell .compliance-bars > div {
+  grid-template-columns: minmax(120px, 1fr) minmax(0, 1fr);
+  gap: 16px;
+  font-size: 13px;
+}
+.report-shell .compliance-bars dt {
+  color: var(--report-muted);
+}
+.report-shell .compliance-bars strong {
+  min-width: 36px;
+  font-weight: 600;
+  text-align: right;
+}
+.report-shell .bar-track {
+  height: 6px;
+  border-radius: 2px;
+  background: #e9edf0;
+}
+.report-shell .bar-track > span {
+  background: var(--report-blue);
+}
+.report-shell .workstream-counts {
+  gap: 12px 24px;
+}
+.report-shell .workstream-counts > li {
+  font-size: 13px;
+  color: var(--report-muted);
+}
+.report-shell .comparison {
+  padding: 26px 0;
+  border-top: 1px solid var(--report-rule);
+}
+.report-shell .comparison > dl {
+  margin-top: 18px;
+  gap: 24px;
+}
+.report-shell .comparison dt {
+  color: var(--report-muted);
+  font-size: 13px;
+}
+.report-shell .comparison dd {
+  margin-top: 6px;
+  font-size: 20px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.report-shell .comparison-delta {
+  margin-top: 7px;
+  color: var(--report-muted);
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.6;
+}
+.report-shell .commitment-outcomes {
+  margin-top: 8px;
+  padding: 26px 0;
+  border-top: 1px solid var(--report-rule);
+}
+.report-shell .chapter-copy {
+  padding: 0;
+}
+.report-shell .chapter-copy > .panel-heading {
+  padding-bottom: 20px;
+}
+.report-shell .chapter-copy > .panel-heading .lozenge {
+  margin-left: auto;
+  background: #f0f3f4;
+  color: var(--report-muted);
+  font-weight: 500;
+}
+.report-shell .wins-list,
+.report-shell .blockers-list {
+  margin-top: 0;
+}
+.report-shell .wins-list li {
+  padding: 22px 0;
+  gap: 14px;
+  grid-template-columns: 20px minmax(0, 1fr) auto;
+  align-items: start;
+  border-color: var(--report-rule);
+}
+.report-shell .achievement-mark {
+  display: inline-flex;
+  padding-top: 2px;
+  color: #357255;
+}
+.report-shell .achievement-mark i,
+.report-shell .achievement-mark::before,
+.report-shell .achievement-mark::after {
+  display: none;
+}
+.report-shell .wins-list strong {
+  font-size: 15px;
+  line-height: 1.5;
+  font-weight: 600;
+}
+.report-shell .wins-list small {
+  max-width: 72ch;
+  margin-top: 6px;
+  color: var(--report-muted);
+  font-size: 14px;
+  line-height: 1.7;
+}
+.report-shell .wins-list .win-value {
+  padding: 4px 8px;
+  background: #edf3ef;
+  color: #356249;
+  font-size: 12px;
+  font-weight: 500;
+}
+.report-shell .blockers-list li {
+  gap: 32px;
+  padding: 24px 0;
+  border-color: var(--report-rule);
+}
+.report-shell .blockers-list li > div:first-child {
+  padding: 0;
+  border-radius: 0;
+  background: transparent;
+}
+.report-shell .blockers-list h3 {
+  font-size: 15px;
+  font-weight: 600;
+}
+.report-shell .blockers-list p {
+  max-width: 68ch;
+  margin-top: 6px;
+  color: var(--report-muted);
+  font-size: 14px;
+  line-height: 1.7;
+}
+.report-shell .blocker-response {
+  padding: 0 0 0 20px;
+  border-left: 2px solid #dce5ed;
+  border-radius: 0;
+  background: transparent;
+}
+.report-shell .blocker-response > span:first-child {
+  display: none;
+}
+.report-shell .blocker-response strong {
+  color: var(--report-blue);
+  font-size: 13px;
+  font-weight: 600;
+}
+.report-shell .chapter-description {
+  padding-block: 12px 32px;
+  color: var(--report-muted);
+  font-size: 14px;
+}
+.report-shell .chapter-controls {
+  position: static;
+  margin: 32px 0 0;
+  padding: 20px 0 0;
+  border-top: 1px solid var(--report-rule);
+  background: transparent;
+}
+.report-shell .next-plan .plan-heading {
+  gap: 0;
+}
+.report-shell .plan-heading > .section-icon {
+  display: none;
+}
+.report-shell .plan-heading h2 {
+  font-size: 20px;
+}
+.report-shell .plan-heading p {
+  margin-top: 5px;
+  font-size: 13px;
+}
+.report-shell .plan-time-context {
+  margin-top: 8px;
+  color: var(--report-muted);
+  font-size: 12px;
+}
+.report-shell .plan-workbench {
+  display: grid;
+  grid-template-columns: minmax(280px, 0.9fr) minmax(0, 1.1fr);
+  gap: 36px;
+  align-items: start;
+  margin-top: 28px;
+}
+.report-shell .plan-calendar {
+  margin: 0;
+  overflow: hidden;
+  border: 1px solid var(--report-rule);
+  border-radius: 6px;
+}
+.report-shell .calendar-toolbar {
+  padding: 8px 10px 8px 14px;
+  gap: 4px;
+}
+.report-shell .calendar-toolbar .panel-heading {
+  gap: 6px;
+}
+.report-shell .calendar-toolbar h3 {
+  font-size: 13px;
+}
+.report-shell .calendar-reset {
+  font-size: 12px;
+  color: var(--report-blue);
+}
+.report-shell .plan-calendar th {
+  padding: 10px 2px;
+  background: #f7f8f9;
+  color: var(--report-muted);
+  font-weight: 500;
+}
+.report-shell .plan-calendar td {
+  height: 52px;
+  border-color: #e6eaed;
+}
+.report-shell .calendar-day,
+.report-shell .calendar-deadline {
+  min-height: 51px;
+  gap: 2px;
+  padding: 6px;
+}
+.report-shell .calendar-outside {
+  background: #fafbfc;
+}
+.report-shell .calendar-stamp {
+  display: none;
+}
+.report-shell .calendar-deadline {
+  background: #f0f5fa;
+}
+.report-shell .calendar-deadline:hover {
+  background: #e3edf6;
+}
+.report-shell .calendar-deadline[aria-pressed="true"] {
+  background: #e3edf6;
+  box-shadow: inset 0 0 0 2px var(--report-blue);
+}
+.report-shell .calendar-count {
+  padding: 1px 4px;
+  color: var(--report-blue);
+  font-weight: 600;
+}
+.report-shell .plan-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 28px;
+  margin: 0;
+}
+.report-shell .plan-actions > .panel-heading {
+  padding: 0 0 16px;
+}
+.report-shell .deadline-group h4 {
+  padding: 14px 0 8px;
+  border: 0;
+  border-top: 1px solid var(--report-rule);
+  background: transparent;
+  color: var(--report-muted);
+  font-size: 12px;
+}
+.report-shell .deadline-group + .deadline-group h4 {
+  border-top: 1px solid var(--report-rule);
+}
+.report-shell .deadline-group h4 > span {
+  display: none;
+}
+.report-shell .plan-action {
+  grid-template-columns: minmax(0, 1fr);
+  padding: 0 0 20px;
+  gap: 8px;
+}
+.report-shell .plan-action + .plan-action {
+  padding-top: 14px;
+}
+.report-shell .plan-action strong {
+  font-size: 14px;
+  line-height: 1.65;
+}
+.report-shell .plan-action p {
+  margin-top: 6px;
+  font-size: 13px;
+  line-height: 1.6;
+}
+.report-shell .action-owner {
+  font-size: 12px;
+  color: var(--report-muted);
+}
+.report-shell .plan-context {
+  border-top: 1px solid var(--report-rule);
+}
+.report-shell .plan-context section {
+  padding: 20px 0;
+}
+.report-shell .plan-context :is(p, li) {
+  color: var(--report-muted);
+  font-size: 14px;
+  line-height: 1.65;
+}
+.report-shell .plan-context .panel-heading {
+  margin-bottom: 10px;
+}
+.report-shell .review-ended {
+  padding: 24px 0;
+}
+.report-shell .review-ended p {
+  margin: 10px 0 24px;
+  color: var(--report-muted);
+}
+.report-shell.presentation-index {
+  color: var(--report-ink);
+  background: #fbfbf9;
+  padding-top: 32px;
+}
+.workspace:has(.report-shell.presentation-index) {
+  background: #fbfbf9;
+}
+.report-shell .presentation-brand .brand-wordmark > span {
+  color: var(--report-muted);
+}
+.report-shell .presentation-topbar {
+  border-color: var(--report-rule);
+}
+.report-shell .presentation-topbar .action[data-slot="button"] {
+  color: var(--report-ink);
+  border-color: #b5bec6;
+  background: #fff;
+}
+.report-shell .presentation-stage {
+  grid-template-columns: minmax(0, 1.4fr) minmax(240px, 0.6fr);
+  padding: 64px 0;
+  gap: 48px;
+}
+.report-shell .presentation-hero p {
+  color: var(--report-muted);
+  font-size: 15px;
+  margin-bottom: 14px;
+}
+.report-shell .presentation-hero h1 {
+  max-width: 20ch;
+  font-size: clamp(30px, 4vw, 52px);
+  line-height: 1.15;
+  letter-spacing: -0.04em;
+}
+.report-shell .presentation-hero .action[data-slot="button"] {
+  color: #fff;
+  background: var(--report-blue);
+}
+.report-shell .presentation-reading {
+  display: block;
+  width: 100%;
+  aspect-ratio: auto;
+  padding-left: 32px;
+  border-left: 1px solid var(--report-rule);
+}
+.report-shell .presentation-figure {
+  padding: 0;
+  text-align: left;
+  gap: 10px;
+}
+.report-shell .presentation-figure strong {
+  font-size: 36px;
+  font-weight: 600;
+  line-height: 1.2;
+}
+.report-shell .presentation-figure span {
+  color: var(--report-muted);
+  font-size: 14px;
+}
+.report-shell .presentation-progress {
+  height: 6px;
+  margin-block: 6px;
+  border-radius: 2px;
+  overflow: hidden;
+  background: #e5eaee;
+}
+.report-shell .presentation-progress > span {
+  display: block;
+  height: 100%;
+  background: var(--report-blue);
+}
+.report-shell .presentation-directory {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  border-color: var(--report-rule);
+}
+.report-shell .presentation-directory > div + div {
+  border-color: var(--report-rule);
+}
+.report-shell .presentation-directory > div:nth-child(odd) {
+  border-left: 0;
+}
+.report-shell .presentation-directory > div:nth-child(n + 3) {
+  border-top: 1px solid var(--report-rule);
+}
+.report-shell .presentation-tile {
+  padding: 24px 20px;
+  color: var(--report-ink);
+}
+.report-shell .presentation-tile:hover {
+  background: #f0f3f4;
+}
+.report-shell .presentation-tile > span:last-child {
+  color: var(--report-muted);
+  font-size: 14px;
+}
+.report-shell .presentation-back {
+  margin: 0;
+  font-size: 12px;
+}
+.report-shell.presentation-index :focus-visible {
+  outline-color: var(--report-blue);
+}
+@media (max-width: 1100px) {
+  .report-shell .report-context {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+  .report-shell .progress-bento {
+    column-gap: 28px;
+  }
+  .report-shell .plan-workbench {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 28px;
+  }
+  .report-shell .plan-calendar {
+    max-width: 560px;
+  }
+}
+@media (max-width: 700px) {
+  .report-shell {
+    padding-top: 24px;
+    padding-bottom: 28px;
+  }
+  .report-shell .report-header {
+    padding-bottom: 20px;
+  }
+  .report-shell .report-title {
+    gap: 10px;
+  }
+  .report-shell .report-period {
+    width: 100%;
+    margin: 4px 0 0;
+  }
+  .report-shell .report-period select {
+    width: 100%;
+    min-height: 44px;
+  }
+  .report-shell .report-workflow {
+    gap: 8px;
+    line-height: 1.6;
+  }
+  .report-shell .report-workbench {
+    gap: 24px;
+  }
+  .report-shell .chapter-nav {
+    gap: 22px;
+  }
+  .report-shell .chapter-nav a {
+    min-height: 52px;
+    font-size: 13px;
+  }
+  .report-shell .chapter-nav a > span {
+    display: none;
+  }
+  .report-shell .progress-bento {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+  }
+  .report-shell
+    .progress-bento
+    :is(.chapter-stage, .progress-month, .progress-detail) {
+    grid-column: 1 / -1;
+    padding: 24px 0;
+  }
+  .report-shell .progress-bento .chapter-stage {
+    border-right: 0;
+    padding-top: 0;
+  }
+  .report-shell .progress-bento .progress-month {
+    border-top: 1px solid var(--report-rule);
+  }
+  .report-shell .progress-bento .summary-metrics {
+    gap: 16px;
+  }
+  .report-shell .progress-bento .metric-card {
+    padding: 0;
+  }
+  .report-shell .progress-bento .metric-card dd {
+    font-size: 20px;
+  }
+  .report-shell .compliance-bars > div {
+    grid-template-columns: minmax(110px, 1fr) minmax(0, 1fr);
+    padding: 0;
+    gap: 12px;
+  }
+  .report-shell .comparison > dl {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px;
+  }
+  .report-shell .wins-list li {
+    grid-template-columns: 20px minmax(0, 1fr);
+  }
+  .report-shell .wins-list .win-value {
+    grid-column: 2;
+  }
+  .report-shell .blockers-list li {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 20px;
+  }
+  .report-shell .blocker-response {
+    padding-left: 16px;
+  }
+  .report-shell .plan-workbench {
+    margin-top: 24px;
+  }
+  .report-shell .calendar-toolbar {
+    padding: 6px 8px 6px 12px;
+  }
+  .report-shell .calendar-day,
+  .report-shell .calendar-deadline {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    min-height: 51px;
+    padding: 4px 0;
+  }
+  .report-shell .chapter-controls {
+    margin: 24px 0 0;
+    padding: 20px 0 0;
+  }
+  .report-shell .presentation-stage {
+    grid-template-columns: minmax(0, 1fr);
+    padding: 40px 0;
+    gap: 32px;
+  }
+  .report-shell .presentation-reading {
+    padding: 24px 0 0;
+    border-left: 0;
+    border-top: 1px solid var(--report-rule);
+    width: 100%;
+  }
+  .report-shell .presentation-directory {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .report-shell .presentation-directory > div + div {
+    border-left: 0;
+    border-top: 1px solid var(--report-rule);
+  }
+  .report-shell .presentation-tile {
+    padding: 22px 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .report-shell *,
+  .report-shell *::before,
+  .report-shell *::after {
+    animation: none;
+    scroll-behavior: auto;
+  }
+}

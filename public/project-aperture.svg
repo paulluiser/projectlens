@@ -3,7 +3,7 @@
   <defs>
     <path id="blade" d="M50 12a38 38 0 0 1 30.3 15L69 46.6Z"/>
   </defs>
-  <use href="#blade" fill="#7100f5"/>
+  <use href="#blade" fill="#2563a6"/>
   <g fill="#14151e">
     <use href="#blade" transform="rotate(60 50 50)"/>
     <use href="#blade" transform="rotate(120 50 50)"/>

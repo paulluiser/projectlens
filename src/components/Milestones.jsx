@@ -180,9 +180,9 @@ function MilestoneRow({ project, item, timeline, today }) {
     <div className="milestone-record">
       <span className="milestone-node" aria-hidden="true">{item.status === 'completed' ? <SuccessIcon label="" /> : <FlagIcon label="" />}</span>
       <div className="milestone-content">
-        <h2><button type="button" className="milestone-detail-toggle" aria-expanded={expanded} aria-controls={`milestone-detail-${item.id}`} onClick={() => setExpanded(value => !value)}>
+        <h3><button type="button" className="milestone-detail-toggle" aria-expanded={expanded} aria-controls={`milestone-detail-${item.id}`} onClick={() => setExpanded(value => !value)}>
           {item.title}<ChevronDownIcon label="" size="small" />
-        </button></h2>
+        </button></h3>
         <span className="sr-only">Target date: {dateLabel}.</span>
         <div className="milestone-meta"><span><PersonIcon label="" size="small" />{item.owner}</span>{item.sample && <span className="milestone-sample-label">Sample</span>}{item.forecast && <span className="milestone-forecast-label">Forecast</span>}</div>
       </div>
@@ -247,7 +247,7 @@ function MilestonePage() {
       <div className="milestone-next">
         {next ? <>
           <div className="milestone-date-stamp" aria-hidden="true"><span>{new Date(milestoneTime(next.dueDate)).toLocaleDateString('en', { month: 'short', timeZone: 'UTC' })}</span><strong>{next.dueDate.slice(-2)}</strong></div>
-          <div><h2>Next checkpoint</h2><p className="milestone-next-title">{next.title}</p><span className="milestone-next-owner"><PersonIcon label="" size="small" />{next.owner}</span></div>
+          <div><h2>Earliest open checkpoint</h2><p className="milestone-next-title">{next.title}</p><span className="milestone-next-owner"><PersonIcon label="" size="small" />{next.owner}<span aria-hidden="true">·</span><time dateTime={next.dueDate}>{dateFormat.format(milestoneTime(next.dueDate))}</time></span></div>
           <span className="sr-only">Due {dateFormat.format(milestoneTime(next.dueDate))}.</span>
         </> : <><span className="milestone-finished-symbol"><SuccessIcon label="" /></span><div><h2>{items.length && completed === items.length ? 'All milestones completed' : items.length ? 'Awaiting target dates' : 'Ready for your first milestone'}</h2><p>{items.length && completed === items.length ? 'Every checkpoint is complete.' : items.length ? `${undated} milestones are not scheduled yet.` : 'Add an outcome and a target date.'}</p></div></>}
       </div>
@@ -275,13 +275,13 @@ function MilestonePage() {
         <div className="milestone-date-axis">{timeline?.ticks.map((tick, index) => <span key={index} style={{ left: `${index * 25}%` }}>{shortMilestoneDate.format(tick)}</span>)}
           {timeline?.today != null && <span className="milestone-today-label" style={{ left: `${timeline.today}%` }}>Today</span>}
         </div>
-        <span className="milestone-date-column">Due date</span><span>Status</span><span />
+        <span className="milestone-date-column">Due date</span><span>Status</span><span className="milestone-actions-heading">Actions</span>
       </div>
       <ol className="milestone-list" aria-label="Project milestones">
         {filtered.map(item => <MilestoneRow project={project} item={item} timeline={timeline} today={today} key={item.id} />)}
       </ol>
       <div className="milestone-board-footer"><span>{items.some(item => item.sample) ? 'Sample milestones · edit or replace with real outcomes' : `${filtered.length} of ${items.length} milestones${undated ? ` · ${undated} not scheduled` : ''}`}</span><span><i className="milestone-diamond" />Target date</span></div>
-    </section> : <div className="milestone-empty"><FlagIcon label="" /><h2>{items.length ? 'No matching milestones' : 'Your next milestone starts here'}</h2><p>{items.length ? 'Try another status or search.' : 'Create a milestone to track an outcome, owner, and deadline.'}</p>
+    </section> : <div className="milestone-empty"><FlagIcon label="" /><h2>{items.length ? 'No matching milestones' : 'No milestones yet'}</h2><p>{items.length ? 'Try another status or search.' : 'Create a milestone to track an outcome, owner, and deadline.'}</p>
       {items.length > 0 && <Button variant="outline" className="action" onClick={() => { setStatus('all'); setSearch('') }}>Clear filters</Button>}
     </div>}
   </main>

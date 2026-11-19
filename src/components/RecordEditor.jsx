@@ -55,7 +55,7 @@ function Field({ label, multiline, hint, ...props }) {
   const Component = multiline ? 'textarea' : 'input'
   const id = useId()
   const [error, setError] = useState('')
-  return <label className="editor-field"><span className="field-label">{label}{props.required ? <span className="field-required" aria-hidden="true"> *</span> : <span className="field-optional"> (optional)</span>}</span><Component {...props} aria-invalid={Boolean(error)} aria-describedby={hint || error ? id : undefined} onInvalid={(event) => setError(event.currentTarget.validationMessage)} onChange={(event) => { setError(''); props.onChange?.(event) }} />{(error || hint) && <small id={id} className={error ? 'field-error' : 'field-hint'}>{error || hint}</small>}</label>
+  return <label className="editor-field"><span className="field-label">{label}{props.required ? <span className="field-required" aria-hidden="true"> *</span> : <span className="field-optional"> (optional)</span>}</span><Component {...props} name={props.name ?? id} autoComplete={props.autoComplete ?? 'off'} aria-invalid={Boolean(error)} aria-describedby={hint || error ? id : undefined} onInvalid={(event) => setError(event.currentTarget.validationMessage)} onChange={(event) => { setError(''); props.onChange?.(event) }} />{(error || hint) && <small id={id} role={error ? 'alert' : undefined} className={error ? 'field-error' : 'field-hint'}>{error || hint}</small>}</label>
 }
 
 function Rows({ title, value, onChange, fields, addLabel }) {

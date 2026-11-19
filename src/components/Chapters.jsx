@@ -1,6 +1,4 @@
-import { motion, useTransform } from 'framer-motion'
 import { CalendarIcon, SuccessIcon, ClockIcon, ImpactIcon, WorkItemIcon, ChartIcon, ChecklistIcon } from '@/components/ui/icons'
-import { easing } from '@/lib/motion'
 import { AnimatedMetric } from './AnimatedMetric'
 
 const hours = new Intl.NumberFormat('en', { maximumFractionDigits: 2 })
@@ -27,11 +25,8 @@ export function ProgressMetrics({ report, elapsed }) {
   )
 }
 
-function ProgressBar({ value, reduced, delay }) {
-  return <span className="bar-track" aria-hidden="true">
-    <motion.span style={{ width: `${value}%` }} initial={reduced ? false : { scaleX: 0 }}
-      animate={{ scaleX: 1 }} transition={{ duration: reduced ? 0 : .9, delay: reduced ? 0 : delay, ease: easing }} />
-  </span>
+function ProgressBar({ value }) {
+  return <span className="bar-track" aria-hidden="true"><span style={{ width: `${value}%` }} /></span>
 }
 
 export function TaskComparison({ report, elapsed, reduced }) {
@@ -42,11 +37,10 @@ export function TaskComparison({ report, elapsed, reduced }) {
   return <figure className="task-comparison">
     <figcaption>Tasks this month</figcaption>
     <div className="task-track" aria-hidden="true" style={{ '--target': `${target}%` }}>
-      <motion.span className="task-fill" data-over-plan={completed > planned} style={{
+      <span className="task-fill" data-over-plan={completed > planned} style={{
         width: `${fill}%`,
         '--planned-share': `${completed ? planned / completed * 100 : 0}%`,
-      }} initial={reduced ? false : { scaleX: 0 }} animate={{ scaleX: 1 }}
-        transition={{ duration: reduced ? 0 : .9, delay: reduced ? 0 : .12, ease: easing }} />
+      }} />
       {planned > 0 || completed > 0 ? <span className="task-target" /> : null}
     </div>
     <dl className="task-key">
@@ -97,14 +91,14 @@ export function WinsCopy({ report }) {
   return (
     <section className="workspace-panel chapter-copy">
       <div className="panel-heading">
-        <SuccessIcon label="" /><h2>{report.name} wins</h2>
+        <SuccessIcon label="" /><h2>Accomplishments</h2>
         <span className="lozenge success">{report.wins.length} {report.wins.length === 1 ? 'highlight' : 'highlights'}</span>
       </div>
       {report.wins.length > 0 ? (
         <ul className="wins-list">
           {report.wins.map((win) => (
             <li key={win.title}>
-              <span className="achievement-mark" aria-hidden="true"><i /></span>
+              <span className="achievement-mark" aria-hidden="true"><SuccessIcon label="" /></span>
               <span><strong>{win.title}</strong><small>{win.detail}</small></span>
               <span className="lozenge success win-value">{win.value}</span>
             </li>
@@ -140,14 +134,15 @@ export function ProgressVisual({ report, reduced, elapsed }) {
   const { projectCompleted: done, total } = report.progress
   const completion = total ? done / total : 0
   const percentage = new Intl.NumberFormat('en', { maximumFractionDigits: 1 }).format(completion * 100)
-  const coverage = useTransform(elapsed, [0, 1050], ['0%', `${completion * 100}%`])
   return (
     <div className="progress-visual status-overview">
       <h2>Project completion</h2>
       <div className="status-body">
-        <motion.div className="status-dial" style={{ '--coverage': reduced ? `${completion * 100}%` : coverage }}>
-          <strong><AnimatedMetric value={total ? `${percentage}%` : '—'} elapsed={elapsed} /></strong>
-        </motion.div>
+        <div className="completion-reading">
+          <strong><AnimatedMetric value={total ? `${percentage}%` : 'Not recorded'} elapsed={elapsed} /></strong>
+          <span>of tracked tasks complete</span>
+        </div>
+        <div className="completion-track" aria-hidden="true"><span style={{ width: `${completion * 100}%` }} /></div>
         <dl className="status-legend">
           <div><dt>Completed</dt><dd><AnimatedMetric value={done} elapsed={elapsed} delay={55} /></dd></div>
           <div><dt>Remaining</dt><dd><AnimatedMetric value={total - done} elapsed={elapsed} delay={90} /></dd></div>

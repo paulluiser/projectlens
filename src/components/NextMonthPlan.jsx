@@ -48,8 +48,7 @@ function DeadlineCalendar({ reportMonth, month, deadlines, activeDate, today, on
           </button>
         </div>
       </div>
-      <motion.div className="calendar-body" id={calendarId} initial={false} aria-hidden={!expanded} inert={!expanded}
-        animate={{ height: expanded ? 'auto' : 0, opacity: expanded ? 1 : 0 }} transition={{ duration: reduced ? 0 : .18 }}>
+      <div className="calendar-body" id={calendarId} hidden={!expanded} aria-hidden={!expanded} inert={!expanded}>
         <table aria-label={`${month} calendar`}>
           <thead><tr>{weekdays.map(day => <th key={day} scope="col">{day}</th>)}</tr></thead>
           <tbody>{weeks.map(week => (
@@ -71,7 +70,7 @@ function DeadlineCalendar({ reportMonth, month, deadlines, activeDate, today, on
             })}</tr>
           ))}</tbody>
         </table>
-      </motion.div>
+      </div>
     </section>
   )
 }
@@ -104,51 +103,53 @@ export function NextMonthPlan({ report, reduced }) {
       </div>
 
       {historical && <p className="plan-time-context">Historical plan · dates are shown as originally planned.</p>}
-      <DeadlineCalendar reportMonth={report.month} month={month} deadlines={deadlines} activeDate={activeDate} today={today} onSelect={setDateFilter} reduced={reduced} />
-      <div className="plan-layout">
-        <section className="workspace-panel plan-actions" aria-labelledby="plan-actions-title">
-          <div className="panel-heading">
-            <TargetIcon label="" /><h3 id="plan-actions-title">{activeDate ? `Planned actions · ${dayLabel(activeDate)}` : 'Planned actions'}</h3>
-          </div>
-          <p className="sr-only" role="status">{count} {count === 1 ? 'action' : 'actions'} shown</p>
-          {items.length === 0 && <p className="plan-empty">No actions are listed for this month.</p>}
-          <div id="plan-action-list">
-            <AnimatePresence initial={false} mode="wait">
-              <motion.div key={activeDate ?? 'all'} {...fade(reduced, 4)}>
-                {visible.map(([date, actions]) => (
-                  <section className="deadline-group" key={date}>
-                    <h4><CalendarIcon label="" size="small" /><time dateTime={date}>{dayLabel(date)}</time></h4>
-                    <ul>
-                      {actions.map((item) => (
-                        <li key={item.title} className="plan-action">
-                          <div><strong>{item.title}</strong>{item.detail && <p>{item.detail}</p>}</div>
-                          <span className="action-owner"><PersonIcon label="" size="small" /><span className="sr-only">Assigned to </span>{item.owner}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </section>
-                ))}
-              </motion.div>
-            </AnimatePresence>
-          </div>
-        </section>
+      <div className="plan-workbench">
+        <DeadlineCalendar reportMonth={report.month} month={month} deadlines={deadlines} activeDate={activeDate} today={today} onSelect={setDateFilter} reduced={reduced} />
+        <div className="plan-layout">
+          <section className="workspace-panel plan-actions" aria-labelledby="plan-actions-title">
+            <div className="panel-heading">
+              <TargetIcon label="" /><h3 id="plan-actions-title">{activeDate ? `Planned actions · ${dayLabel(activeDate)}` : 'Planned actions'}</h3>
+            </div>
+            <p className="sr-only" role="status">{count} {count === 1 ? 'action' : 'actions'} shown</p>
+            {items.length === 0 && <p className="plan-empty">No actions are listed for this month.</p>}
+            <div id="plan-action-list">
+              <AnimatePresence initial={false} mode="wait">
+                <motion.div key={activeDate ?? 'all'} {...fade(true, 0)}>
+                  {visible.map(([date, actions]) => (
+                    <section className="deadline-group" key={date}>
+                      <h4><CalendarIcon label="" size="small" /><time dateTime={date}>{dayLabel(date)}</time></h4>
+                      <ul>
+                        {actions.map((item) => (
+                          <li key={item.title} className="plan-action">
+                            <div><strong>{item.title}</strong>{item.detail && <p>{item.detail}</p>}</div>
+                            <span className="action-owner"><PersonIcon label="" size="small" /><span className="sr-only">Assigned to </span>{item.owner}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </section>
+                  ))}
+                </motion.div>
+              </AnimatePresence>
+            </div>
+          </section>
 
-        {(milestones.length > 0 || support) && (
-          <aside className="workspace-panel plan-context" aria-label="Plan milestones and support">
-            {milestones.length > 0 && (
-              <section>
-                <div className="panel-heading"><FlagIcon label="" /><h3>Milestones</h3></div>
-                <ul>{milestones.map((milestone) => <li key={milestone}>{milestone}</li>)}</ul>
-              </section>
-            )}
-            {support && (
-              <section>
-                <div className="panel-heading"><PeopleIcon label="" /><h3>Support needed</h3></div>
-                <p>{support}</p>
-              </section>
-            )}
-          </aside>
-        )}
+          {(milestones.length > 0 || support) && (
+            <aside className="workspace-panel plan-context" aria-label="Plan milestones and support">
+              {milestones.length > 0 && (
+                <section>
+                  <div className="panel-heading"><FlagIcon label="" /><h3>Milestones</h3></div>
+                  <ul>{milestones.map((milestone) => <li key={milestone}>{milestone}</li>)}</ul>
+                </section>
+              )}
+              {support && (
+                <section>
+                  <div className="panel-heading"><PeopleIcon label="" /><h3>Support needed</h3></div>
+                  <p>{support}</p>
+                </section>
+              )}
+            </aside>
+          )}
+        </div>
       </div>
     </section>
   )

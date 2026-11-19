@@ -12,7 +12,7 @@ A presenter walks an audience through the month’s results, blockers, and next 
 
 ## Stack
 
-React, shadcn/ui, Tailwind CSS, Three.js, and Framer Motion. The prototype will use Vite to produce a static build deployable to Vercel. Versioned JSON seeds the initial workspace. Website changes save through a server API to a local JSON file during development and a private Vercel Blob JSON object when deployed. Editors sign in with a shared editor password. Readers open the same report URLs across devices.
+React, shadcn/ui, Tailwind CSS, and Framer Motion. The prototype will use Vite to produce a static build deployable to Vercel. Versioned JSON seeds the initial workspace. Website changes save through a server API to a local JSON file during development and a private Vercel Blob JSON object when deployed. Editors sign in with a shared editor password. Readers open the same report URLs across devices.
 
 ## Product requirements
 
@@ -33,7 +33,7 @@ React, shadcn/ui, Tailwind CSS, Three.js, and Framer Motion. The prototype will 
 
 ## Interface
 
-Use a clear reporting workspace with familiar sidebar navigation, breadcrumbs, chapter tabs, and labelled controls. The November 2026 audit relaxes the previous strict Jira match and 60/30/10 color allocation under the user’s override permission. Use a macOS-inspired toolbar, Finder-style navigation, light reading surfaces, system blue actions, and semantic green, amber, and red feedback. Keep Atlassian core icons consistent throughout. The landing page introduces Project Lens and loads report data only after navigation to a project surface.
+Use a clear reporting workspace with familiar sidebar navigation, breadcrumbs, chapter tabs, and labelled controls. The November 2026 audit relaxes the previous strict Jira match and 60/30/10 color allocation under the user’s override permission. Use a neutral toolbar, familiar sidebar navigation, white reading surfaces, restrained blue actions, and semantic green, amber, and red feedback. The November 19 visual remake follows the current DESIGN.md. Keep Atlassian core icons consistent throughout. The landing page introduces Project Lens and loads report data only after navigation to a project surface.
 
 ## Deployment decisions
 
@@ -41,11 +41,11 @@ The implementation uses private Vercel Blob for durable shared JSON and a shared
 
 ## Acceptance
 
-- The site renders its graphs and illustrations from HTML, CSS, and Three.js geometry. Visual assets are removed.
+- The site renders its charts and report outline from HTML and CSS. The Project Lens SVG identity is retained; decorative WebGL geometry is removed.
 
 - A presenter can open the library from the landing page, select the September review, and visit all four chapters using mouse or keyboard.
 - A reader can open a chapter directly from a shared URL, inspect the underlying figures, and discover October’s planned work inside the September report.
-- The interface is legible at phone and desktop widths. Report content and navigation remain usable with reduced motion or unavailable WebGL.
+- The interface is legible at phone and desktop widths. Report content and navigation remain usable with reduced motion.
 - `npm run build` produces the static site in `dist/` with URL fallback configured for Vercel.
 
 ## Monthly review workflow

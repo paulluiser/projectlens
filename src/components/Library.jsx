@@ -2,7 +2,7 @@ import { ProjectMark } from './ProjectMark'
 import { ProjectTabs } from './ProjectTabs'
 import { useEffect } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { ArrowRightIcon, ProjectIcon, SearchIcon, SuccessIcon, ClockIcon, CalendarIcon, ChartIcon } from '@/components/ui/icons'
+import { ArrowRightIcon, ProjectIcon, SearchIcon, SuccessIcon, ClockIcon, CalendarIcon } from '@/components/ui/icons'
 import { Link, useNavigate, useParams, useSearchParams, useLocation } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
@@ -161,7 +161,6 @@ function LoadedLibrary() {
 }
 
 function ProjectDashboard({ query }) {
-  const reduced = useReducedMotion()
   const { workspace } = useWorkspace()
   const navigate = useNavigate()
   const terms = query.toLowerCase().split(/\s+/).filter(Boolean)
@@ -176,9 +175,9 @@ function ProjectDashboard({ query }) {
   const trackedCount = months.length
   const coverage = trackedCount ? Math.round(publishedCount / trackedCount * 100) : 0
   const counters = [
-    { label: 'Projects', count: workspace.projects.length, Icon: ProjectIcon, tone: 'blue' },
-    { label: 'Published reports', count: publishedCount, Icon: SuccessIcon, tone: 'green' },
-    { label: workspace.canEdit ? 'Draft reports' : 'Awaiting reports', count: workspace.canEdit ? draftCount : pendingCount, Icon: ClockIcon, tone: 'amber' },
+    { label: 'Projects', count: workspace.projects.length },
+    { label: 'Published reports', count: publishedCount },
+    { label: workspace.canEdit ? 'Draft reports' : 'Awaiting reports', count: workspace.canEdit ? draftCount : pendingCount },
   ]
   return <main id="main-content" tabIndex={-1} className="site-width library project-dashboard">
     <div className="page-heading directory-heading">
@@ -189,25 +188,12 @@ function ProjectDashboard({ query }) {
         if (saved) navigate(projectPath(saved.id))
       }} /></div>
     </div>
-    <section className="portfolio-metrics" aria-label="Project dashboard">
-      <div className="portfolio-feature">
-        <div className="portfolio-feature-copy">
-          <span><ChartIcon label="" /> Reporting coverage</span>
-          <strong>{trackedCount ? `${coverage}%` : '—'}</strong>
-          <p>{trackedCount ? `${publishedCount} of ${trackedCount} reporting months published` : 'Create a reporting month to track coverage.'}</p>
-        </div>
-        <motion.div className="portfolio-dial" aria-hidden="true" style={{ '--coverage': `${coverage}%` }}
-          initial={reduced ? false : { opacity: 0, scale: .94 }} animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: reduced ? 0 : .45 }} />
+    <section className="portfolio-summary" aria-label="Project dashboard">
+      <dl>{counters.map(({ label, count }) => <div key={label}><dt>{label}</dt><dd>{count}</dd></div>)}</dl>
+      <div className="portfolio-coverage"><span>Reporting coverage</span><strong>{trackedCount ? `${coverage}%` : 'No reporting months'}</strong>
+        <p>{trackedCount ? `${publishedCount} of ${trackedCount} reporting months published` : 'Create a reporting month to track coverage.'}</p>
+        <progress max="100" value={coverage} aria-label="Reporting coverage" />
       </div>
-      {counters.map(({ label, count, Icon, tone }, index) => (
-        <motion.div className="portfolio-counter" data-tone={tone} key={label}
-          initial={reduced ? false : { opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: reduced ? 0 : .24, delay: reduced ? 0 : index * .045 }}>
-          <span className="portfolio-icon"><Icon label="" /></span>
-          <strong>{count}</strong><span>{label}</span>
-        </motion.div>
-      ))}
     </section>
     <section aria-label="All projects" className="project-index">
       <div className="project-dashboard-results">

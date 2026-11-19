@@ -35,7 +35,8 @@ function ProgressChapter({ report, project, reduced }) {
     <div className="progress-bento">
       <section className="workspace-panel chapter-stage"><ProgressVisual report={report} reduced={reduced} elapsed={elapsed} /></section>
       <section className="workspace-panel progress-month">
-        <h2>{report.coverLine}</h2>
+        <h2>This month</h2>
+        <p className="report-month-summary">{report.coverLine}</p>
         <TaskComparison report={report} reduced={reduced} elapsed={elapsed} />
         <ProgressMetrics report={report} elapsed={elapsed} />
       </section>
@@ -203,11 +204,11 @@ function ReportReader({ project, month, report, chapterIndex, preview }) {
     return () => window.removeEventListener('keydown', onKey)
   }, [isPresent, navigate, nextPath, presenting, previousPath, presentationHome, currentPath, readerSuffix, suffix, project.id, month.id])
 
-  const transition = { duration: reduced ? 0 : 0.24, ease: easing }
+  const transition = { duration: 0, ease: easing }
   const copyMotion = {
-    enter: (step) => ({ opacity: reduced ? 1 : 0, x: reduced ? 0 : step * 24 }),
+    enter: { opacity: 1, x: 0 },
     show: { opacity: 1, x: 0 },
-    exit: (step) => ({ opacity: reduced ? 1 : 0, x: reduced ? 0 : step * -18, transition: { ...transition, duration: reduced ? 0 : 0.16 } }),
+    exit: { opacity: 1, x: 0, transition },
   }
 
   if (presentationHome) {
@@ -226,18 +227,18 @@ function ReportReader({ project, month, report, chapterIndex, preview }) {
           <Button variant="outline" className="action" onClick={() => navigate(currentPath + readerSuffix, { replace: true })}>Exit presentation</Button>
         </div>
         <div className="presentation-stage">
-          <motion.header className="presentation-hero" {...fade(reduced, 12)}>
+          <motion.header className="presentation-hero" {...fade(true, 0)}>
             <p>{month.label}{preview && ' · Draft'}</p>
             <h1 ref={presentationHeading} tabIndex={-1}>{project.name}</h1>
             <Button asChild className="action action-primary">
               <Link to={reportPath(project.id, month.id) + suffix}>Start review <ArrowRightIcon label="" /></Link>
             </Button>
           </motion.header>
-          <motion.div className="presentation-reading" {...fade(reduced, 8)}>
-            <div className="presentation-orbit" style={{ '--coverage': `${completion}%` }} aria-hidden="true" />
+          <motion.div className="presentation-reading" {...fade(true, 0)}>
             <div className="presentation-figure">
-              <strong>{total ? `${completion}%` : '—'}</strong>
+              <strong>{total ? `${completion}%` : 'Not recorded'}</strong>
               <span>Project completion</span>
+              <div className="presentation-progress" aria-hidden="true"><span style={{ width: `${completion}%` }} /></div>
               <span>{projectCompleted} of {total} tasks</span>
             </div>
           </motion.div>
@@ -245,8 +246,8 @@ function ReportReader({ project, month, report, chapterIndex, preview }) {
         <nav className="presentation-directory" aria-label="Presentation chapters">
           {chapters.map((entry, index) => {
             const Icon = chapterIcons[index]
-            return <motion.div key={entry.id} initial={reduced ? false : { opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }} transition={{ delay: reduced ? 0 : index * .055 }}>
+            return <motion.div key={entry.id} initial={false}
+              animate={{ opacity: 1, y: 0 }} transition={{ duration: 0 }}>
               <Link className="presentation-tile" data-chapter={entry.id} to={reportPath(project.id, month.id, entry.id) + suffix}>
                 <Icon label="" /><strong>{entry.label}</strong><ArrowUpRightIcon label="" />
                 <span>{chapterSummaries[index]}</span>
