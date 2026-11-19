@@ -20,7 +20,7 @@ def sheets(path):
         if 'xl/sharedStrings.xml' in archive.namelist():
             shared = [''.join(node.itertext()) for node in ET.fromstring(archive.read('xl/sharedStrings.xml'))]
         result = []
-        for sheet in ['xl/worksheets/sheet1.xml', 'xl/worksheets/sheet2.xml']:
+        for sheet in ['xl/worksheets/sheet1.xml', 'xl/worksheets/sheet2.xml', 'xl/worksheets/sheet3.xml']:
             if sheet not in archive.namelist():
                 continue
             cells = {}
@@ -47,11 +47,12 @@ def record(id, title, owner, due, notes, start='', status='planned'):
 
 def extract(directory):
     sims = sheets(directory / 'SIMS.xlsx')[1]
-    # The named gate sheet is the milestone authority; the master/playbook are supporting activities.
+    # Every scheduled activity, checkpoint, and playbook stage is a source item.
     gate_windows = [
         (4, 'Oct 26 – Nov 13, 2026', '2026-10-26', '2026-11-13'),
         (5, 'Nov 23 – Dec 11, 2026', '2026-11-23', '2026-12-11'),
         (6, 'Dec 11 – 17, 2026', '2026-12-11', '2026-12-17'),
+        (7, 'Dec 18 – Jan 5', '2026-12-18', '2027-01-05'),
         (8, 'Jan 6 – 8, 2027', '2027-01-06', '2027-01-08'),
         (9, 'Jan 11 – 12', '2027-01-11', '2027-01-12'),
         (10, 'Jan 13', '', '2027-01-13'),
@@ -69,6 +70,32 @@ def extract(directory):
                  'The 18 Jan go-live is conditional on acceptance, backups, security, and reconciled control totals.\n'
                  f'Source: SIMS.xlsx · Milestones & Gates · A{row}:E{row}.')
         sims_records.append(record(f'sims-gate-{row}', sims[f'A{row}'], sims[f'C{row}'], end, notes, start))
+
+    master = sheets(directory / 'SIMS.xlsx')[0]
+    activities = []
+    for row in range(5, 40):
+        source_status = master[f'E{row}']
+        status = {'Completed': 'completed', 'In Progress': 'in-progress'}.get(source_status, 'planned')
+        notes = (f"Workstream: {master[f'A{row}']}\nSource status: {source_status}\n"
+                 f"Prerequisite / exit criteria: {master[f'G{row}']}\n{master[f'H{row}']}\n"
+                 f'Source: SIMS.xlsx · Master Timeline · A{row}:H{row}.')
+        activities.append(record(f'sims-activity-{row}', master[f'B{row}'], master[f'F{row}'],
+                                 excel_date(master[f'D{row}']), notes,
+                                 excel_date(master[f'C{row}']) if master.get(f'C{row}') else '', status))
+    playbook = sheets(directory / 'SIMS.xlsx')[2]
+    windows = [('2026-10-21','2026-11-13'), ('2026-11-16','2026-11-17'),
+               ('2026-11-02','2026-12-17'), ('2026-12-18','2027-01-05'),
+               ('2027-01-06','2027-01-11'), ('2027-01-11','2027-01-12'),
+               ('2027-01-13','2027-01-14'), ('2027-01-15','2027-01-17'),
+               ('','2027-01-18'), ('2027-01-18','2027-01-29')]
+    stages = []
+    for row, (start, end) in zip(range(4, 14), windows):
+        notes = (f"Scheduled window: {playbook[f'B{row}']}\n"
+                 f"Client responsibility: {playbook[f'C{row}']}\n"
+                 f"Project team responsibility: {playbook[f'D{row}']}\n"
+                 f'Source: SIMS.xlsx · Migration Playbook · A{row}:D{row}.')
+        stages.append(record(f'sims-playbook-{row}', playbook[f'A{row}'], 'Client / Project team', end, notes, start))
+    sims_records = activities + sims_records + stages
 
     pms = sheets(directory / 'PMS.xlsx')[0]
     pms_records = []

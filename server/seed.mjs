@@ -15,7 +15,7 @@ const reports = {
 export const seedProjects = catalog.map(project => ({
   ...project,
   milestones: milestones[project.id] ?? [],
-  milestoneImportRevision: 'timeline-workbooks-2026-11-19-v1',
+  milestoneImportRevision: 'timeline-workbooks-2026-11-19-replacement-v2',
   months: project.months.map(month => ({
     ...month,
     ...(reports[`${project.id}/${month.id}`] ? { report: reports[`${project.id}/${month.id}`] } : {}),
