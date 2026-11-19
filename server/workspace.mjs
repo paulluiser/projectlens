@@ -3,6 +3,7 @@ import { mkdir, readFile, rename, writeFile, unlink } from 'node:fs/promises'
 import { dirname, resolve } from 'node:path'
 import * as vercelBlob from '@vercel/blob'
 import { seedProjects } from './seed.mjs'
+import { importTimelineMilestones } from './milestone-import.mjs'
 
 const MAX_BODY = 1024 * 1024
 const BLOB_PATH = 'project-lens/workspace.json'
@@ -41,6 +42,23 @@ function monthLabels(monthId) {
   const date = new Date(`${monthId}-01T00:00:00Z`)
   return { month: monthId, label: date.toLocaleDateString('en-US', { month:'long', year:'numeric', timeZone:'UTC' }), name: date.toLocaleDateString('en-US', {month:'long',timeZone:'UTC'}) }
 }
+function validateMilestone(data) {
+  const fields = strings(data, ['title', 'owner', 'status'], ['description', 'dueDate', 'startDate'])
+  fields.dueDate ??= ''
+  fields.startDate ??= ''
+  if (fields.title.length > 160 || fields.owner.length > 120 || (fields.description?.length ?? 0) > 2000) throw failure(400, 'Milestone text is too long.')
+  for (const date of [fields.dueDate, fields.startDate]) {
+    if (date && (!/^\d{4}-\d{2}-\d{2}$/.test(date) || !validMonth(date.slice(0, 7)) ||
+        !Number.isFinite(Date.parse(date)) || new Date(date).toISOString().slice(0, 10) !== date)) {
+      throw failure(400, 'Milestone dates must be valid calendar dates.')
+    }
+  }
+  if (fields.startDate && (!fields.dueDate || fields.startDate > fields.dueDate)) throw failure(400, 'Start date must be on or before the target date.')
+  if (!['planned', 'in-progress', 'blocked', 'completed'].includes(fields.status)) throw failure(400, 'Invalid milestone status.')
+  if (data.sample !== undefined && typeof data.sample !== 'boolean') throw failure(400, 'Sample flag must be a boolean.')
+  if (data.forecast !== undefined && typeof data.forecast !== 'boolean') throw failure(400, 'Forecast flag must be a boolean.')
+  return { ...fields, sample: data.sample ?? false, forecast: data.forecast ?? false }
+}
 function validateReport(data, monthId) {
   object(data, 'Report')
   const progress = object(data.progress, 'Progress')
@@ -78,8 +96,8 @@ function change(state, body, now) {
   object(body,'Request')
   if (typeof body.expectedVersion !== 'string' || !body.expectedVersion) throw failure(400,'expectedVersion is required.')
   if (body.expectedVersion !== state.version) throw failure(409,'The workspace changed. Reload and try again.')
-  const { action, projectId, monthId, data } = body
-  if (!['createProject','updateProject','deleteProject','createReport','updateReport','publishReport','deleteReport'].includes(action)) throw failure(400,'Unknown action.')
+  const { action, projectId, monthId, milestoneId, data } = body
+  if (!['createProject','updateProject','deleteProject','createReport','updateReport','publishReport','deleteReport','createMilestone','updateMilestone','deleteMilestone'].includes(action)) throw failure(400,'Unknown action.')
   if (action === 'createProject') {
     const fields = strings(data,['name'],['description'])
     if (fields.name.length > 120 || (fields.description?.length ?? 0) > 2000) throw failure(400,'Project text is too long.')
@@ -98,6 +116,18 @@ function change(state, body, now) {
       if (fields.name.length > 120 || (fields.description?.length ?? 0) > 2000) throw failure(400,'Project text is too long.')
       project.name = fields.name
       if (fields.description !== undefined) project.description = fields.description
+    } else if (['createMilestone', 'updateMilestone', 'deleteMilestone'].includes(action)) {
+      const milestones = project.milestones ?? []
+      if (action === 'createMilestone') {
+        if (milestones.length >= 200) throw failure(400, 'A project can have up to 200 milestones.')
+        project.milestones = [...milestones, { id: randomUUID(), ...validateMilestone(data) }]
+      } else {
+        if (!validId(milestoneId)) throw failure(400, 'Invalid milestone ID.')
+        const milestoneIndex = milestones.findIndex(item => item.id === milestoneId)
+        if (milestoneIndex < 0) throw failure(404, 'Milestone not found.')
+        if (action === 'deleteMilestone') project.milestones = milestones.filter(item => item.id !== milestoneId)
+        else project.milestones = milestones.map((item, index) => index === milestoneIndex ? { ...validateMilestone(data), id: item.id } : item)
+      }
     } else {
       if (!validMonth(monthId)) throw failure(400,'Invalid month ID.')
       const monthIndex = project.months.findIndex(month=>month.id===monthId)
@@ -190,7 +220,7 @@ export function createHandlers({ env = process.env, blob = vercelBlob, now = Dat
     }
     return {...result,...flags(req)}
   }
-  async function readState() {
+  async function readStoredState() {
     if (env.BLOB_READ_WRITE_TOKEN) {
       const result = await blob.get(BLOB_PATH,{access:'private',token:env.BLOB_READ_WRITE_TOKEN,useCache:false})
       if (!result) return {state:clone(seed),etag:null}
@@ -201,6 +231,10 @@ export function createHandlers({ env = process.env, blob = vercelBlob, now = Dat
       if (error.code !== 'ENOENT') throw error
       return {state:clone(seed)}
     }
+  }
+  async function readState() {
+    const result = await readStoredState()
+    return { ...result, state: importTimelineMilestones(result.state, projects) }
   }
   async function saveState(state,etag) {
     if (env.BLOB_READ_WRITE_TOKEN) {

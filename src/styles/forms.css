@@ -4,24 +4,12 @@
 .editor-overlay { position: fixed; inset: 0; z-index: 60; background: var(--dialog-scrim); }
 .editor-dialog { --dialog-gutter: 24px; position: fixed; z-index: 61; top: 50%; left: 50%; display: flex; flex-direction: column; width: min(480px, calc(100% - 32px)); max-height: min(900px, calc(100dvh - 48px)); min-height: 0; overflow: hidden; transform: translate(-50%, -50%); border-radius: 16px; background: var(--card); color: var(--foreground); box-shadow: 0 20px 56px var(--sheet-shadow); }
 .editor-dialog.wide { width: min(840px, calc(100% - 48px)); }
-.dialog-header { flex: none; padding: 0 var(--dialog-gutter) 18px; border-bottom: 1px solid var(--border); background: var(--sheet-header); }
-.dialog-window-controls { display: flex; width: fit-content; margin-left: -10px; }
-.window-control { display: grid; width: 32px; height: 34px; place-items: center; border: 0; border-radius: 6px; padding: 0; background: transparent; cursor: pointer; }
-.window-control > span { display: grid; width: 14px; height: 14px; place-items: center; border: 1px solid rgb(0 0 0 / .17); border-radius: 50%; color: #241710; background: var(--window-control-color); }
-.window-close { --window-control-color: #ff6058; }
-.window-compact { --window-control-color: #febc2e; }
-.window-expand { --window-control-color: #28c840; }
-.window-control > span > * { opacity: 0; }
-.window-control svg { width: 9px; height: 9px; display: block; }
-.window-control i { width: 7px; height: 1.5px; background: currentColor; }
-.dialog-window-controls:hover .window-control > span > *,
-.window-control:is(:focus-visible, [aria-pressed=true]) > span > * { opacity: 1; }
-.window-control:focus-visible { outline: 2px solid var(--ring); outline-offset: -2px; }
-.window-control:disabled { cursor: not-allowed; opacity: .45; }
-.editor-dialog:has(.dialog-header[data-window-size=compact]) { top: calc(var(--visible-viewport-top, 0px) + var(--visible-viewport-height, 100dvh) / 2); left: 50%; width: min(640px, calc(100% - 24px)); height: auto; max-height: calc(var(--visible-viewport-height, 100dvh) * .8); transform: translate(-50%, -50%); border-radius: 12px; }
-.editor-dialog:not(.wide):has(.dialog-header[data-window-size=compact]) { width: min(400px, calc(100% - 24px)); }
-.editor-dialog:has(.dialog-header[data-window-size=expanded]) { top: var(--visible-viewport-top, 0px); left: 0; width: 100%; height: var(--visible-viewport-height, 100dvh); max-height: none; transform: none; border-radius: 0; }
-.editor-dialog:has(.dialog-header[data-window-size=expanded]) :is(.editor-form-fields, .dialog-body > *) { max-width: 1000px; margin-inline: auto; width: 100%; }
+.dialog-header { display: flex; align-items: flex-start; gap: 12px; flex: none; padding: 20px var(--dialog-gutter); border-bottom: 1px solid var(--border); background: var(--sheet-header); }
+.dialog-header > .editor-heading { flex: 1; min-width: 0; }
+.dialog-close { display: grid; place-items: center; flex: 0 0 36px; width: 36px; height: 36px; padding: 0; border: 0; border-radius: 6px; background: transparent; color: var(--muted-foreground); cursor: pointer; }
+.dialog-close:hover { background: var(--secondary); color: var(--foreground); }
+.dialog-close:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
+.dialog-close:disabled { cursor: not-allowed; opacity: .45; }
 .editor-heading { display: flex; align-items: flex-start; gap: 16px; }
 .dialog-heading-copy { flex: 1; min-width: 0; }
 .dialog-symbol { display: grid; flex: none; place-items: center; width: 40px; height: 40px; border-radius: 12px; background: var(--accent); color: var(--accent-foreground); }
@@ -91,7 +79,8 @@
   .editor-heading { gap: 12px; }
   .dialog-header { padding-bottom: 16px; }
   .editor-heading h2 { font-size: 20px; }
-  .remove-row, .window-control { width: 44px; height: 44px; }
+  .remove-row, .dialog-close { width: 44px; height: 44px; }
+  .dialog-close { flex-basis: 44px; }
   .editor-description { font-size: 14px; }
   .editor-field :is(input, textarea, select) { min-height: 46px; font-size: 16px; }
   .editor-grid, .editor-row-fields { grid-template-columns: minmax(0, 1fr); gap: 16px; }
@@ -104,10 +93,8 @@
   .editor-dialog.wide[data-state=open] { animation-name: mobile-editor-enter; }
   .editor-dialog.wide[data-state=closed] { animation-name: mobile-editor-exit; }
 }
-.editor-dialog:has(.dialog-header[data-window-size=compact])[data-state=closed] { animation-name: dialog-exit; }
-.editor-dialog:has(.dialog-header[data-window-size=expanded])[data-state=closed] { animation-name: mobile-editor-exit; }
 @media (prefers-reduced-motion: reduce) {
-  .editor-dialog[data-state], .editor-dialog:has(.dialog-header[data-window-size])[data-state=closed], .editor-overlay[data-state], .editor-list-row { animation: none; }
+  .editor-dialog[data-state], .editor-overlay[data-state], .editor-list-row { animation: none; }
   .editor-field :is(input, textarea, select) { transition: none; }
 }
 

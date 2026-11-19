@@ -111,7 +111,7 @@ Verification is limited to component interactions and source inspection: drawer 
 
 ## Modal and field system
 
-All editor, sign-in, publication, and deletion dialogs share `ModalHeader` and `src/styles/forms.css`. Retired page-specific editor rules are removed from the main stylesheet. Headers, report section shortcuts, and action footers remain outside the scrolling form body, so desktop and mobile controls do not depend on negative sticky offsets. Wide report dialogs keep their full-height phone layout and VisualViewport support.
+All editor, sign-in, publication, and deletion dialogs share `ModalHeader` and `src/styles/forms.css`. Use one neutral close button at the upper right; colored window controls and dialog size toggles are removed. Retired page-specific editor rules are removed from the main stylesheet. Headers, report section shortcuts, and action footers remain outside the scrolling form body, so desktop and mobile controls do not depend on negative sticky offsets. Wide report dialogs keep their full-height phone layout and VisualViewport support.
 
 Use 24px desktop dialog gutters and 20px mobile gutters, 16px field-grid gaps, and 24px between report sections. Desktop controls are at least 44px high; phone controls use at least 46px and 16px text. Labels use stronger foreground text; optional markers and helper text use subtle text. Focus, invalid, disabled, and read-only states are explicit for inputs, textareas, and selects. Empty helper elements are omitted. Repeated rows have a neutral surface and consistent removal controls.
 
@@ -128,3 +128,11 @@ The sidebar Projects link always targets `/landing/projects` and clears project/
 ## macOS appearance
 
 A cool desktop surface frames an inset workspace with a translucent toolbar and grouped Finder-style sidebar. The landing page pairs a dark introduction with a live, generic chapter preview. The Projects dashboard places project counts beside its list heading. Reports use a sticky chapter rail on wide screens and scrollable tabs at narrower widths. Progress combines a single metric strip with a linear completion chart. Report editors open below the desktop toolbar and use the full available height on phones. Shared color and type tokens live in `src/styles/tokens.css`.
+
+## Project milestones
+
+The Milestones page uses a restrained roadmap surface inspired by Linear’s [project milestones](https://linear.app/docs/project-milestones) and Orbix’s [milestone scheduling study](https://dribbble.com/shots/26776961-Project-Management-Dashboard-Milestones-Timeline-View). Project tabs and shared Mac-style dialogs remain consistent with the workspace.
+
+A compact distribution bar describes milestone statuses, alongside the earliest unfinished checkpoint. This bar measures milestones, not project task completion. The roadmap plots target-date diamonds against a shared date axis. When a source supplies a start date, a subtle span shows the real scheduled window. It does not invent durations or completion percentages. An in-range Today line provides orientation. The list alternative shows full target dates. Status filters include counts, search matches titles and owners, and expanding a title reveals notes and the full target date. Edit and delete remain visible, with deletion confirmed in the shared dialog.
+
+Phones use a vertical checkpoint list with full dates and larger controls. Status is always stated in text as well as color. Imported source schedules retain forecast labels, unknown owners, and undated QA-dependent milestones. Any remaining custom examples stay explicitly labeled. Violet identifies active work, green completed outcomes, amber blockers, and slate planned work; the global system-blue action token is preserved. Product transitions are short state feedback, with no staged page-load sequence.

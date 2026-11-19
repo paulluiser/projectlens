@@ -1,4 +1,5 @@
 import { ProjectMark } from './ProjectMark'
+import { ProjectTabs } from './ProjectTabs'
 import { useEffect } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { ArrowRightIcon, ProjectIcon, SearchIcon, SuccessIcon, ClockIcon, CalendarIcon, ChartIcon } from '@/components/ui/icons'
@@ -115,6 +116,7 @@ function LoadedLibrary() {
           {project && <><RecordEditor kind="report" project={project} onSaved={(_, data, monthId) => navigate(reportPath(project.id, monthId) + '?preview=1')} /><DeleteRecord project={project} onDeleted={() => navigate(projectsPath)} /></>}
         </div>
       </div>
+      <ProjectTabs projectId={project.id} />
       <section aria-label="Available reports">
         <div className="library-filters">
           <Filter Icon={ProjectIcon} label="Project" value={project?.id ?? 'all'} onChange={(value) => updateFilter('project', value)}

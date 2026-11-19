@@ -1,7 +1,8 @@
 import { ProjectMark } from './ProjectMark'
 import { Link, useLocation } from 'react-router-dom'
 import { useWorkspace } from '@/lib/workspace'
-import { projectPath } from '@/lib/routes.mjs'
+import { milestonesPath, projectPath } from '@/lib/routes.mjs'
+import { FlagIcon } from '@/components/ui/icons'
 
 export function ProjectNav() {
   const { pathname } = useLocation()
@@ -20,6 +21,8 @@ export function ProjectNav() {
               <Link to={path} className="sidebar-link" aria-current={active ? 'location' : undefined}>
                 <ProjectMark project={project} />{project.name}
               </Link>
+              {active && <Link className="sidebar-link project-milestones-link" to={milestonesPath(project.id)}
+                aria-current={pathname === milestonesPath(project.id) ? 'page' : undefined}><FlagIcon label="" size="small" />Milestones</Link>}
             </li>
           )
         })}

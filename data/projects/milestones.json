@@ -1,0 +1,305 @@
+{
+  "simsdotnet": [
+    {
+      "id": "sims-gate-4",
+      "title": "AP UAT",
+      "owner": "Procurement / QA",
+      "startDate": "2026-10-26",
+      "dueDate": "2026-11-13",
+      "status": "planned",
+      "description": "Gate requirement: Procurement processes signed off\nDecision / risk: No P1/P2 blockers\nSchedule constraint: no scheduled project activities from 18 Dec 2026 through 5 Jan 2027. The 18 Jan go-live is conditional on acceptance, backups, security, and reconciled control totals.\nSource: SIMS.xlsx · Milestones & Gates · A4:E4.",
+      "sample": false
+    },
+    {
+      "id": "sims-gate-5",
+      "title": "Sales UAT",
+      "owner": "Sales / QA",
+      "startDate": "2026-11-23",
+      "dueDate": "2026-12-11",
+      "status": "planned",
+      "description": "Gate requirement: AR scenarios signed off\nDecision / risk: No P1/P2 blockers\nSchedule constraint: no scheduled project activities from 18 Dec 2026 through 5 Jan 2027. The 18 Jan go-live is conditional on acceptance, backups, security, and reconciled control totals.\nSource: SIMS.xlsx · Milestones & Gates · A5:E5.",
+      "sample": false
+    },
+    {
+      "id": "sims-gate-6",
+      "title": "Inventory UAT",
+      "owner": "Warehouse / QA",
+      "startDate": "2026-12-11",
+      "dueDate": "2026-12-17",
+      "status": "planned",
+      "description": "Gate requirement: 5-day focused acceptance\nDecision / risk: High risk: short test window\nSchedule constraint: no scheduled project activities from 18 Dec 2026 through 5 Jan 2027. The 18 Jan go-live is conditional on acceptance, backups, security, and reconciled control totals.\nSource: SIMS.xlsx · Milestones & Gates · A6:E6.",
+      "sample": false
+    },
+    {
+      "id": "sims-gate-8",
+      "title": "Integrated UAT + training",
+      "owner": "QA / Client",
+      "startDate": "2027-01-06",
+      "dueDate": "2027-01-08",
+      "status": "planned",
+      "description": "Gate requirement: Procure-to-receive-to-sell scenarios validated\nDecision / risk: 3-day compressed window\nSchedule constraint: no scheduled project activities from 18 Dec 2026 through 5 Jan 2027. The 18 Jan go-live is conditional on acceptance, backups, security, and reconciled control totals.\nSource: SIMS.xlsx · Milestones & Gates · A8:E8.",
+      "sample": false
+    },
+    {
+      "id": "sims-gate-9",
+      "title": "Final rehearsal",
+      "owner": "DevOps / Data team",
+      "startDate": "2027-01-11",
+      "dueDate": "2027-01-12",
+      "status": "planned",
+      "description": "Gate requirement: Reproducible migration + rollback verified\nDecision / risk: Controls and error rates pass\nSchedule constraint: no scheduled project activities from 18 Dec 2026 through 5 Jan 2027. The 18 Jan go-live is conditional on acceptance, backups, security, and reconciled control totals.\nSource: SIMS.xlsx · Milestones & Gates · A9:E9.",
+      "sample": false
+    },
+    {
+      "id": "sims-gate-10",
+      "title": "Business data sign-off",
+      "owner": "Client data owners",
+      "startDate": "",
+      "dueDate": "2027-01-13",
+      "status": "planned",
+      "description": "Gate requirement: Open PO/SO and verified opening inventory\nDecision / risk: Unresolved variances block go-live\nSchedule constraint: no scheduled project activities from 18 Dec 2026 through 5 Jan 2027. The 18 Jan go-live is conditional on acceptance, backups, security, and reconciled control totals.\nSource: SIMS.xlsx · Milestones & Gates · A10:E10.",
+      "sample": false
+    },
+    {
+      "id": "sims-gate-11",
+      "title": "Go/no-go",
+      "owner": "Sponsor / PM",
+      "startDate": "",
+      "dueDate": "2027-01-14",
+      "status": "planned",
+      "description": "Gate requirement: All acceptance, backup, security gates passed\nDecision / risk: Delay if blockers\nSchedule constraint: no scheduled project activities from 18 Dec 2026 through 5 Jan 2027. The 18 Jan go-live is conditional on acceptance, backups, security, and reconciled control totals.\nSource: SIMS.xlsx · Milestones & Gates · A11:E11.",
+      "sample": false
+    },
+    {
+      "id": "sims-gate-12",
+      "title": "Freeze and cutover",
+      "owner": "Client / DevOps",
+      "startDate": "2027-01-15",
+      "dueDate": "2027-01-17",
+      "status": "planned",
+      "description": "Gate requirement: Freeze + load + count reconciliation\nDecision / risk: Freeze after business hours\nSchedule constraint: no scheduled project activities from 18 Dec 2026 through 5 Jan 2027. The 18 Jan go-live is conditional on acceptance, backups, security, and reconciled control totals.\nSource: SIMS.xlsx · Milestones & Gates · A12:E12.",
+      "sample": false
+    },
+    {
+      "id": "sims-gate-13",
+      "title": "Production go-live",
+      "owner": "All owners",
+      "startDate": "",
+      "dueDate": "2027-01-18",
+      "status": "planned",
+      "description": "Gate requirement: Production acceptance\nDecision / risk: Tentative target\nSchedule constraint: no scheduled project activities from 18 Dec 2026 through 5 Jan 2027. The 18 Jan go-live is conditional on acceptance, backups, security, and reconciled control totals.\nSource: SIMS.xlsx · Milestones & Gates · A13:E13.",
+      "sample": false
+    },
+    {
+      "id": "sims-gate-14",
+      "title": "Hypercare completion",
+      "owner": "Support / Client",
+      "startDate": "",
+      "dueDate": "2027-01-29",
+      "status": "planned",
+      "description": "Gate requirement: Critical tickets cleared and BAU staffed\nDecision / risk: Exit by signed checklist\nSchedule constraint: no scheduled project activities from 18 Dec 2026 through 5 Jan 2027. The 18 Jan go-live is conditional on acceptance, backups, security, and reconciled control totals.\nSource: SIMS.xlsx · Milestones & Gates · A14:E14.",
+      "sample": false
+    }
+  ],
+  "performance-management-system-pms": [
+    {
+      "id": "pms-package-1",
+      "title": "Database design and API contracts",
+      "owner": "1 full-stack developer",
+      "startDate": "2026-11-03",
+      "dueDate": "2026-11-12",
+      "status": "planned",
+      "description": "Completion criteria: Schema for every mockup module; keys, snapshots, audit/history, migrations and API contracts. Confirm acceptance cases.\nBudget: 7.5 workdays. Predecessor ID: —.\nSource schedule: planned, very high delivery risk, no separate QA resource or contingency. All-feature acceptance and no release-blocking defects are required.\nSource: PMS.xlsx · Timeline · A11:H11.",
+      "sample": false
+    },
+    {
+      "id": "pms-package-2",
+      "title": "Backend foundation and employee access",
+      "owner": "1 full-stack developer",
+      "startDate": "2026-11-12",
+      "dueDate": "2026-11-19",
+      "status": "planned",
+      "description": "Completion criteria: Persistence, role/company/team access, employee directory, profile/settings, manager assignment and effective-date validation.\nBudget: 2.5 workdays. Predecessor ID: 1.\nSource schedule: planned, very high delivery risk, no separate QA resource or contingency. All-feature acceptance and no release-blocking defects are required.\nSource: PMS.xlsx · Timeline · A12:H12.",
+      "sample": false
+    },
+    {
+      "id": "pms-package-3",
+      "title": "KPI and behavioral template services",
+      "owner": "1 full-stack developer",
+      "startDate": "2026-11-20",
+      "dueDate": "2026-11-23",
+      "status": "planned",
+      "description": "Completion criteria: Versioned KPI templates, flexible matrices, reference/scoring toggle, scales, question types, preview, publish and archive.\nBudget: 2 workdays. Predecessor ID: 2.\nSource schedule: planned, very high delivery risk, no separate QA resource or contingency. All-feature acceptance and no release-blocking defects are required.\nSource: PMS.xlsx · Timeline · A13:H13.",
+      "sample": false
+    },
+    {
+      "id": "pms-package-4",
+      "title": "Review cycles and scheduled workflow",
+      "owner": "1 full-stack developer",
+      "startDate": "2026-11-24",
+      "dueDate": "2026-11-25",
+      "status": "planned",
+      "description": "Completion criteria: Cycle wizard APIs, participant/template snapshots, evaluator assignments, stage gates, dates, launch/schedule/cancel and clock processing.\nBudget: 2 workdays. Predecessor ID: 3.\nSource schedule: planned, very high delivery risk, no separate QA resource or contingency. All-feature acceptance and no release-blocking defects are required.\nSource: PMS.xlsx · Timeline · A14:H14.",
+      "sample": false
+    },
+    {
+      "id": "pms-package-5",
+      "title": "Accomplishments and evaluator assessments",
+      "owner": "1 full-stack developer",
+      "startDate": "2026-11-26",
+      "dueDate": "2026-12-01",
+      "status": "planned",
+      "description": "Completion criteria: Actuals and drafts, submit/verify/return, correction history, typed assessment answers, stage order and retained evaluator ownership.\nBudget: 3 workdays. Predecessor ID: 4.\nSource schedule: planned, very high delivery risk, no separate QA resource or contingency. All-feature acceptance and no release-blocking defects are required.\nSource: PMS.xlsx · Timeline · A15:H15.",
+      "sample": false
+    },
+    {
+      "id": "pms-package-6",
+      "title": "Scoring, result release and recovery",
+      "owner": "1 full-stack developer",
+      "startDate": "2026-12-02",
+      "dueDate": "2026-12-03",
+      "status": "planned",
+      "description": "Completion criteria: Weighted scores, anonymity, finalization, separate release, deadline extensions, reasoned reopening and downstream resubmission.\nBudget: 1.5 workdays. Predecessor ID: 5.\nSource schedule: planned, very high delivery risk, no separate QA resource or contingency. All-feature acceptance and no release-blocking defects are required.\nSource: PMS.xlsx · Timeline · A16:H16.",
+      "sample": false
+    },
+    {
+      "id": "pms-package-7",
+      "title": "202 Files, journals and NTEs",
+      "owner": "1 full-stack developer",
+      "startDate": "2026-12-03",
+      "dueDate": "2026-12-04",
+      "status": "planned",
+      "description": "Completion criteria: Journal records; HR notice drafting/issuance, employee notice history, read receipts, responses, late cases, close/cancel and team visibility.\nBudget: 1.5 workdays. Predecessor ID: 6.\nSource schedule: planned, very high delivery risk, no separate QA resource or contingency. All-feature acceptance and no release-blocking defects are required.\nSource: PMS.xlsx · Timeline · A17:H17.",
+      "sample": false
+    },
+    {
+      "id": "pms-package-8",
+      "title": "Performance Improvement Plans",
+      "owner": "1 full-stack developer",
+      "startDate": "2026-12-07",
+      "dueDate": "2026-12-09",
+      "status": "planned",
+      "description": "Completion criteria: Automatic/manual enrollment, source snapshots, coverage/exclusions, weekly planning/progress, assessment, follow-up and closure gates.\nBudget: 2 workdays. Predecessor ID: 7.\nSource schedule: planned, very high delivery risk, no separate QA resource or contingency. All-feature acceptance and no release-blocking defects are required.\nSource: PMS.xlsx · Timeline · A18:H18.",
+      "sample": false
+    },
+    {
+      "id": "pms-package-9",
+      "title": "Dashboards, reports and notifications",
+      "owner": "1 full-stack developer",
+      "startDate": "2026-12-10",
+      "dueDate": "2026-12-10",
+      "status": "planned",
+      "description": "Completion criteria: Role-scoped counts, filters, date ranges, exports, actionable in-app notices, notification preferences and retained audit evidence.\nBudget: 1 workdays. Predecessor ID: 8.\nSource schedule: planned, very high delivery risk, no separate QA resource or contingency. All-feature acceptance and no release-blocking defects are required.\nSource: PMS.xlsx · Timeline · A19:H19.",
+      "sample": false
+    },
+    {
+      "id": "pms-package-10",
+      "title": "Complete supplied frontend integration",
+      "owner": "1 full-stack developer",
+      "startDate": "2026-12-11",
+      "dueDate": "2026-12-11",
+      "status": "planned",
+      "description": "Completion criteria: Connect every remaining screen/action, goal/milestone controls where exposed, both themes, mobile layout and animated workflow guide.\nBudget: 1 workdays. Predecessor ID: 9.\nSource schedule: planned, very high delivery risk, no separate QA resource or contingency. All-feature acceptance and no release-blocking defects are required.\nSource: PMS.xlsx · Timeline · A20:H20.",
+      "sample": false
+    },
+    {
+      "id": "pms-package-11",
+      "title": "Full-flow regression and defect fixes",
+      "owner": "1 full-stack developer",
+      "startDate": "2026-12-14",
+      "dueDate": "2026-12-14",
+      "status": "planned",
+      "description": "Completion criteria: Exercise all roles/modules and exception paths; fix release-blocking issues and obtain stakeholder acceptance. Tests also run during each build task.\nBudget: 1 workdays. Predecessor ID: 10.\nSource schedule: planned, very high delivery risk, no separate QA resource or contingency. All-feature acceptance and no release-blocking defects are required.\nSource: PMS.xlsx · Timeline · A21:H21.",
+      "sample": false
+    },
+    {
+      "id": "pms-package-12",
+      "title": "MVP deployment and release checks",
+      "owner": "1 full-stack developer",
+      "startDate": "2026-12-15",
+      "dueDate": "2026-12-15",
+      "status": "planned",
+      "description": "Completion criteria: Deploy MVP, seed approved data, verify all mockup features, check backups/rollback and obtain go/no-go approval by December 15.\nBudget: 1 workdays. Predecessor ID: 11.\nSource schedule: planned, very high delivery risk, no separate QA resource or contingency. All-feature acceptance and no release-blocking defects are required.\nSource: PMS.xlsx · Timeline · A22:H22.",
+      "sample": false
+    }
+  ],
+  "hrdotnet-mobile": [
+    {
+      "id": "mobile-milestone-7",
+      "title": "Sign-in and Home (live data)",
+      "owner": "Unassigned",
+      "startDate": "",
+      "dueDate": "2026-10-20",
+      "status": "completed",
+      "description": "Source status: Completed. Confidence: Confirmed.\nValidated on phone\nTarget: Oct 20. Owner not specified in the source.\nDates are forecasts based on the 20 Oct 2026 estimate, not committed deadlines. Notifications and payslip PDF downloads are excluded pending backend support.\nSource: Mobile.xlsx · Mobile Timeline · A7:E7.",
+      "sample": false,
+      "forecast": false
+    },
+    {
+      "id": "mobile-milestone-8",
+      "title": "Attendance (clock in / out)",
+      "owner": "Unassigned",
+      "startDate": "",
+      "dueDate": "2026-10-22",
+      "status": "planned",
+      "description": "Source status: Forecast. Confidence: Medium.\nReal HRDotNet data\nTarget: Oct 22. Owner not specified in the source.\nDates are forecasts based on the 20 Oct 2026 estimate, not committed deadlines. Notifications and payslip PDF downloads are excluded pending backend support.\nSource: Mobile.xlsx · Mobile Timeline · A8:E8.",
+      "sample": false,
+      "forecast": true
+    },
+    {
+      "id": "mobile-milestone-9",
+      "title": "Leave requests",
+      "owner": "Unassigned",
+      "startDate": "",
+      "dueDate": "2026-10-23",
+      "status": "planned",
+      "description": "Source status: Forecast. Confidence: Medium.\nLive data; first filing type\nTarget: Oct 23. Owner not specified in the source.\nDates are forecasts based on the 20 Oct 2026 estimate, not committed deadlines. Notifications and payslip PDF downloads are excluded pending backend support.\nSource: Mobile.xlsx · Mobile Timeline · A9:E9.",
+      "sample": false,
+      "forecast": true
+    },
+    {
+      "id": "mobile-milestone-10",
+      "title": "Other requests (4 types)",
+      "owner": "Unassigned",
+      "startDate": "",
+      "dueDate": "2026-10-28",
+      "status": "planned",
+      "description": "Source status: Forecast. Confidence: Medium.\nMissed log, OT, official business, schedule change\nTarget: Oct 28. Owner not specified in the source.\nDates are forecasts based on the 20 Oct 2026 estimate, not committed deadlines. Notifications and payslip PDF downloads are excluded pending backend support.\nSource: Mobile.xlsx · Mobile Timeline · A10:E10.",
+      "sample": false,
+      "forecast": true
+    },
+    {
+      "id": "mobile-milestone-11",
+      "title": "Approvals + payslips / screens connected",
+      "owner": "Unassigned",
+      "startDate": "",
+      "dueDate": "2026-10-30",
+      "status": "planned",
+      "description": "Source status: Forecast. Confidence: Medium.\nAll screens use live HRDotNet data\nTarget: Oct 30. Owner not specified in the source.\nDates are forecasts based on the 20 Oct 2026 estimate, not committed deadlines. Notifications and payslip PDF downloads are excluded pending backend support.\nSource: Mobile.xlsx · Mobile Timeline · A11:E11.",
+      "sample": false,
+      "forecast": true
+    },
+    {
+      "id": "mobile-milestone-12",
+      "title": "First complete team test build",
+      "owner": "Unassigned",
+      "startDate": "2026-11-03",
+      "dueDate": "2026-11-04",
+      "status": "planned",
+      "description": "Source status: Forecast. Confidence: Medium.\nBuild and test on a phone\nTarget: Nov 3–4. Owner not specified in the source.\nDates are forecasts based on the 20 Oct 2026 estimate, not committed deadlines. Notifications and payslip PDF downloads are excluded pending backend support.\nSource: Mobile.xlsx · Mobile Timeline · A12:E12.",
+      "sample": false,
+      "forecast": true
+    },
+    {
+      "id": "mobile-milestone-13",
+      "title": "Remove sample data",
+      "owner": "Unassigned",
+      "startDate": "",
+      "dueDate": "",
+      "status": "planned",
+      "description": "Source status: Pending QA. Confidence: Not set.\nNo fixed calendar date\nTarget: After QA approval. Owner not specified in the source.\nDates are forecasts based on the 20 Oct 2026 estimate, not committed deadlines. Notifications and payslip PDF downloads are excluded pending backend support.\nSource: Mobile.xlsx · Mobile Timeline · A13:E13.",
+      "sample": false,
+      "forecast": false
+    }
+  ]
+}

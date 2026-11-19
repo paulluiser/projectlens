@@ -20,6 +20,10 @@ export function projectPath(projectId) {
   return `${projectsPath}/${encodeURIComponent(projectId)}`
 }
 
+export function milestonesPath(projectId) {
+  return `${projectPath(projectId)}/milestones`
+}
+
 export function reportPath(projectId, monthId, chapter = 'progress') {
   return `${projectPath(projectId)}/${encodeURIComponent(monthId)}/${encodeURIComponent(chapter)}`
 }

@@ -12,6 +12,7 @@ import { useWorkspace, WorkspaceProvider } from './lib/workspace'
 
 const Library = lazy(() => import('./components/Library').then(({ Library }) => ({ default: Library })))
 const Report = lazy(() => import('./components/Report').then(({ Report }) => ({ default: Report })))
+const Milestones = lazy(() => import('./components/Milestones').then(({ Milestones }) => ({ default: Milestones })))
 
 const ProjectNav = lazy(() => import('./components/ProjectNav').then(({ ProjectNav }) => ({ default: ProjectNav })))
 const mobileSidebar = matchMedia('(max-width: 760px), (max-height: 500px) and (pointer: coarse) and (max-width: 1050px)')
@@ -115,6 +116,7 @@ function RouteFrame({ page, location, reduced, covered }) {
       <Suspense fallback={<LoadingScreen />}>
         <Routes location={location}>
           <Route path={overviewPath} element={<Overview />} />
+          <Route path={`${projectsPath}/:projectId/milestones`} element={<Milestones />} />
           <Route path={`${projectsPath}/:projectId?`} element={<Library />} />
           <Route path={`${projectsPath}/:projectId/:monthId/:chapterId?`} element={<Report />} />
           <Route path="/reports" element={<LegacyLibrary />} />
@@ -208,7 +210,7 @@ export function App() {
 
   const path = location.pathname.replace(/\/$/, '') || '/'
   const relative = path.startsWith(projectsPath + '/') ? path.slice(projectsPath.length + 1) : ''
-  const page = relative.includes('/') ? 'report' : relative ? projectsPath : path
+  const page = relative.endsWith('/milestones') ? path : relative.includes('/') ? 'report' : relative ? projectsPath : path
 
   const publicPage = publicTabs.find(tab => tab.path === (path === '/' ? landingPath : path))
   if (publicPage) return <Home key={publicPage.id} page={publicPage} />

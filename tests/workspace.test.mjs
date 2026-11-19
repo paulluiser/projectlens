@@ -300,3 +300,51 @@ test('the shipped seed publishes every project and report in the catalog', async
     assert.equal(month.report.month, month.id)
   }
 })
+
+test('milestone CRUD persists and isolates project records with conflict protection', async t => {
+  const h = await fixture(t)
+  let { body: state } = await call(h.workspace)
+  const data = { title: 'Release readiness', owner: 'Paul', dueDate: '2026-11-30', status: 'planned', description: 'QA sign-off', sample: true }
+  const post = (action, version, milestoneId, value = data, projectId = 'simsdotnet') => call(h.workspace, 'POST', { action, expectedVersion: version, projectId, milestoneId, data: value })
+  const created = await post('createMilestone', state.version)
+  assert.equal(created.status, 200)
+  const item = created.body.projects[0].milestones.at(-1)
+  assert.equal(item.title, data.title)
+  assert.equal(item.sample, true)
+  assert.equal((await post('updateMilestone', state.version, item.id)).status, 409)
+  state = created.body
+  for (const bad of [{ ...data, dueDate: '2026-02-30' }, { ...data, status: 'unknown' }, { ...data, title: '' }, { ...data, owner: '' }, { ...data, sample: 'yes' }]) {
+    assert.equal((await post('updateMilestone', state.version, item.id, bad)).status, 400)
+  }
+  assert.equal((await post('deleteMilestone', state.version, 'missing')).status, 404)
+  assert.equal((await post('deleteMilestone', state.version, item.id, data, 'missing-project')).status, 404)
+  const updated = await post('updateMilestone', state.version, item.id, { ...data, title: 'Release ready', status: 'completed', sample: false })
+  assert.equal(updated.status, 200)
+  assert.equal(updated.body.projects[0].milestones.at(-1).status, 'completed')
+  assert.equal((await call(h.workspace)).body.projects[0].milestones.at(-1).title, 'Release ready')
+  const deleted = await post('deleteMilestone', updated.body.version, item.id)
+  assert.equal(deleted.status, 200)
+  assert.equal((await call(h.workspace)).body.projects[0].milestones.some(m => m.id === item.id), false)
+})
+
+test('milestone writes require editor access', async t => {
+  const h = await fixture(t, { LENS_EDITOR_PASSWORD: 'secret' })
+  const { body } = await call(h.workspace)
+  const result = await call(h.workspace, 'POST', { action: 'createMilestone', projectId: 'simsdotnet', expectedVersion: body.version, data: { title: 'Locked', owner: 'Paul', dueDate: '2026-11-30', status: 'planned' } })
+  assert.equal(result.status, 401)
+})
+
+test('milestones preserve date windows, forecasts, and explicitly unscheduled work', async t => {
+  const h = await fixture(t)
+  const { body: state } = await call(h.workspace)
+  const data = {title:'QA-dependent outcome',owner:'Unassigned',dueDate:'',status:'planned',forecast:false}
+  let result = await mutate(h,'createMilestone',state.version,data,'simsdotnet')
+  assert.equal(result.status,200)
+  assert.equal(result.body.projects[0].milestones.at(-1).dueDate,'')
+  result = await mutate(h,'createMilestone',result.body.version,{...data,startDate:'2026-11-03',dueDate:'2026-11-04',forecast:true},'simsdotnet')
+  assert.equal(result.status,200)
+  assert.equal(result.body.projects[0].milestones.at(-1).startDate,'2026-11-03')
+  assert.equal(result.body.projects[0].milestones.at(-1).forecast,true)
+  assert.equal((await mutate(h,'createMilestone',result.body.version,{...data,startDate:'2026-11-05',dueDate:'2026-11-04'},'simsdotnet')).status,400)
+  assert.equal((await mutate(h,'createMilestone',result.body.version,{...data,startDate:'2026-11-05'},'simsdotnet')).status,400)
+})
