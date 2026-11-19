@@ -171,3 +171,24 @@
 .milestone-duration { position: absolute; top: calc(50% - 4px); height: 8px; border-radius: 4px; background: var(--status-ink); opacity: .22; }
 .milestone-unscheduled { position: absolute; top: 50%; transform: translateY(-50%); font-size: 11px; color: var(--muted-foreground); background: var(--card); padding: 4px 8px; }
 .milestone-forecast-label { color: var(--milestone-active); font-size: 10px; }
+
+.milestone-status-trigger { border: 0; cursor: pointer; min-height: 30px; font-family: inherit; }
+.milestone-status-trigger:hover { outline: 1px solid var(--status-ink); outline-offset: 1px; }
+.milestone-status-trigger:disabled { cursor: wait; opacity: .7; }
+.milestone-status-trigger > span:last-child { display: flex; }
+.milestone-status-menu { z-index: 70; width: 220px; max-width: calc(100vw - 24px); padding: 5px; border-radius: 8px; background: var(--popover); color: var(--popover-foreground); box-shadow: 0 6px 24px var(--sheet-shadow); outline: none; }
+.milestone-status-menu-label { padding: 7px 9px; font-size: 11px; font-weight: 600; color: var(--muted-foreground); }
+.milestone-status-option { display: flex; align-items: center; gap: 9px; position: relative; min-height: 36px; padding: 7px 9px; border-radius: 5px; font-size: 13px; cursor: pointer; outline: none; user-select: none; }
+.milestone-status-option > i { width: 7px; height: 7px; border-radius: 50%; background: var(--muted-foreground); }
+.milestone-status-option[data-status=completed] > i { background: var(--success); }
+.milestone-status-option[data-status=in-progress] > i { background: #6550c4; }
+.milestone-status-option[data-status=blocked] > i { background: var(--warning); }
+.milestone-status-option[data-highlighted] { background: var(--accent); color: var(--accent-foreground); }
+.milestone-status-option[data-disabled] { opacity: .5; cursor: wait; }
+.milestone-status-selected { display: flex; margin-left: auto; color: var(--primary); }
+.milestone-status-feedback { padding: 8px 9px; font-size: 12px; line-height: 1.5; color: var(--muted-foreground); }
+.milestone-status-error { color: var(--destructive); }
+@media (max-width: 760px) {
+  .milestone-status-trigger { min-height: 44px; }
+  .milestone-status-option { min-height: 44px; }
+}

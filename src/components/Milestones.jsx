@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import { Dialog } from 'radix-ui'
+import { Dialog, DropdownMenu } from 'radix-ui'
 import AddGlyph from '@atlaskit/icon/core/add'
 import EditGlyph from '@atlaskit/icon/core/edit'
 import DeleteGlyph from '@atlaskit/icon/core/delete'
-import { CalendarIcon, FlagIcon, PersonIcon, SuccessIcon, SearchIcon, PlanIcon, ChecklistIcon, ChevronDownIcon } from '@/components/ui/icons'
+import { CalendarIcon, FlagIcon, PersonIcon, SuccessIcon, SearchIcon, PlanIcon, ChecklistIcon, ChevronDownIcon, CheckIcon } from '@/components/ui/icons'
 import { Button } from '@/components/ui/button'
 import { ModalHeader } from '@/components/ui/modal-header'
 import { useWorkspace, WorkspaceNotice } from '@/lib/workspace'
@@ -109,8 +109,65 @@ export function Milestones() {
   return <WorkspaceNotice><MilestonePage /></WorkspaceNotice>
 }
 
-function StatusBadge({ status }) {
-  return <span className="milestone-status" data-status={status}><i aria-hidden="true" />{statuses[status]}</span>
+function MilestoneStatus({ project, item }) {
+  const { workspace, mutate, refresh, setEditing } = useWorkspace()
+  const [open, setOpen] = useState(false)
+  const [busy, setBusy] = useState(false)
+  const [error, setError] = useState('')
+  const [snapshot, setSnapshot] = useState(null)
+  useEffect(() => {
+    if (!open) return
+    setEditing(true)
+    return () => setEditing(false)
+  }, [open, setEditing])
+
+  function toggle(value) {
+    if (busy) return
+    if (value) {
+      setSnapshot({ version: workspace.version, item: { ...item } })
+      setError('')
+    }
+    setOpen(value)
+  }
+
+  async function choose(status) {
+    if (busy) return
+    if (status === item.status) { setOpen(false); return }
+    setBusy(true)
+    setError('')
+    try {
+      await mutate({ action: 'updateMilestone', projectId: project.id, milestoneId: item.id, data: { ...snapshot.item, status } }, snapshot.version)
+      setOpen(false)
+    } catch (failure) {
+      setError(failure.status === 409 ? 'This milestone changed. Close and reopen this menu to use the latest version.' : failure.message)
+      if (failure.status === 409) await refresh(true)
+    } finally { setBusy(false) }
+  }
+
+  const label = <><i aria-hidden="true" />{statuses[item.status]}</>
+  if (!workspace.canEdit) return <span className="milestone-status" data-status={item.status}>{label}</span>
+  return <DropdownMenu.Root open={open} onOpenChange={toggle}>
+    <DropdownMenu.Trigger asChild>
+      <button type="button" className="milestone-status milestone-status-trigger" data-status={item.status}
+        aria-label={`Change status for ${item.title}: ${statuses[item.status]}`} aria-busy={busy} disabled={busy}>
+        {busy ? <><span className="busy-indicator" aria-hidden="true" />Saving…</> : <>{label}<ChevronDownIcon label="" size="small" /></>}
+      </button>
+    </DropdownMenu.Trigger>
+    <DropdownMenu.Portal>
+      <DropdownMenu.Content className="milestone-status-menu" align="end" sideOffset={6} collisionPadding={12}
+        aria-label={`Status for ${item.title}`} onEscapeKeyDown={event => { if (busy) event.preventDefault() }}>
+        <DropdownMenu.Label className="milestone-status-menu-label">Change status</DropdownMenu.Label>
+        <DropdownMenu.RadioGroup value={item.status}>
+          {Object.entries(statuses).map(([value, text]) => <DropdownMenu.RadioItem className="milestone-status-option" data-status={value} value={value} key={value} disabled={busy}
+            onSelect={event => { event.preventDefault(); choose(value) }}>
+            <i aria-hidden="true" />{text}<DropdownMenu.ItemIndicator className="milestone-status-selected"><CheckIcon label="" size="small" /></DropdownMenu.ItemIndicator>
+          </DropdownMenu.RadioItem>)}
+        </DropdownMenu.RadioGroup>
+        {busy && <p className="milestone-status-feedback" role="status">Saving status…</p>}
+        {error && <p className="milestone-status-feedback milestone-status-error" role="alert">{error}</p>}
+      </DropdownMenu.Content>
+    </DropdownMenu.Portal>
+  </DropdownMenu.Root>
 }
 
 function MilestoneRow({ project, item, timeline, today }) {
@@ -141,7 +198,7 @@ function MilestoneRow({ project, item, timeline, today }) {
       </> : <span className="milestone-unscheduled">Not scheduled</span>}
     </div>
     <div className="milestone-deadline"><time dateTime={item.dueDate || undefined}>{dateLabel}</time>{overdue && <span className="milestone-overdue">{item.forecast ? 'Forecast elapsed' : 'Past due'}</span>}</div>
-    <StatusBadge status={item.status} />
+    <MilestoneStatus project={project} item={item} />
     <div className="row-actions"><MilestoneDialog project={project} item={item} intent="edit" /><MilestoneDialog project={project} item={item} intent="delete" /></div>
     <div className="milestone-details" id={`milestone-detail-${item.id}`} hidden={!expanded}>
       <div><h3>Milestone notes</h3><p>{item.description || 'No notes yet.'}</p></div>
