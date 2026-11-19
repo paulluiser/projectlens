@@ -95,6 +95,17 @@ export function WorkspaceProvider({ active, children }) {
       const verb = operation.action === 'publishReport' ? 'published' : operation.action.startsWith('delete') ? 'deleted' : operation.action.startsWith('create') ? 'created' : 'saved'
       setNotice(`${entity} ${verb}.${operation.action.endsWith('Report') && ['createReport', 'updateReport'].includes(operation.action) ? ' Preview the draft, then publish when ready.' : ''}`)
       return result
+    } catch (failure) {
+      if (failure.status === 409) {
+        try {
+          const latest = await request('/api/workspace')
+          setWorkspace(latest)
+          setError('')
+        } catch (refreshFailure) {
+          setError(refreshFailure.message)
+        }
+      }
+      throw failure
     } finally {
       writing.current = false
     }
