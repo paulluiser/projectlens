@@ -273,7 +273,7 @@ function MilestonePage() {
       <div className="milestone-column-headings" aria-hidden="true">
         <span>Milestone & owner</span>
         <div className="milestone-date-axis">{timeline?.ticks.map((tick, index) => <span key={index} style={{ left: `${index * 25}%` }}>{shortMilestoneDate.format(tick)}</span>)}
-          {timeline?.today != null && <span className="milestone-today-label" style={{ left: `${timeline.today}%` }}>Today</span>}
+          {timeline?.today != null && <span className="milestone-today-label" style={{ left: `clamp(28px, ${timeline.today}%, calc(100% - 28px))` }}>Today</span>}
         </div>
         <span className="milestone-date-column">Due date</span><span>Status</span><span className="milestone-actions-heading">Actions</span>
       </div>

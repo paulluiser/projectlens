@@ -61,8 +61,14 @@
 .milestone-board-heading h2 span { background: var(--muted); padding: 2px 6px; border-radius: 4px; font-size: 12px; color: var(--muted-foreground); font-variant-numeric: tabular-nums; }
 .milestone-range { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted-foreground); font-variant-numeric: tabular-nums; }
 .milestone-column-headings { display: grid; grid-template-columns: var(--milestone-columns); align-items: center; column-gap: 20px; padding: 0 20px; min-height: 56px; background: var(--background); border-bottom: 1px solid var(--border); font-size: 12px; font-weight: 500; color: var(--muted-foreground); }
-.milestone-date-axis { position: relative; height: 56px; }
+.milestone-date-axis { position: relative; height: 56px; container: milestone-axis / inline-size; }
 .milestone-date-axis > span { position: absolute; top: 12px; transform: translateX(-50%); white-space: nowrap; font-variant-numeric: tabular-nums; font-size: 11px; }
+/* Keep the endpoint labels inside their column, away from Status and milestone names. */
+.milestone-date-axis > span:first-child { transform: none; }
+.milestone-date-axis > span:nth-child(5) { transform: translateX(-100%); }
+@container milestone-axis (max-width: 280px) {
+  .milestone-date-axis > span:nth-child(2), .milestone-date-axis > span:nth-child(4) { visibility: hidden; }
+}
 .milestone-date-axis .milestone-today-label { top: auto; bottom: 4px; color: var(--primary); font-weight: 600; font-size: 10px; background: var(--accent); padding: 1px 5px; border-radius: 3px; }
 .milestone-list { list-style: none; padding: 0; margin: 0; }
 .milestone-item { display: grid; grid-template-columns: var(--milestone-columns); align-items: center; column-gap: 20px; padding: 0 20px; border-bottom: 1px solid var(--border); }
