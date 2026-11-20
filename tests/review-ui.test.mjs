@@ -293,8 +293,11 @@ try {
   await submit('Save milestone')
   await until(()=>document.querySelector('.milestone-status-trigger'),'milestone created')
   const statusTrigger = document.querySelector('.milestone-status-trigger')
-  await act(async()=>statusTrigger.dispatchEvent(new window.KeyboardEvent('keydown',{key:'ArrowDown',bubbles:true,cancelable:true})))
+  await act(async()=>{statusTrigger.focus();statusTrigger.dispatchEvent(new window.KeyboardEvent('keydown',{key:'ArrowDown',bubbles:true,cancelable:true}))})
   await until(()=>document.querySelector('[role="menuitemradio"]'),'status menu')
+  assert.notEqual(document.body.style.pointerEvents,'none','status menu must not disable the sidebar or global search')
+  assert.equal(document.getElementById('root').getAttribute('aria-hidden'),null,'workspace stays available while choosing a status')
+  assert.equal(document.body.hasAttribute('data-scroll-locked'),false,'status menu must not change page scrolling')
   assert.equal(document.querySelectorAll('[role="menuitemradio"]').length,4)
   assert.equal(document.querySelector('[role="menuitemradio"][data-status="planned"]').getAttribute('aria-checked'),'true')
   holdWrite = true

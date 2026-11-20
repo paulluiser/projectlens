@@ -146,7 +146,7 @@ function MilestoneStatus({ project, item }) {
 
   const label = <><i aria-hidden="true" />{statuses[item.status]}</>
   if (!workspace.canEdit) return <span className="milestone-status" data-status={item.status}>{label}</span>
-  return <DropdownMenu.Root open={open} onOpenChange={toggle}>
+  return <DropdownMenu.Root open={open} onOpenChange={toggle} modal={false}>
     <DropdownMenu.Trigger asChild>
       <button type="button" className="milestone-status milestone-status-trigger" data-status={item.status}
         aria-label={`Change status for ${item.title}: ${statuses[item.status]}`} aria-busy={busy} disabled={busy}>
