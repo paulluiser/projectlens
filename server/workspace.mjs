@@ -222,7 +222,8 @@ export function createHandlers({ env = process.env, blob = vercelBlob, now = Dat
   }
   async function readStoredState() {
     if (env.BLOB_READ_WRITE_TOKEN) {
-      const result = await blob.get(BLOB_PATH,{access:'private',token:env.BLOB_READ_WRITE_TOKEN,useCache:false})
+      // Compression weakens the response ETag; If-Match writes require the original strong validator.
+      const result = await blob.get(BLOB_PATH,{access:'private',token:env.BLOB_READ_WRITE_TOKEN,useCache:false,headers:{'accept-encoding':'identity'}})
       if (!result) return {state:clone(seed),etag:null}
       return {state:JSON.parse(await new Response(result.stream).text()),etag:result.blob.etag}
     }

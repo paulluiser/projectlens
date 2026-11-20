@@ -348,3 +348,34 @@ test('milestones preserve date windows, forecasts, and explicitly unscheduled wo
   assert.equal((await mutate(h,'createMilestone',result.body.version,{...data,startDate:'2026-11-05',dueDate:'2026-11-04'},'simsdotnet')).status,400)
   assert.equal((await mutate(h,'createMilestone',result.body.version,{...data,startDate:'2026-11-05'},'simsdotnet')).status,400)
 })
+
+test('milestone saves use the strong Blob ETag instead of the compressed weak validator', async () => {
+  const milestone = {id:'test-milestone',title:'Requirements and scope approved',owner:'Unassigned',status:'completed',dueDate:'',startDate:'',description:'',sample:false,forecast:false}
+  const projects = structuredClone(fixtureProjects)
+  projects[0].milestones = [milestone]
+  let stored = JSON.stringify({projects,version:'original-version'})
+  let revision = 1
+  const blob = {
+    async get(path, options) {
+      const strong = options.headers?.['accept-encoding'] === 'identity'
+      return {statusCode:200,stream:new Response(stored).body,blob:{etag:`${strong ? '' : 'W/'}"${revision}"`}}
+    },
+    async put(path, contents, options) {
+      if(options.ifMatch !== `"${revision}"`) throw Object.assign(new Error('ETag mismatch'),{status:412})
+      stored = contents
+      revision++
+      return {etag:`"${revision}"`}
+    },
+  }
+  const h = createHandlers({env:{VERCEL:'1',BLOB_READ_WRITE_TOKEN:'fake-token',LENS_EDITOR_PASSWORD:'secret'},blob,projects})
+  const login = await call(h.session,'POST',{password:'secret'})
+  const cookie = login.headers['set-cookie'].split(';')[0]
+  const initial = (await call(h.workspace,'GET',undefined,{cookie})).body
+  const update = (version, dueDate) => call(h.workspace,'POST',{action:'updateMilestone',projectId:'simsdotnet',milestoneId:milestone.id,expectedVersion:version,data:{...milestone,dueDate}},{cookie})
+  const first = await update(initial.version,'2026-06-01')
+  assert.equal(first.status,200,JSON.stringify(first.body))
+  assert.equal(JSON.parse(stored).projects[0].milestones[0].dueDate,'2026-06-01')
+  const second = await update(first.body.version,'2026-06-02')
+  assert.equal(second.status,200,JSON.stringify(second.body))
+  assert.equal((await update(initial.version,'2026-06-03')).status,409,'genuine stale edits remain protected')
+})
