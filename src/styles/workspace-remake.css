@@ -723,3 +723,13 @@ progress::-webkit-progress-value {
 .sidebar-editor-access .action, .sidebar-editor-access .editor-session { width: 100%; }
 .sidebar-editor-access .editor-session { display: grid; gap: 8px; }
 .sidebar-editor-access :is(.local-editor-label, .storage-note) { display: block; padding: 8px; font-size: 12px; line-height: 1.5; color: var(--muted-foreground); }
+
+.project-report-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin: 20px 0 16px; }
+.project-report-toolbar .library-count { margin: 0; }
+.project-report-tools { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.report-sort { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--muted-foreground); }
+.report-sort select { min-height: 36px; padding: 6px 10px; border: 1px solid var(--input); border-radius: 6px; background: var(--card); color: var(--foreground); font: inherit; font-size: 13px; }
+@media (max-width: 760px) {
+  .project-report-toolbar { flex-wrap: wrap; gap: 12px; }
+  .report-sort select { min-height: 44px; font-size: 16px; max-width: 100%; }
+}

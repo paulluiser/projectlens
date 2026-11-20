@@ -27,3 +27,18 @@ test('source date windows determine the range while undated milestones stay unsc
   assert.ok(axis.end > milestoneTime('2026-11-12'))
   assert.equal(milestoneTimeline([{dueDate:''}]), null)
 })
+
+test('milestone calendar uses Monday-first weeks, leap days, and correct month boundaries', async () => {
+  const { milestoneCalendarDays, shiftMilestoneMonth } = await import('../src/lib/milestones.mjs')
+  const february = milestoneCalendarDays('2028-02')
+  assert.equal(february.length,35)
+  assert.equal(february[0],null)
+  assert.equal(february[1],'2028-02-01')
+  assert.equal(february.filter(Boolean).length,29)
+  assert.ok(february.includes('2028-02-29'))
+  assert.equal(milestoneCalendarDays('2026-11').filter(Boolean).length,30)
+  assert.equal(shiftMilestoneMonth('2026-12',1),'2027-01')
+  assert.equal(shiftMilestoneMonth('2027-01',-1),'2026-12')
+  assert.equal(shiftMilestoneMonth('1900-01',-1),'1900-01')
+  assert.equal(shiftMilestoneMonth('9999-12',1),'9999-12')
+})

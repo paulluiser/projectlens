@@ -20,3 +20,23 @@ export function milestoneTimeline(items, today = Date.now()) {
     today: today >= start && today <= end ? position(today) : null,
   }
 }
+
+export function shiftMilestoneMonth(month, delta) {
+  const date = new Date(`${month}-01T00:00:00Z`)
+  date.setUTCMonth(date.getUTCMonth() + delta)
+  if (date.getUTCFullYear() < 1900) return '1900-01'
+  if (date.getUTCFullYear() > 9999) return '9999-12'
+  return date.toISOString().slice(0,7)
+}
+
+export function milestoneCalendarDays(month) {
+  const first = new Date(`${month}-01T00:00:00Z`)
+  const offset = (first.getUTCDay() + 6) % 7
+  const last = new Date(first)
+  last.setUTCMonth(last.getUTCMonth() + 1,0)
+  const count = last.getUTCDate()
+  return Array.from({length:Math.ceil((offset + count) / 7) * 7},(_,index)=> {
+    const day = index - offset + 1
+    return day > 0 && day <= count ? `${month}-${String(day).padStart(2,'0')}` : null
+  })
+}

@@ -4,14 +4,14 @@ import { Dialog, DropdownMenu } from 'radix-ui'
 import AddGlyph from '@atlaskit/icon/core/add'
 import EditGlyph from '@atlaskit/icon/core/edit'
 import DeleteGlyph from '@atlaskit/icon/core/delete'
-import { CalendarIcon, FlagIcon, PersonIcon, SuccessIcon, SearchIcon, PlanIcon, ChecklistIcon, ChevronDownIcon, CheckIcon } from '@/components/ui/icons'
+import { CalendarIcon, FlagIcon, PersonIcon, SuccessIcon, SearchIcon, PlanIcon, ChecklistIcon, ChevronDownIcon, CheckIcon, ArrowLeftIcon, ArrowRightIcon } from '@/components/ui/icons'
 import { Button } from '@/components/ui/button'
 import { ModalHeader } from '@/components/ui/modal-header'
 import { useWorkspace, WorkspaceNotice } from '@/lib/workspace'
 import { projectsPath } from '@/lib/routes.mjs'
 import { ProjectTabs } from './ProjectTabs'
 import { ProjectMark } from './ProjectMark'
-import { milestoneStatuses as statuses, milestoneDate as dateFormat, shortMilestoneDate, milestoneTime, milestoneTimeline } from '@/lib/milestones.mjs'
+import { milestoneStatuses as statuses, milestoneDate as dateFormat, shortMilestoneDate, milestoneTime, milestoneTimeline, milestoneCalendarDays, shiftMilestoneMonth } from '@/lib/milestones.mjs'
 
 const AddIcon = AddGlyph.default ?? AddGlyph
 const EditIcon = EditGlyph.default ?? EditGlyph
@@ -207,6 +207,62 @@ function MilestoneRow({ project, item, timeline, today }) {
   </li>
 }
 
+function MilestoneCalendar({ project, items, timeline, today }) {
+  const [month, setMonth] = useState(today.slice(0,7))
+  const [selected, setSelected] = useState(null)
+  const monthName = new Intl.DateTimeFormat('en', {month:'long',year:'numeric',timeZone:'UTC'}).format(milestoneTime(`${month}-01`))
+  const days = milestoneCalendarDays(month)
+  const dueThisMonth = items.filter(item => item.dueDate.startsWith(month))
+  const visible = selected ? dueThisMonth.filter(item => item.dueDate === selected) : dueThisMonth
+  const undated = items.filter(item => !item.dueDate)
+  function navigateMonth(value) {
+    if (!/^\d{4}-(0[1-9]|1[0-2])$/.test(value) || value < '1900-01' || value > '9999-12') return
+    setMonth(value)
+    setSelected(null)
+  }
+  function agenda(records, label) {
+    return <section className="milestone-board milestone-calendar-agenda" data-view="list" aria-label={label}>
+      <div className="milestone-board-heading"><h2>{label}<span>{records.length}</span></h2>
+        {selected && label !== 'Unscheduled milestones' && <button type="button" className="text-link" onClick={() => setSelected(null)}>Show all this month</button>}
+      </div>
+      {records.length ? <ol className="milestone-list">{records.map(item => <MilestoneRow key={item.id} project={project} item={item} timeline={timeline} today={today} />)}</ol>
+        : <p className="milestone-calendar-empty">{selected ? 'No milestones are due on this date.' : 'No milestones are due this month.'}</p>}
+    </section>
+  }
+  return <section className="milestone-calendar" aria-label="Milestone calendar">
+    <div className="milestone-calendar-toolbar">
+      <div><h2 aria-live="polite">{monthName}</h2><p>{dueThisMonth.length} {dueThisMonth.length === 1 ? 'milestone' : 'milestones'} due this month</p></div>
+      <div className="milestone-calendar-controls">
+        <button type="button" className="action" onClick={() => navigateMonth(today.slice(0,7))}>Today</button>
+        <label><span className="sr-only">Calendar month</span><input type="month" min="1900-01" max="9999-12" value={month} onChange={event => navigateMonth(event.target.value)} /></label>
+        <button type="button" className="icon-button" aria-label="Previous month" disabled={month === '1900-01'} onClick={() => navigateMonth(shiftMilestoneMonth(month,-1))}><ArrowLeftIcon label="" /></button>
+        <button type="button" className="icon-button" aria-label="Next month" disabled={month === '9999-12'} onClick={() => navigateMonth(shiftMilestoneMonth(month,1))}><ArrowRightIcon label="" /></button>
+      </div>
+    </div>
+    <table className="milestone-calendar-grid" aria-label={`${monthName} milestone deadlines`}>
+      <thead><tr>{['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].map(day => <th key={day} scope="col">{day}</th>)}</tr></thead>
+      <tbody>{Array.from({length:days.length/7},(_,week) => <tr key={week}>
+        {days.slice(week*7,week*7+7).map((date,index) => {
+          if (!date) return <td className="milestone-calendar-outside" key={`empty-${index}`} />
+          const events = dueThisMonth.filter(item => item.dueDate === date)
+          return <td key={date} data-today={date === today || undefined} data-selected={selected === date || undefined}>
+            <button type="button" className="milestone-calendar-day" aria-pressed={selected === date} aria-controls="milestone-calendar-selected"
+              aria-label={`${dateFormat.format(milestoneTime(date))}, ${events.length} ${events.length === 1 ? 'milestone' : 'milestones'}`}
+              onClick={() => setSelected(selected === date ? null : date)}>
+              <span className="milestone-calendar-day-heading"><time dateTime={date} aria-current={date === today ? 'date' : undefined}>{Number(date.slice(-2))}</time>{events.length > 0 && <span className="milestone-calendar-count">{events.length}</span>}</span>
+              <span className="milestone-calendar-stamps" aria-hidden="true">{events.slice(0,2).map(item => <span key={item.id} data-status={item.status}><i />{item.title}</span>)}{events.length > 2 && <span>+{events.length-2} more</span>}</span>
+              <span className="milestone-calendar-dots" aria-hidden="true">{events.slice(0,4).map(item => <i key={item.id} data-status={item.status} />)}</span>
+            </button>
+          </td>
+        })}
+      </tr>)}</tbody>
+    </table>
+    <p className="milestone-calendar-hint">Select a date to view and manage its milestones.</p>
+    <div id="milestone-calendar-selected" aria-live="polite">{agenda(visible,selected ? `Due ${dateFormat.format(milestoneTime(selected))}` : 'Milestones this month')}</div>
+    {undated.length > 0 && agenda(undated,'Unscheduled milestones')}
+  </section>
+}
+
 function MilestonePage() {
   const { projectId } = useParams()
   const { workspace } = useWorkspace()
@@ -261,12 +317,13 @@ function MilestonePage() {
         <label className="milestone-search"><SearchIcon label="" size="small" /><span className="sr-only">Search milestones</span><input type="search" placeholder="Search milestones…" value={search} onChange={event => setSearch(event.target.value)} /></label>
         <div className="milestone-view-toggle" role="group" aria-label="Milestone view">
           <button type="button" aria-pressed={view === 'roadmap'} onClick={() => setView('roadmap')}><PlanIcon label="" size="small" />Roadmap</button>
+          <button type="button" aria-pressed={view === 'calendar'} onClick={() => setView('calendar')}><CalendarIcon label="" size="small" />Calendar</button>
           <button type="button" aria-pressed={view === 'list'} onClick={() => setView('list')}><ChecklistIcon label="" size="small" />List</button>
         </div>
       </div>
     </div>
     <p className="sr-only" role="status">{filtered.length} milestones shown</p>
-    {filtered.length > 0 ? <section className="milestone-board" data-view={view} aria-label={view === 'roadmap' ? 'Milestone roadmap' : 'Milestone list'}>
+    {view === 'calendar' ? <MilestoneCalendar key={project.id} project={project} items={filtered} timeline={timeline} today={today} /> : filtered.length > 0 ? <section className="milestone-board" data-view={view} aria-label={view === 'roadmap' ? 'Milestone roadmap' : 'Milestone list'}>
       <div className="milestone-board-heading"><h2>{view === 'roadmap' ? 'Project timeline' : 'Project milestones'}<span>{filtered.length}</span></h2>
         <span className="milestone-range"><CalendarIcon label="" size="small" />{timeline ? `${rangeStart} – ${rangeEnd}` : 'No dated milestones'}</span>
       </div>
