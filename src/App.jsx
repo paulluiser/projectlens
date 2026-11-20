@@ -14,6 +14,7 @@ const Library = lazy(() => import('./components/Library').then(({ Library }) => 
 const Report = lazy(() => import('./components/Report').then(({ Report }) => ({ default: Report })))
 const Milestones = lazy(() => import('./components/Milestones').then(({ Milestones }) => ({ default: Milestones })))
 
+const EditorAccess = lazy(() => import('./components/RecordEditor').then(({ EditorAccess }) => ({ default: EditorAccess })))
 const ProjectNav = lazy(() => import('./components/ProjectNav').then(({ ProjectNav }) => ({ default: ProjectNav })))
 const mobileSidebar = matchMedia('(max-width: 760px), (max-height: 500px) and (pointer: coarse) and (max-width: 1050px)')
 
@@ -66,6 +67,7 @@ function Header({ expanded, onToggle, onNavigate, narrow }) {
 }
 
 function Sidebar({ showProjects, onNavigate, modal, onClose }) {
+  const { workspace } = useWorkspace()
   return (
     <aside className="site-sidebar" id="workspace-sidebar" role={modal ? 'dialog' : undefined} aria-modal={modal || undefined} aria-label={modal ? 'Navigation' : undefined}>
       <div className="mobile-drawer-heading"><strong>Navigation</strong><button type="button" className="icon-button" aria-label="Close navigation" onClick={onClose}><SidebarIcon label="" /></button></div>
@@ -77,6 +79,7 @@ function Sidebar({ showProjects, onNavigate, modal, onClose }) {
         <NavLink className="sidebar-link" to={projectsPath} end><ProjectsIcon label="" /> Projects</NavLink>
         {showProjects && <Suspense fallback={<SidebarSkeleton />}><ProjectNav /></Suspense>}
       </nav>
+      {workspace && <div className="sidebar-editor-access"><Suspense fallback={null}><EditorAccess /></Suspense></div>}
     </aside>
   )
 }
@@ -159,7 +162,7 @@ export function App() {
 
   useEffect(() => {
     function onKey(event) {
-      if (event.key === 'Escape' && expanded && narrow) {
+      if (event.key === 'Escape' && expanded && narrow && !document.querySelector('.editor-dialog')) {
         setSidebars((state) => ({ ...state, mobile: false }))
         document.getElementById('sidebar-toggle')?.focus()
         return
@@ -179,7 +182,7 @@ export function App() {
     if (!drawer) return
     const previousOverflow = document.body.style.overflow
     document.body.style.overflow = 'hidden'
-    const focusable = () => [drawer.querySelector('[aria-label="Close navigation"]'), ...drawer.querySelectorAll('a[href]')].filter(Boolean)
+    const focusable = () => [...drawer.querySelectorAll('a[href], button:not([disabled]), input:not([disabled])')]
     focusable()[0]?.focus()
     function trapFocus(event) {
       if (event.key !== 'Tab' || document.querySelector('.editor-dialog')) return

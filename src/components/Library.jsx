@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { fade, useReducedMotion } from '@/lib/motion'
 import { useWorkspace, WorkspaceNotice } from '@/lib/workspace'
-import { RecordEditor, DeleteRecord, EditorAccess } from './RecordEditor'
+import { RecordEditor, DeleteRecord } from './RecordEditor'
 import { projectPath, projectsPath, reportPath } from '@/lib/routes.mjs'
 
 function Filter({ Icon, label, value, options, onChange }) {
@@ -108,7 +108,6 @@ function LoadedLibrary() {
         <span className="section-icon"><ProjectIcon label="" /></span>
         <div><h1>{project?.name ?? 'Projects'}</h1><p>{project?.description || 'Find a monthly report by project and month.'}</p></div>
         <div className="record-toolbar">
-          <EditorAccess />
           <RecordEditor kind="project" project={project} onSaved={(next, data) => {
             const saved = project ?? next.projects.find((entry) => entry.name === data.name)
             if (saved) navigate(projectPath(saved.id))
@@ -183,7 +182,7 @@ function ProjectDashboard({ query }) {
     <div className="page-heading directory-heading">
       <span className="section-icon"><ProjectIcon label="" /></span>
       <div><h1>Projects</h1></div>
-      <div className="record-toolbar"><EditorAccess /><RecordEditor kind="project" onSaved={(next, data) => {
+      <div className="record-toolbar"><RecordEditor kind="project" onSaved={(next, data) => {
         const saved = next.projects.find(project => project.name === data.name)
         if (saved) navigate(projectPath(saved.id))
       }} /></div>

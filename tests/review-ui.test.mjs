@@ -80,6 +80,8 @@ try {
   holdInitial = false
   await act(async()=>releaseInitial())
   await until(()=>document.body.textContent.includes('Local editor'),'load projects')
+  assert.ok(document.querySelector('.sidebar-editor-access').textContent.includes('Local editor'))
+  assert.equal(document.querySelector('.record-toolbar')?.textContent.includes('Local editor'),false)
   assert.equal(document.querySelector('.loading-screen'),null,'skeleton clears when data arrives')
   await click(document.querySelector('a[aria-label="Project Lens home"]'))
   await until(()=>document.querySelector('.public-landing'), 'public landing')

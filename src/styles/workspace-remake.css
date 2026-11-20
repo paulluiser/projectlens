@@ -714,3 +714,12 @@ progress::-webkit-progress-value {
     scroll-behavior: auto !important;
   }
 }
+
+/* Keep editor access available beneath the independently scrolling project navigation. */
+.workspace .site-sidebar { display: flex; flex-direction: column; overflow: hidden; }
+.site-sidebar > nav { flex: 1 1 auto; min-height: 0; overflow-y: auto; }
+.site-sidebar > .mobile-drawer-heading { flex: none; }
+.sidebar-editor-access { flex: none; margin-top: 16px; border-top: 1px solid var(--border); padding: 16px 4px 0; }
+.sidebar-editor-access .action, .sidebar-editor-access .editor-session { width: 100%; }
+.sidebar-editor-access .editor-session { display: grid; gap: 8px; }
+.sidebar-editor-access :is(.local-editor-label, .storage-note) { display: block; padding: 8px; font-size: 12px; line-height: 1.5; color: var(--muted-foreground); }

@@ -24,7 +24,7 @@ Deploy the project to Vercel using the Vite framework preset and `dist` output d
 | `BLOB_READ_WRITE_TOKEN` | Access to the connected private Blob store |
 | `LENS_EDITOR_PASSWORD` | Shared editor password |
 
-Use a long editor password and give it to the people who should manage reports. Sign in from the Projects page. The browser receives an HttpOnly session cookie valid for eight hours. Readers can open reports directly. Editor sessions authorize changes across the workspace.
+Use a long editor password and give it to the people who should manage reports. Use Editor sign-in at the bottom of the workspace sidebar. The browser receives an HttpOnly session cookie valid for eight hours. Readers can open reports directly. Editor sessions authorize changes across the workspace.
 
 The shared workspace is stored as JSON at `project-lens/workspace.json` in the Blob store. Reads bypass the Blob cache. Conditional writes reject stale versions so one editor cannot silently overwrite another editor’s save. Open project pages refresh on focus and every 15 seconds while visible. Refresh pauses while an editor form is open. If a save conflicts, the form preserves its values and offers an explicit reload of the latest saved record. [Vercel Blob SDK](https://vercel.com/docs/vercel-blob/using-blob-sdk)
 
