@@ -217,7 +217,7 @@ function MilestonePage() {
   useEffect(() => { setStatus('all'); setSearch('') }, [projectId])
   useEffect(() => { document.title = `Milestones · ${project?.name ?? 'Project unavailable'} · Project Lens` }, [project?.name])
   if (!project) return <main className="site-width missing-page" id="main-content"><h1>Project unavailable</h1><Link to={projectsPath}>Back to projects</Link></main>
-  const items = [...(project.milestones ?? [])].sort((a, b) => (a.dueDate || '9999-12-31').localeCompare(b.dueDate || '9999-12-31') || a.title.localeCompare(b.title))
+  const items = [...(project.milestones ?? [])].sort((a, b) => (a.dueDate || '9999-12-31').localeCompare(b.dueDate || '9999-12-31'))
   const counts = Object.fromEntries(Object.keys(statuses).map(key => [key, items.filter(item => item.status === key).length]))
   const completed = counts.completed
   const next = items.find(item => item.status !== 'completed' && item.dueDate)

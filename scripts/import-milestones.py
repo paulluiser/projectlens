@@ -1,4 +1,6 @@
-"""Extract the supplied timeline workbooks without changing them.
+"""Historical raw-timeline extractor; not the current approved SDLC baseline.
+Running this explicitly replaces milestones.json with workbook activities.
+Extract the supplied timeline workbooks without changing them.
 Usage: python3 scripts/import-milestones.py /path/to/workbooks
 """
 import hashlib
