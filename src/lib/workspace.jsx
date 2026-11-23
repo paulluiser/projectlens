@@ -32,11 +32,15 @@ export function WorkspaceProvider({ active, children }) {
   const [workspace, setWorkspace] = useState(null)
   const [error, setError] = useState('')
   const [notice, setNotice] = useState('')
+  // A notice is a message, or { text, action: { label, run } } for an undoable change (kept on screen longer).
   useEffect(() => {
     if (!notice) return
-    const timer = setTimeout(() => setNotice(''), 6000)
+    const timer = setTimeout(() => setNotice(''), typeof notice === 'object' ? 10000 : 6000)
     return () => clearTimeout(timer)
   }, [notice])
+  const latest = useRef(null)
+  latest.current = workspace
+  const latestVersion = useCallback(() => latest.current?.version, [])
   const sequence = useRef(0)
   const writing = useRef(false)
   const editing = useRef(false)
@@ -79,7 +83,7 @@ export function WorkspaceProvider({ active, children }) {
     }
   }, [active, refresh])
 
-  async function mutate(operation, expectedVersion) {
+  async function mutate(operation, expectedVersion, options = {}) {
     if (writing.current) throw new Error('Another change is saving. Please wait a moment.')
     writing.current = true
     setRefreshing(false)
@@ -93,7 +97,8 @@ export function WorkspaceProvider({ active, children }) {
       setError('')
       const entity = operation.action.endsWith('Project') ? 'Project' : operation.action.endsWith('Milestone') ? 'Milestone' : operation.action.endsWith('Week') ? 'Week' : operation.action.endsWith('Task') ? 'Task' : 'Report'
       const verb = operation.action === 'publishReport' ? 'published' : operation.action.startsWith('delete') ? 'deleted' : operation.action.startsWith('create') ? 'created' : 'saved'
-      setNotice(`${entity} ${verb}.${operation.action.endsWith('Report') && ['createReport', 'updateReport'].includes(operation.action) ? ' Preview the draft, then publish when ready.' : ''}`)
+      if (options.notice !== undefined) setNotice(options.notice || '')
+      else setNotice(`${entity} ${verb}.${operation.action.endsWith('Report') && ['createReport', 'updateReport'].includes(operation.action) ? ' Preview the draft, then publish when ready.' : ''}`)
       return result
     } catch (failure) {
       if (failure.status === 409) {
@@ -122,10 +127,10 @@ export function WorkspaceProvider({ active, children }) {
     return refresh(true)
   }
 
-  return <WorkspaceContext.Provider value={{ workspace, error, refresh, mutate, login, logout, setEditing }}>
+  return <WorkspaceContext.Provider value={{ workspace, error, refresh, mutate, login, logout, setEditing, notify: setNotice, latestVersion }}>
     {active && workspace && refreshing && <div className="workspace-refresh" aria-hidden="true"><span className="busy-indicator" aria-hidden="true" /> Checking for updates…</div>}
     {children}
-    <div className="save-announcement" role="status" aria-live="polite" aria-atomic="true"><AnimatePresence initial={false}>{notice && <motion.div className="save-message" key={notice} initial={{ opacity: 0, y: reduced ? 0 : 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: reduced ? 0 : 4 }} transition={{ duration: reduced ? 0 : 0.18 }}><span>{notice}</span><button type="button" aria-label="Dismiss notification" onClick={() => setNotice('')}>Dismiss</button></motion.div>}</AnimatePresence></div>
+    <div className="save-announcement" role="status" aria-live="polite" aria-atomic="true"><AnimatePresence initial={false}>{notice && <motion.div className="save-message" key={typeof notice === 'object' ? notice.text : notice} initial={{ opacity: 0, y: reduced ? 0 : 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: reduced ? 0 : 4 }} transition={{ duration: reduced ? 0 : 0.18 }}><span>{typeof notice === 'object' ? notice.text : notice}</span>{typeof notice === 'object' && notice.action && <button type="button" className="save-message-action" onClick={() => { const { run } = notice.action; setNotice(''); run() }}>{notice.action.label}</button>}<button type="button" aria-label="Dismiss notification" onClick={() => setNotice('')}>Dismiss</button></motion.div>}</AnimatePresence></div>
   </WorkspaceContext.Provider>
 }
 

@@ -72,12 +72,44 @@ function validateWeek(data) {
   if ((fields.label?.length ?? 0) > 80) throw failure(400, 'Week label is too long.')
   return { start: fields.start, end: fields.end, label: fields.label ?? '' }
 }
+// Owners are a list (a task can be shared). Older records stored one string such as "KC/Franco";
+// those are split on "/", "&", "+" and commas when read or saved.
+export const splitOwners = value => [...new Set(String(value ?? '').split(/\s*(?:\/|&|\+|,)\s*/).map(name => name.trim()).filter(Boolean))]
+function validateOwners(data) {
+  const raw = Array.isArray(data.owners) ? data.owners : data.owner !== undefined ? splitOwners(data.owner) : null
+  if (!raw || !raw.every(name => typeof name === 'string')) throw failure(400, 'Owners must be a list of names.')
+  const owners = [...new Set(raw.map(name => name.trim()).filter(Boolean))]
+  if (!owners.length) throw failure(400, 'Add at least one owner.')
+  if (owners.length > 8) throw failure(400, 'A task can have up to 8 owners.')
+  if (owners.some(name => name.length > 60)) throw failure(400, 'Owner names can be up to 60 characters.')
+  return owners
+}
 function validateTask(data) {
-  const fields = strings(data, ['title', 'owner', 'dueDate', 'status'], ['notes'])
-  if (fields.title.length > 160 || fields.owner.length > 120 || (fields.notes?.length ?? 0) > 2000) throw failure(400, 'Task text is too long.')
+  object(data, 'Task')
+  const fields = strings(data, ['title', 'dueDate', 'status'], ['notes'])
+  if (fields.title.length > 160 || (fields.notes?.length ?? 0) > 2000) throw failure(400, 'Task text is too long.')
   if (!validDate(fields.dueDate)) throw failure(400, 'Task target date must be a valid calendar date.')
   if (!taskStatuses.includes(fields.status)) throw failure(400, 'Invalid task status.')
-  return { title: fields.title, owner: fields.owner, dueDate: fields.dueDate, status: fields.status, notes: fields.notes ?? '' }
+  return { title: fields.title, owners: validateOwners(data), dueDate: fields.dueDate, status: fields.status, notes: fields.notes ?? '' }
+}
+// Read-time upgrade for tasks saved before owners became a list. Returns the same state when nothing changes.
+export function normalizeTaskOwners(state) {
+  let changed = false
+  const projects = state.projects.map(project => {
+    if (!project.weeks?.some(week => week.tasks?.some(task => !Array.isArray(task.owners)))) return project
+    changed = true
+    return { ...project, weeks: project.weeks.map(week => ({ ...week, tasks: (week.tasks ?? []).map(task => {
+      if (Array.isArray(task.owners)) return task
+      const { owner, ...rest } = task
+      return { ...rest, owners: splitOwners(owner) }
+    }) })) }
+  })
+  return changed ? { ...state, projects } : state
+}
+function taskIdList(data) {
+  object(data, 'Selection')
+  if (!Array.isArray(data.taskIds) || !data.taskIds.length || data.taskIds.length > 200 || !data.taskIds.every(validId)) throw failure(400, 'Choose between 1 and 200 tasks.')
+  return new Set(data.taskIds)
 }
 function changeWeekly(project, action, weekId, taskId, data) {
   const weeks = project.weeks ?? []
@@ -97,11 +129,31 @@ function changeWeekly(project, action, weekId, taskId, data) {
     week.tasks = [...tasks, { id: randomUUID(), ...validateTask(data) }]
     return
   }
+  if (action === 'setTaskStatus' || action === 'deleteTasks') {
+    const ids = taskIdList(data)
+    if ([...ids].some(id => !tasks.some(item => item.id === id))) throw failure(404, 'One or more tasks were not found.')
+    if (action === 'deleteTasks') { week.tasks = tasks.filter(item => !ids.has(item.id)); return }
+    if (!taskStatuses.includes(data.status)) throw failure(400, 'Invalid task status.')
+    week.tasks = tasks.map(item => ids.has(item.id) ? { ...item, status: data.status } : item)
+    return
+  }
+  if (action === 'restoreTasks') {
+    // Undo for deletes: put the same tasks (same IDs) back. Tasks already present are left as they are.
+    object(data, 'Restore')
+    if (!Array.isArray(data.tasks) || !data.tasks.length || data.tasks.length > 200) throw failure(400, 'Choose between 1 and 200 tasks to restore.')
+    const restored = data.tasks.filter(item => !tasks.some(existing => existing.id === item?.id)).map(item => {
+      if (!validId(item?.id)) throw failure(400, 'Invalid task ID.')
+      return { id: item.id, ...validateTask(item) }
+    })
+    if (tasks.length + restored.length > 200) throw failure(400, 'A week can have up to 200 tasks.')
+    week.tasks = [...tasks, ...restored]
+    return
+  }
   if (!validId(taskId)) throw failure(400, 'Invalid task ID.')
   if (!tasks.some(item => item.id === taskId)) throw failure(404, 'Task not found.')
   week.tasks = action === 'deleteTask' ? tasks.filter(item => item.id !== taskId) : tasks.map(item => item.id === taskId ? { id: item.id, ...validateTask(data) } : item)
 }
-const weeklyActions = ['createWeek', 'updateWeek', 'deleteWeek', 'createTask', 'updateTask', 'deleteTask']
+const weeklyActions = ['createWeek', 'updateWeek', 'deleteWeek', 'createTask', 'updateTask', 'deleteTask', 'setTaskStatus', 'deleteTasks', 'restoreTasks']
 function validateReport(data, monthId) {
   object(data, 'Report')
   const progress = object(data.progress, 'Progress')
@@ -280,7 +332,7 @@ export function createHandlers({ env = process.env, blob = vercelBlob, now = Dat
   }
   async function readState() {
     const result = await readStoredState()
-    return { ...result, state: importWeeklyPlans(importTimelineMilestones(result.state, projects), projects) }
+    return { ...result, state: normalizeTaskOwners(importWeeklyPlans(importTimelineMilestones(result.state, projects), projects)) }
   }
   async function saveState(state,etag) {
     if (env.BLOB_READ_WRITE_TOKEN) {

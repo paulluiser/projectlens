@@ -12,7 +12,8 @@ test('weekly plans for 3–6 and 9–13 November are imported once and keep exis
   assert.equal(sims.weeks[1].tasks.length, 4)
   assert.equal(sims.weeks[1].tasks[1].status, 'in-progress', 'Ongoing maps to in progress')
   assert.equal(sims.weeks[2].tasks.length, 5)
-  assert.equal(upgraded.projects[1].weeks[1].tasks[0].owner, 'Rose')
+  assert.deepEqual(upgraded.projects[1].weeks[1].tasks[0].owners, ['Rose'])
+  assert.deepEqual(sims.weeks[1].tasks[1].owners, ['KC', 'Franco'], 'shared tasks list each owner')
   assert.equal(state.projects[0].weeks.length, 1, 'does not mutate stored state')
   const deleted = { ...upgraded, projects: upgraded.projects.map(project => ({ ...project, weeks: [] })) }
   assert.equal(importWeeklyPlans(deleted, seedProjects), deleted, 'does not restore user deletions')

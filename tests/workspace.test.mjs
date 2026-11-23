@@ -397,7 +397,7 @@ test('weekly brackets and tasks support full CRUD with validation and conflict p
   state = created.body
 
   const task = { title: 'Regression test AP module', owner: 'Rica', dueDate: '2026-11-24', status: 'todo', notes: 'Use the October build' }
-  for (const bad of [{ ...task, status: 'doing' }, { ...task, dueDate: '' }, { ...task, owner: '' }, { ...task, title: 'x'.repeat(161) }]) {
+  for (const bad of [{ ...task, status: 'doing' }, { ...task, dueDate: '' }, { ...task, owner: '' }, { ...task, owners: [] }, { ...task, title: 'x'.repeat(161) }]) {
     assert.equal((await post('createTask', state.version, { weekId: saved.id, data: bad })).status, 400)
   }
   assert.equal((await post('createTask', state.version, { weekId: 'missing', data: task })).status, 404)
@@ -425,6 +425,49 @@ test('weekly brackets and tasks support full CRUD with validation and conflict p
   const removedWeek = await post('deleteWeek', removedTask.body.version, { weekId: saved.id })
   assert.equal(removedWeek.status, 200)
   assert.equal((await call(h.workspace)).body.projects[0].weeks.length, 0)
+})
+
+test('tasks have several owners, change status in bulk, and deleted tasks can be restored', async t => {
+  const h = await fixture(t)
+  let { body: state } = await call(h.workspace)
+  const post = (action, version, extra) => call(h.workspace, 'POST', { action, expectedVersion: version, projectId: 'simsdotnet', ...extra })
+  state = (await post('createWeek', state.version, { data: { start: '2026-11-16', end: '2026-11-20' } })).body
+  const weekId = state.projects[0].weeks.at(-1).id
+  const base = { title: 'Integration', dueDate: '2026-11-18', status: 'todo', notes: '' }
+  for (const owners of [[], [''], Array.from({ length: 9 }, (_, i) => `P${i}`), ['x'.repeat(61)], 'KC']) {
+    assert.equal((await post('createTask', state.version, { weekId, data: { ...base, owners } })).status, 400, JSON.stringify(owners))
+  }
+  state = (await post('createTask', state.version, { weekId, data: { ...base, owners: [' KC ', 'Franco', 'KC'] } })).body
+  assert.deepEqual(state.projects[0].weeks.at(-1).tasks[0].owners, ['KC', 'Franco'], 'trimmed and de-duplicated')
+  state = (await post('createTask', state.version, { weekId, data: { ...base, title: 'Legacy shape', owner: 'Jess/Rica' } })).body
+  const [first, second] = state.projects[0].weeks.at(-1).tasks
+  assert.deepEqual(second.owners, ['Jess', 'Rica'], 'a single owner string is split')
+  assert.equal(second.owner, undefined)
+
+  assert.equal((await post('setTaskStatus', state.version, { weekId, data: { taskIds: [first.id, 'missing'], status: 'done' } })).status, 404)
+  assert.equal((await post('setTaskStatus', state.version, { weekId, data: { taskIds: [first.id], status: 'doing' } })).status, 400)
+  assert.equal((await post('setTaskStatus', state.version, { weekId, data: { taskIds: [], status: 'done' } })).status, 400)
+  state = (await post('setTaskStatus', state.version, { weekId, data: { taskIds: [first.id, second.id], status: 'blocked' } })).body
+  assert.deepEqual(state.projects[0].weeks.at(-1).tasks.map(task => task.status), ['blocked', 'blocked'])
+
+  const before = state.projects[0].weeks.at(-1).tasks
+  state = (await post('deleteTasks', state.version, { weekId, data: { taskIds: [first.id, second.id] } })).body
+  assert.equal(state.projects[0].weeks.at(-1).tasks.length, 0)
+  assert.equal((await post('restoreTasks', state.version, { weekId, data: { tasks: [{ ...before[0], id: 'Bad ID' }] } })).status, 400)
+  state = (await post('restoreTasks', state.version, { weekId, data: { tasks: before } })).body
+  assert.deepEqual(state.projects[0].weeks.at(-1).tasks, before, 'undo brings back the same tasks with the same IDs')
+  state = (await post('restoreTasks', state.version, { weekId, data: { tasks: before } })).body
+  assert.equal(state.projects[0].weeks.at(-1).tasks.length, 2, 'restoring twice does not duplicate')
+})
+
+test('tasks saved with a single owner string are read as an owner list', async () => {
+  const { normalizeTaskOwners } = await import('../server/workspace.mjs')
+  const state = { version: 'v', projects: [{ id: 'p', weeks: [{ id: 'w', tasks: [{ id: 't', title: 'x', owner: 'KC/Franco', dueDate: '2026-11-06', status: 'done', notes: '' }] }] }] }
+  const upgraded = normalizeTaskOwners(state)
+  assert.deepEqual(upgraded.projects[0].weeks[0].tasks[0].owners, ['KC', 'Franco'])
+  assert.equal(upgraded.projects[0].weeks[0].tasks[0].owner, undefined)
+  assert.equal(upgraded.version, 'v')
+  assert.equal(normalizeTaskOwners(upgraded), upgraded, 'already-upgraded state is returned unchanged')
 })
 
 test('weekly writes require editor access', async t => {

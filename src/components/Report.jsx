@@ -2,7 +2,7 @@ import { ProjectMark } from './ProjectMark'
 import { ProjectBrand } from './ProjectBrand'
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion, useIsPresent } from 'framer-motion'
-import { ProgressIcon, ArrowLeftIcon, ArrowRightIcon, ArrowUpRightIcon, CalendarIcon, ChevronRightIcon, BlockerIcon, MilestoneIcon, MaximizeIcon, MinimizeIcon, PlanIcon } from '@/components/ui/icons'
+import { ProgressIcon, ArrowLeftIcon, ArrowRightIcon, ArrowUpRightIcon, CalendarIcon, PrinterIcon, ChevronRightIcon, BlockerIcon, MilestoneIcon, MaximizeIcon, MinimizeIcon, PlanIcon } from '@/components/ui/icons'
 import { Link, Navigate, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import {
@@ -128,6 +128,8 @@ function ReportReader({ project, month, report, chapterIndex, preview }) {
   const [viewParams] = useSearchParams()
   const presenting = viewParams.get('present') === '1'
   const presentationHome = presenting && viewParams.get('view') !== 'chapter'
+  // Print mode lays out all four chapters in reading order, opens the print dialog, then returns to the chapter.
+  const printing = !presenting && viewParams.get('print') === '1'
   const readerSuffix = preview ? '?preview=1' : ''
   const presentationSuffix = preview ? '?preview=1&present=1' : '?present=1'
   const suffix = presenting ? presentationSuffix + '&view=chapter' : readerSuffix
@@ -143,6 +145,19 @@ function ReportReader({ project, month, report, chapterIndex, preview }) {
   const Copy = copyByChapter[chapter.id]
   const currentPath = reportPath(project.id, month.id, chapter.id)
   const presentationHeading = useRef(null)
+  useEffect(() => {
+    if (!printing) return
+    let cancelled = false
+    const back = () => navigate(currentPath + readerSuffix, { replace: true })
+    window.addEventListener('afterprint', back, { once: true })
+    ;(async () => {
+      await document.fonts?.ready
+      await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)))
+      await new Promise(resolve => setTimeout(resolve, 250))
+      if (!cancelled) window.print()
+    })()
+    return () => { cancelled = true; window.removeEventListener('afterprint', back) }
+  }, [printing, currentPath, readerSuffix, navigate])
   useEffect(() => {
     if (presentationHome) {
       window.scrollTo({ top: 0, behavior: 'instant' })
@@ -281,7 +296,8 @@ function ReportReader({ project, month, report, chapterIndex, preview }) {
           <div className="record-toolbar">
             {!presenting && <><RecordEditor kind="report" project={project} month={month} onSaved={(_, data, id) => navigate(reportPath(project.id, id, chapter.id) + '?preview=1')} />
             <ShareReport projectId={project.id} monthId={month.id} chapterId={chapter.id} published={Boolean(month.report)} />
-            <DeleteRecord project={project} month={month} onDeleted={() => navigate(projectPath(project.id))} /></>}
+            <DeleteRecord project={project} month={month} onDeleted={() => navigate(projectPath(project.id))} />
+            <Button type="button" variant="outline" className="action print-button" onClick={() => navigate(currentPath + (preview ? '?preview=1&print=1' : '?print=1'))}><PrinterIcon label="" />Print / PDF</Button></>}
             <Button type="button" variant="outline" className="action present-button" aria-pressed={presenting}
               onClick={() => {
                 setEnded(false)
@@ -301,6 +317,14 @@ function ReportReader({ project, month, report, chapterIndex, preview }) {
         </div>
         <div className="report-reading">
           {ended && <section className="workspace-panel review-ended"><h2 ref={endHeading} tabIndex={-1}>Review complete</h2><p>You’ve reached the end of {month.label}. Revisit the plan, or go back to your projects.</p><div className="review-ended-actions"><Button className="action action-primary" onClick={() => navigate(libraryReturn)}>Back to projects</Button><Button className="action" variant="outline" onClick={() => setEnded(false)}>Revisit the plan</Button></div></section>}
+          {printing && <div className="print-toolbar" role="status"><span>Preparing all four chapters for printing. Choose “Save as PDF” in the print dialog for a PDF.</span><Button variant="outline" className="action" onClick={() => navigate(currentPath + readerSuffix, { replace: true })}>Back to report</Button></div>}
+          {printing ? <div className="print-chapters">{chapters.map(entry => {
+            const EntryCopy = copyByChapter[entry.id]
+            return <section key={entry.id} className="print-chapter" aria-labelledby={`print-${entry.id}`}>
+              <h2 id={`print-${entry.id}`}>{entry.label}</h2>
+              {entry.id === 'progress' ? <ProgressChapter report={report} project={project} reduced /> : <EntryCopy report={report} reduced />}
+            </section>
+          })}</div> : <>
           <div hidden={ended}>
             <AnimatePresence mode="wait" custom={direction} initial={false}>
               <ChapterPane className="chapter-content" key={chapter.id} ref={focusChapter} custom={direction}
@@ -318,6 +342,7 @@ function ReportReader({ project, month, report, chapterIndex, preview }) {
               {nextPath ? <Button asChild className="action action-primary chapter-next"><Link to={nextPath}>Next <ArrowRightIcon label="" /></Link></Button> : <Button className="action action-primary chapter-next" onClick={() => { setEnded(true); window.scrollTo({ top: 0, behavior: 'instant' }) }}>Finish review <ArrowUpRightIcon label="" /></Button>}
             </div>
           </div>
+          </>}
         </div>
       </div>
     </main>

@@ -53,12 +53,24 @@ export function taskFlags(task, week, today) {
   }
 }
 
+// A task's owners as a list. Older records held one string such as "KC/Franco"; split it the same way the server does.
+export const splitOwners = value => [...new Set(String(value ?? '').split(/\s*(?:\/|&|\+|,)\s*/).map(name => name.trim()).filter(Boolean))]
+export const taskOwners = task => Array.isArray(task.owners) ? task.owners : splitOwners(task.owner)
+export const formatOwners = task => taskOwners(task).join(', ')
+
+// Status shortcuts on the board and list: 1 To do, 2 In progress, 3 Blocked, 4 Done.
+export const statusKeys = Object.fromEntries(taskStatusOrder.map((status, index) => [String(index + 1), status]))
+
 export function summarize(tasks) {
   const counts = Object.fromEntries(taskStatusOrder.map(status => [status, tasks.filter(task => task.status === status).length]))
+  // A shared task counts once for each of its owners, so workload reflects everyone on it.
   const owners = [...tasks.reduce((map, task) => {
-    const entry = map.get(task.owner) ?? { owner: task.owner, total: 0, done: 0 }
-    entry.total++; if (task.status === 'done') entry.done++
-    return map.set(task.owner, entry)
+    for (const name of taskOwners(task)) {
+      const entry = map.get(name) ?? { owner: name, total: 0, done: 0 }
+      entry.total++; if (task.status === 'done') entry.done++
+      map.set(name, entry)
+    }
+    return map
   }, new Map()).values()].sort((a, b) => b.total - a.total || a.owner.localeCompare(b.owner))
   return { counts, owners, total: tasks.length, done: counts.done, percent: tasks.length ? Math.round(counts.done / tasks.length * 100) : 0 }
 }

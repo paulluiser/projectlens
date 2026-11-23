@@ -24,6 +24,7 @@ import PeopleIconGlyph from '@atlaskit/icon/core/people-group'
 import PersonIconGlyph from '@atlaskit/icon/core/person'
 import ProjectsIconGlyph from '@atlaskit/icon/core/project'
 import PlanIconGlyph from '@atlaskit/icon/core/roadmap'
+import PrinterIconGlyph from '@atlaskit/icon/core/printer'
 import SearchIconGlyph from '@atlaskit/icon/core/search'
 import ImpactIconGlyph from '@atlaskit/icon/core/status-warning'
 import TargetIconGlyph from '@atlaskit/icon/core/target'
@@ -58,6 +59,7 @@ export const PeopleIcon = /* @__PURE__ */ unwrap(PeopleIconGlyph)
 export const PersonIcon = /* @__PURE__ */ unwrap(PersonIconGlyph)
 export const ProjectsIcon = /* @__PURE__ */ unwrap(ProjectsIconGlyph)
 export const PlanIcon = /* @__PURE__ */ unwrap(PlanIconGlyph)
+export const PrinterIcon = /* @__PURE__ */ unwrap(PrinterIconGlyph)
 export const SearchIcon = /* @__PURE__ */ unwrap(SearchIconGlyph)
 export const ImpactIcon = /* @__PURE__ */ unwrap(ImpactIconGlyph)
 export const TargetIcon = /* @__PURE__ */ unwrap(TargetIconGlyph)
