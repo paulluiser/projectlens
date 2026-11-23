@@ -338,7 +338,7 @@ function WeeklyPage() {
       <div><p className="page-eyebrow"><Link to={projectsPath}>Projects</Link></p><h1>{project.name}</h1><p>Weekly task delegation: who owns what, by when.</p></div>
       {weeks.length > 0 && <div className="record-toolbar"><WeekDialog project={project} onSaved={id => id && setParam({ week: id })} trigger={newWeekButton} /></div>}
     </div>
-    <ProjectTabs projectId={project.id} />
+    {!week && <ProjectTabs projectId={project.id} />}
 
     {!week ? <section className="empty-panel">
       <WeekIllustration />
@@ -346,6 +346,8 @@ function WeeklyPage() {
       <p>Set a date range, then delegate tasks with an owner, a target date and a status. Track them as a list or on a board.</p>
       {workspace.canEdit ? <WeekDialog project={project} onSaved={id => id && setParam({ week: id })} trigger={<Button className="action action-primary"><AddIcon label="" />New week</Button>} /> : <p className="field-hint">Editors can create weeks.</p>}
     </section> : <>
+      <div className="weekly-strip">
+      <ProjectTabs projectId={project.id} />
       <div className="week-bar">
         <div className="week-nav" role="group" aria-label="Choose week">
           <button type="button" className="icon-button" aria-label="Previous week" disabled={index <= 0} onClick={() => setParam({ week: weeks[index - 1].id })}><ArrowLeftIcon label="" /></button>
@@ -361,6 +363,7 @@ function WeeklyPage() {
           <WeekDialog project={project} week={week} intent="edit" trigger={<Button variant="outline" className="action"><EditIcon label="" />Edit</Button>} />
           <WeekDialog project={project} week={week} intent="delete" onSaved={() => setParam({ week: '' })} trigger={<Button variant="outline" className="action record-icon-action" aria-label={`Delete ${weekTitle(week)}`}><DeleteIcon label="" /></Button>} />
         </div>
+      </div>
       </div>
 
       <WeekSummary week={week} tasks={tasks} today={today} />
