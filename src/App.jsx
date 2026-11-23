@@ -69,7 +69,7 @@ function Header({ expanded, onToggle, onNavigate, narrow }) {
           <SidebarIcon label="" />
         </button>
         <Link className="brand" to={landingPath} aria-label="Lens home" onClick={onNavigate}>
-          <ProjectBrand />
+          <ProjectBrand size={24} />
         </Link>
       </div>
       <button ref={searchToggle} type="button" className="icon-button mobile-search-toggle" aria-label={searchOpen ? 'Close search' : 'Open search'} aria-controls="global-search-form" aria-expanded={searchOpen} onClick={() => { onNavigate(); setSearchOpen(value => !value) }}><SearchIcon label="" /></button>

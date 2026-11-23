@@ -945,3 +945,18 @@ fieldset:disabled { opacity: 1; }
 .weekly-strip { margin-bottom: 16px; }
 .weekly-strip .week-bar { margin: 0; padding: 0; border: 0; background: transparent; }
 .weekly-strip .week-bar .record-toolbar { margin-left: auto; }
+
+/* Header brand: logo and name lead, the sidebar toggle sits at the right edge of the sidebar column. */
+.site-header .header-brand { gap: 8px; padding-inline: 16px 12px; }
+.site-header .brand { order: -1; gap: 10px; padding: 4px 6px 4px 2px; border-radius: var(--radius-control); font-size: var(--t-base); font-weight: 600; letter-spacing: -0.02em; }
+.site-header .brand:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
+.site-header .brand-logo { display: block; width: 24px; height: 24px; }
+.site-header #sidebar-toggle { margin-left: auto; width: 32px; height: 32px; }
+.workspace[data-sidebar=true] .site-header .header-brand { border-right: 1px solid var(--border); align-self: stretch; }
+.workspace[data-sidebar=false] .site-header .header-brand { width: auto; }
+.workspace[data-sidebar=false] .site-header #sidebar-toggle { margin-left: 4px; }
+@media (max-width: 760px), (max-height: 500px) and (pointer: coarse) and (max-width: 1050px) {
+  .site-header .header-brand { padding-inline: 8px; gap: 4px; border-right: 0 !important; }
+  .site-header .brand { order: 0; }
+  .site-header #sidebar-toggle { margin-left: 0; width: 44px; height: 44px; }
+}
