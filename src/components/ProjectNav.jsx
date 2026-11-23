@@ -21,10 +21,11 @@ export function ProjectNav() {
   const { workspace } = useWorkspace()
   const projects = workspace?.projects ?? []
   const active = projects.find(project => projectSection(pathname, project.id))?.id
-  const [open, setOpen] = useState(() => new Set(active ? [active] : []))
-  useEffect(() => { if (active) setOpen(previous => previous.has(active) ? previous : new Set([...previous, active])) }, [active])
+  // One project open at a time: opening another closes the previous one.
+  const [open, setOpen] = useState(active ?? null)
+  useEffect(() => { if (active) setOpen(active) }, [active])
   if (!projects.length) return null
-  const toggle = id => setOpen(previous => { const next = new Set(previous); next.has(id) ? next.delete(id) : next.add(id); return next })
+  const toggle = id => setOpen(previous => previous === id ? null : id)
 
   return (
     <div className="sidebar-project-group">
@@ -32,7 +33,7 @@ export function ProjectNav() {
       <ul className="sidebar-projects" aria-labelledby="sidebar-projects-label">
         {projects.map(project => {
           const current = projectSection(pathname, project.id)
-          const expanded = open.has(project.id)
+          const expanded = open === project.id
           const listId = `sidebar-sections-${project.id}`
           return (
             <li key={project.id} className="sidebar-project" data-current={current ? '' : undefined}>

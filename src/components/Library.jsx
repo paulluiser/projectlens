@@ -1,5 +1,4 @@
 import { ProjectMark } from './ProjectMark'
-import { ProjectTabs } from './ProjectTabs'
 import { useEffect } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { ArrowRightIcon, SearchIcon, SuccessIcon, ClockIcon } from '@/components/ui/icons'
@@ -76,7 +75,7 @@ function LoadedLibrary() {
   return (
     <main id="main-content" tabIndex={-1} className="site-width library">
       <div className="page-heading directory-heading">
-        <div><p className="page-eyebrow"><Link to={projectsPath}>Projects</Link></p><h1>{project?.name ?? 'Projects'}</h1><p>{project?.description || 'Monthly reports for this project.'}</p></div>
+        <div><p className="page-eyebrow"><Link to={projectsPath}>Projects</Link><span aria-hidden="true"> / </span><span>Reports</span></p><h1>{project?.name ?? 'Projects'}</h1><p>{project?.description || 'Monthly reports for this project.'}</p></div>
         <div className="record-toolbar">
           <RecordEditor kind="project" project={project} onSaved={(next, data) => {
             const saved = project ?? next.projects.find((entry) => entry.name === data.name)
@@ -85,7 +84,6 @@ function LoadedLibrary() {
           {project && <><RecordEditor kind="report" project={project} onSaved={(_, data, monthId) => navigate(reportPath(project.id, monthId) + '?preview=1')} /><DeleteRecord project={project} onDeleted={() => navigate(projectsPath)} /></>}
         </div>
       </div>
-      <ProjectTabs projectId={project.id} />
       <section aria-label="Available reports">
         <div className="project-report-toolbar">
           <span className="library-count" role="status">{rows.length} {rows.length === 1 ? 'record' : 'records'}</span>

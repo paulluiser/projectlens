@@ -283,14 +283,14 @@ try {
   assert.ok(captured.some(call=>call.path==='/api/workspace'&&call.status===200))
 
   await click(document.querySelector('.site-sidebar a[href="/landing/projects/simsdotnet"]'))
-  await until(()=>document.querySelector('.project-tabs'),'project sections')
+  await until(()=>document.querySelector('.project-report-toolbar'),'project reports')
   assert.equal(document.querySelector('.library-filters'),null,'project reports have no redundant filters')
   assert.equal(document.querySelector('.report-table td[data-label="Project"]'),null,'project column is omitted')
   assert.match(document.querySelector('.report-table tbody td[data-label="Report month"]').textContent,/October/)
   await act(async()=>{const sort=document.querySelector('[aria-label="Sort reports"]');sort.value='oldest';sort.dispatchEvent(new window.Event('change',{bubbles:true}))})
   await until(()=>document.querySelector('.report-table tbody td[data-label="Report month"]')?.textContent.includes('September'),'reports sorted oldest first')
 
-  await click(document.querySelector('.project-tabs a[href$="/milestones"]'))
+  await click(document.querySelector('.site-sidebar a[href$="/simsdotnet/milestones"]'))
   await until(()=>document.querySelector('.milestone-page'),'milestone page')
   await click(byButton('Create milestone'))
   await fill('Milestone title','Inline status check')

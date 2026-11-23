@@ -9,7 +9,6 @@ import { Button } from '@/components/ui/button'
 import { ModalHeader } from '@/components/ui/modal-header'
 import { useWorkspace, WorkspaceNotice } from '@/lib/workspace'
 import { projectsPath } from '@/lib/routes.mjs'
-import { ProjectTabs } from './ProjectTabs'
 import { milestoneStatuses as statuses, milestoneDate as dateFormat, shortMilestoneDate, milestoneTime, milestoneTimeline, milestoneCalendarDays, shiftMilestoneMonth } from '@/lib/milestones.mjs'
 import { RoadmapIllustration, SearchIllustration } from './Illustrations'
 
@@ -298,10 +297,9 @@ function MilestonePage() {
   const filtered = items.filter(item => (status === 'all' || item.status === status) && `${item.title} ${item.owner}`.toLowerCase().includes(search.trim().toLowerCase()))
   return <main className="site-width milestone-page" id="main-content" tabIndex={-1}>
     <div className="page-heading directory-heading">
-      <div><p className="page-eyebrow"><Link to={projectsPath}>Projects</Link></p><h1>{project.name}</h1><p>Milestones, owners and dates for this project.</p></div>
+      <div><p className="page-eyebrow"><Link to={projectsPath}>Projects</Link><span aria-hidden="true"> / </span><span>Milestones</span></p><h1>{project.name}</h1><p>Milestones, owners and dates for this project.</p></div>
       <div className="record-toolbar"><MilestoneDialog project={project} /></div>
     </div>
-    <ProjectTabs projectId={project.id} />
     <section className="milestone-overview" aria-label="Milestone progress">
       <div className="milestone-delivery">
         <div className="milestone-section-heading"><h2>Delivery roadmap</h2>{items.some(item => item.sample) && <span className="milestone-demo-badge">Sample data</span>}</div>

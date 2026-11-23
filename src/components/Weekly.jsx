@@ -10,7 +10,6 @@ import { ModalHeader } from '@/components/ui/modal-header'
 import { useWorkspace, WorkspaceNotice } from '@/lib/workspace'
 import { projectsPath } from '@/lib/routes.mjs'
 import { defaultWeek, formatDay, formatRange, formatWeekday, bracketDays, suggestedBracket, summarize, taskFlags, taskStatuses, taskStatusOrder, todayIso, weekPhase, weekTitle } from '@/lib/weekly.mjs'
-import { ProjectTabs } from './ProjectTabs'
 import { projectInitials } from './ProjectMark'
 import { BoardIllustration, SearchIllustration, WeekIllustration } from './Illustrations'
 
@@ -335,10 +334,9 @@ function WeeklyPage() {
 
   return <main className="site-width weekly-page" id="main-content" tabIndex={-1}>
     <div className="page-heading directory-heading">
-      <div><p className="page-eyebrow"><Link to={projectsPath}>Projects</Link></p><h1>{project.name}</h1><p>Weekly task delegation: who owns what, by when.</p></div>
+      <div><p className="page-eyebrow"><Link to={projectsPath}>Projects</Link><span aria-hidden="true"> / </span><span>Weekly</span></p><h1>{project.name}</h1><p>Weekly task delegation: who owns what, by when.</p></div>
       {weeks.length > 0 && <div className="record-toolbar"><WeekDialog project={project} onSaved={id => id && setParam({ week: id })} trigger={newWeekButton} /></div>}
     </div>
-    {!week && <ProjectTabs projectId={project.id} />}
 
     {!week ? <section className="empty-panel">
       <WeekIllustration />
@@ -347,7 +345,6 @@ function WeeklyPage() {
       {workspace.canEdit ? <WeekDialog project={project} onSaved={id => id && setParam({ week: id })} trigger={<Button className="action action-primary"><AddIcon label="" />New week</Button>} /> : <p className="field-hint">Editors can create weeks.</p>}
     </section> : <>
       <div className="weekly-strip">
-      <ProjectTabs projectId={project.id} />
       <div className="week-bar">
         <div className="week-nav" role="group" aria-label="Choose week">
           <button type="button" className="icon-button" aria-label="Previous week" disabled={index <= 0} onClick={() => setParam({ week: weeks[index - 1].id })}><ArrowLeftIcon label="" /></button>

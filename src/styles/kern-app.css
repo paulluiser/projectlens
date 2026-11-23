@@ -941,15 +941,7 @@ fieldset:disabled { opacity: 1; }
   .week-bar .record-toolbar { margin-left: auto; }
 }
 
-/* Weekly: project tabs and the week bar share one strip. */
-.weekly-strip { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 12px; margin-bottom: 16px; }
-.weekly-strip .project-tabs { margin: 0; }
-.weekly-strip .week-bar { flex: 1 1 auto; margin: 0; padding: 0; border: 0; background: transparent; justify-content: flex-end; flex-wrap: nowrap; }
-.weekly-strip .week-bar .record-toolbar { margin-left: 0; }
-@media (min-width: 1201px) and (max-width: 1399px) {
-  .weekly-strip .week-bar-meta { display: none; }
-}
-@media (max-width: 1200px) {
-  .weekly-strip .week-bar { justify-content: flex-start; flex-wrap: wrap; }
-  .weekly-strip .week-bar .record-toolbar { margin-left: auto; }
-}
+/* Weekly: the week bar is one plain strip (switcher and meta left, actions right). */
+.weekly-strip { margin-bottom: 16px; }
+.weekly-strip .week-bar { margin: 0; padding: 0; border: 0; background: transparent; }
+.weekly-strip .week-bar .record-toolbar { margin-left: auto; }

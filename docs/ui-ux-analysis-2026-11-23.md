@@ -17,7 +17,7 @@ The two time horizons, monthly review and weekly execution, were the biggest gap
 
 **Before:** the sidebar listed projects as flat links that opened the reports list. Milestones appeared as a sub-link only on the active project. Nothing summarized a project as a whole, so the only entry points were a table of report months or a milestone list.
 
-**After:** every project is a group with the same four sections, in the same order, in both the sidebar and the page tabs:
+**After:** every project is a group with the same four sections, in the same order, switched from the sidebar (the page tabs that repeated them were removed as redundant):
 
 ```
 Projects
@@ -32,7 +32,7 @@ Projects
 
 Why this structure:
 - **Predictable.** The same four sections exist for every project, so people learn the layout once.
-- **Scales without clutter.** The current project opens automatically and the others stay collapsed.
+- **Scales without clutter.** Only one project is open at a time; the current project opens automatically and opening another closes it.
 - **Shows where you are.** The sidebar marks the current section; on a report chapter it marks Reports as the location, since Reports is the parent.
 - **Keeps old links working.** Reports keeps the project's original address, so existing links and bookmarks still land on the reports list.
 

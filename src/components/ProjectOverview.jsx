@@ -6,7 +6,6 @@ import { useWorkspace, WorkspaceNotice } from '@/lib/workspace'
 import { milestonesPath, projectPath, projectsPath, reportPath, weeklyPath } from '@/lib/routes.mjs'
 import { milestoneStatuses } from '@/lib/milestones.mjs'
 import { defaultWeek, formatRange, summarize, todayIso, weekPhase, weekTitle } from '@/lib/weekly.mjs'
-import { ProjectTabs } from './ProjectTabs'
 import { ColumnChart, StatusSplit } from './Charts'
 import { ChartIllustration } from './Illustrations'
 
@@ -49,10 +48,9 @@ function OverviewPage() {
 
   return <main className="site-width project-overview" id="main-content" tabIndex={-1}>
     <div className="page-heading directory-heading">
-      <div><p className="page-eyebrow"><Link to={projectsPath}>Projects</Link></p><h1>{project.name}</h1><p>{project.description || 'Where this project stands across reviews, milestones and the current week.'}</p></div>
+      <div><p className="page-eyebrow"><Link to={projectsPath}>Projects</Link><span aria-hidden="true"> / </span><span>Overview</span></p><h1>{project.name}</h1><p>{project.description || 'Where this project stands across reviews, milestones and the current week.'}</p></div>
       {latest && <div className="record-toolbar"><Button asChild variant="outline" className="action"><Link to={reportPath(project.id, latest.id) + '?present=1'}>Present latest</Link></Button></div>}
     </div>
-    <ProjectTabs projectId={project.id} />
 
     <section className="overview-lead" aria-label="Latest review">
       {latest ? <article className="overview-spotlight">

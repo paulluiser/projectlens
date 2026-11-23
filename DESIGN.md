@@ -25,7 +25,7 @@ Geist Mono for everything (loaded from `@fontsource/geist-mono` at 400, 500 and 
 
 The desktop toolbar is 56px high and the sidebar 248px wide. Narrow screens use an accessible navigation drawer and expandable search. Preserve focus trapping, Escape dismissal, scroll locking and trigger focus restoration. Keep one primary page heading, a skip link and labelled icon controls.
 
-Projects is the all-project dashboard. A project opens its monthly report directory, with Reports and Milestones as sibling tabs. Desktop tables become labelled records on phones. Empty and filtered states explain the next action. Keep visible context when refreshing or recovering from an error.
+Projects is the all-project dashboard. A project opens its monthly report directory; its sections (Overview, Reports, Milestones, Weekly) are switched from the sidebar only, and the page eyebrow names the current section ("Projects / Weekly"). Desktop tables become labelled records on phones. Empty and filtered states explain the next action. Keep visible context when refreshing or recovering from an error.
 
 Reports have four chapters: Progress, Accomplishments, Blockers and Next Month. Display final figures immediately; use a labelled linear completion bar. Put narrative in open document sections. Keep blocker and response adjacent. Place the compact next-month calendar beside the agenda on desktop and above it on phones. Navigation stays in document flow and must not cover content. Presentation uses the same neutral reading treatment.
 
@@ -61,7 +61,7 @@ Every workspace screen is rebuilt on Kern's components in `src/styles/kern-app.c
 - Pages open with an eyebrow, an h1 at `--t-h1` and a muted description; actions sit on the right. Icon tiles beside titles are gone.
 - Overview follows Kern's home: one dark spotlight (latest review), a stats card with a green meter, then a row list where the latest row is tinted green.
 - Projects are marked with Kern's monogram (initials on the green tint), not colour-coded shapes, because colour is kept for meaning.
-- Section switches (project tabs, report chapters, milestone views and filters) are Kern's segmented control.
+- Section switches (report chapters, milestone views and filters) are Kern's segmented control.
 - Status marks use Kern's verdict shape code: solid for published or completed, outlined for draft or in progress, dashed for awaiting or planned. Counts are neutral pills.
 - Cards are 14px corners on raised paper, lists and tables are bordered row groups, dialogs and menus follow Kern's dialog and dropdown recipes, and progress bars are 8px green meters.
 - Milestone filter, search and view are kept in the URL (`?status=`, `?search=`, `?view=`).
@@ -69,7 +69,7 @@ Every workspace screen is rebuilt on Kern's components in `src/styles/kern-app.c
 
 ## Projects, Weekly and charts (November 23, 2026)
 
-- **Sidebar:** each project is a disclosure group with four sections in a fixed order: Overview, Reports, Milestones, Weekly. The current project opens automatically. The page tabs repeat the same four sections.
+- **Sidebar:** each project is a disclosure group with four sections in a fixed order: Overview, Reports, Milestones, Weekly. Only one project is open at a time: opening another closes the previous one, and the current project opens automatically. There are no page tabs repeating these sections.
 - **Weekly:** each project has weeks with an editor-set start and end (up to 31 days) and an optional label. Tasks have a title, owner, target date, status (to do, in progress, blocked, done) and notes. The board is the default view and the list is the alternative; every card has a status menu as the keyboard and touch alternative to dragging. Week, view, search and owner live in the URL.
 - **Status palette** (tokens `--status-done`, `--status-active`, `--status-blocked`, `--status-todo`): green, blue, red and grey. It is validated with the dataviz checker in bar order (done, in progress, blocked, to do). Statuses always carry a label, and marks follow Kern's verdict shapes: solid for done, outlined for in progress, dashed for not started.
 - **Charts** are built in `Charts.jsx` and follow the dataviz mark specs: columns at most 24px, 4px rounded tops, hairline grid, a legend for two or more series, a hover tooltip per mark, and a table view. The neutral series is `#CFC9BE`; it relies on labels and the table, never on contrast alone.
