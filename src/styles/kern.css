@@ -151,3 +151,14 @@ html { -webkit-tap-highlight-color: transparent; }
 
 /* Native selects get explicit colours so Windows high-contrast and dark UI don't repaint them */
 select { background-color: var(--field-surface); color: var(--foreground); }
+
+/* Landing paper texture: a fine grain and a soft mottle drawn from SVG noise, tiled under the content.
+   Static (no fixed attachment, no animation), warm-ink tinted, and dropped for print and forced colours. */
+.lx {
+  --lx-paper-grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .07 0 0 0 0 .06 0 0 0 0 .04 0 0 0 .6 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)' opacity='.12'/%3E%3C/svg%3E");
+  --lx-paper-mottle: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='640' height='640'%3E%3Cfilter id='m'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.008 .014' numOctaves='2' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .45 0 0 0 0 .38 0 0 0 0 .26 0 0 0 .5 -.12'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23m)' opacity='.06'/%3E%3C/svg%3E");
+  background-color: var(--background);
+  background-image: var(--lx-paper-grain), var(--lx-paper-mottle);
+  background-size: 220px 220px, 640px 640px;
+}
+@media print, (forced-colors: active) { .lx { background-image: none; } }

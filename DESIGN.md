@@ -4,7 +4,7 @@ Updated November 23, 2026: Lens now uses the Kern design system (from `~/Documen
 
 ## Direction and references
 
-Quiet, exact, tool-like, as in Kern: warm paper surfaces, near-black ink, one blue accent (the logo's blue, #2563A6). Public pages follow the live Kern site (https://kern-ai.vercel.app/): a centred hero whose headline retypes the audience (project leads, delivery teams, stakeholders) in blue with a block cursor, a "What you get" grid with blue icons, three figures that resolve into place, one dark call-to-action band, and a four-column footer. Inner pages use an eyebrow, an h1 and the same icon grid. Everything is scoped to `.lx` in kern.css. Workspace pages use aligned data, compact controls and clear separators.
+Quiet, exact, tool-like, as in Kern: warm paper surfaces, near-black ink, one blue accent (the logo's blue, #2563A6). Public pages follow the live Kern site (https://kern-ai.vercel.app/): a centred hero whose headline retypes the audience (project leads, delivery teams, stakeholders) in blue with a block cursor, a "What you get" grid with blue icons, three figures that resolve into place, one dark call-to-action band, and a four-column footer. Inner pages use an eyebrow, an h1 and the same icon grid. Everything is scoped to `.lx` in kern.css. Public pages sit on a quiet paper texture (a fine grain and a soft mottle from inline SVG noise, static, off in print and forced colours); it is kept light enough that muted text stays above 4.5:1 on the darkest speck. The workspace stays flat. Workspace pages use aligned data, compact controls and clear separators.
 
 References inform hierarchy and interaction, rather than copying another product:
 
