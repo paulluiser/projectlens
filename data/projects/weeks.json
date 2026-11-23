@@ -1,0 +1,240 @@
+{
+  "simsdotnet": [
+    {
+      "id": "week-sims-2026-11-03",
+      "start": "2026-11-03",
+      "end": "2026-11-06",
+      "label": "",
+      "tasks": [
+        {
+          "id": "week-sims-2026-11-03-01",
+          "title": "Collection Receipt and CC Backend",
+          "owner": "Jess",
+          "dueDate": "2026-11-06",
+          "status": "done",
+          "notes": ""
+        },
+        {
+          "id": "week-sims-2026-11-03-02",
+          "title": "Collection Receipt and CC Integration",
+          "owner": "KC/Franco",
+          "dueDate": "2026-11-06",
+          "status": "in-progress",
+          "notes": ""
+        },
+        {
+          "id": "week-sims-2026-11-03-03",
+          "title": "Masterfile Listing Reports",
+          "owner": "KC",
+          "dueDate": "2026-11-06",
+          "status": "done",
+          "notes": ""
+        },
+        {
+          "id": "week-sims-2026-11-03-04",
+          "title": "SI and Trip Ticket Initial Testing",
+          "owner": "Rica",
+          "dueDate": "2026-11-06",
+          "status": "done",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "week-sims-2026-11-09",
+      "start": "2026-11-09",
+      "end": "2026-11-13",
+      "label": "",
+      "tasks": [
+        {
+          "id": "week-sims-2026-11-09-01",
+          "title": "Collection Receipt Integration",
+          "owner": "KC",
+          "dueDate": "2026-11-12",
+          "status": "todo",
+          "notes": ""
+        },
+        {
+          "id": "week-sims-2026-11-09-02",
+          "title": "Check Clearing Integration",
+          "owner": "Franco",
+          "dueDate": "2026-11-13",
+          "status": "todo",
+          "notes": ""
+        },
+        {
+          "id": "week-sims-2026-11-09-03",
+          "title": "Inventory Module Group Test Script Preparation",
+          "owner": "Rica",
+          "dueDate": "2026-11-13",
+          "status": "todo",
+          "notes": ""
+        },
+        {
+          "id": "week-sims-2026-11-09-04",
+          "title": "Purchase Return Backend",
+          "owner": "Jess",
+          "dueDate": "2026-11-11",
+          "status": "todo",
+          "notes": ""
+        },
+        {
+          "id": "week-sims-2026-11-09-05",
+          "title": "Purchase Return Integration",
+          "owner": "Franco",
+          "dueDate": "2026-11-13",
+          "status": "todo",
+          "notes": ""
+        }
+      ]
+    }
+  ],
+  "performance-management-system-pms": [
+    {
+      "id": "week-pms-2026-11-03",
+      "start": "2026-11-03",
+      "end": "2026-11-06",
+      "label": "",
+      "tasks": [
+        {
+          "id": "week-pms-2026-11-03-01",
+          "title": "Technical onboarding",
+          "owner": "Vin",
+          "dueDate": "2026-11-06",
+          "status": "done",
+          "notes": ""
+        },
+        {
+          "id": "week-pms-2026-11-03-02",
+          "title": "Tech stack selection",
+          "owner": "Vin",
+          "dueDate": "2026-11-06",
+          "status": "done",
+          "notes": ""
+        },
+        {
+          "id": "week-pms-2026-11-03-03",
+          "title": "Technical requirements consolidation",
+          "owner": "Vin",
+          "dueDate": "2026-11-06",
+          "status": "done",
+          "notes": ""
+        },
+        {
+          "id": "week-pms-2026-11-03-04",
+          "title": "Foundational database schema/design",
+          "owner": "Vin",
+          "dueDate": "2026-11-06",
+          "status": "done",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "week-pms-2026-11-09",
+      "start": "2026-11-09",
+      "end": "2026-11-13",
+      "label": "",
+      "tasks": [
+        {
+          "id": "week-pms-2026-11-09-01",
+          "title": "Users Database Connection and Integration",
+          "owner": "Vin",
+          "dueDate": "2026-11-13",
+          "status": "todo",
+          "notes": ""
+        },
+        {
+          "id": "week-pms-2026-11-09-02",
+          "title": "Authentication Database Connection and Integration",
+          "owner": "Vin",
+          "dueDate": "2026-11-13",
+          "status": "todo",
+          "notes": ""
+        },
+        {
+          "id": "week-pms-2026-11-09-03",
+          "title": "Templates Integration",
+          "owner": "Miguel",
+          "dueDate": "2026-11-13",
+          "status": "todo",
+          "notes": ""
+        },
+        {
+          "id": "week-pms-2026-11-09-04",
+          "title": "UI internal restructuring",
+          "owner": "Miguel",
+          "dueDate": "2026-11-13",
+          "status": "todo",
+          "notes": ""
+        }
+      ]
+    }
+  ],
+  "hrdotnet-mobile": [
+    {
+      "id": "week-hrmobile-2026-11-03",
+      "start": "2026-11-03",
+      "end": "2026-11-06",
+      "label": "",
+      "tasks": [
+        {
+          "id": "week-hrmobile-2026-11-03-01",
+          "title": "Loans Integration and UI Adjustments",
+          "owner": "Miguel",
+          "dueDate": "2026-11-06",
+          "status": "done",
+          "notes": ""
+        },
+        {
+          "id": "week-hrmobile-2026-11-03-02",
+          "title": "Profile Integration and UI Adjustments",
+          "owner": "Miguel",
+          "dueDate": "2026-11-06",
+          "status": "done",
+          "notes": ""
+        },
+        {
+          "id": "week-hrmobile-2026-11-03-03",
+          "title": "Settings Integration and UI Adjustments",
+          "owner": "Miguel",
+          "dueDate": "2026-11-06",
+          "status": "done",
+          "notes": ""
+        },
+        {
+          "id": "week-hrmobile-2026-11-03-04",
+          "title": "General UI Fixes",
+          "owner": "Miguel",
+          "dueDate": "2026-11-06",
+          "status": "done",
+          "notes": ""
+        },
+        {
+          "id": "week-hrmobile-2026-11-03-05",
+          "title": "First initial APK Build",
+          "owner": "Miguel",
+          "dueDate": "2026-11-06",
+          "status": "done",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "week-hrmobile-2026-11-09",
+      "start": "2026-11-09",
+      "end": "2026-11-13",
+      "label": "",
+      "tasks": [
+        {
+          "id": "week-hrmobile-2026-11-09-01",
+          "title": "Initial QA run (end-to-end)",
+          "owner": "Rose",
+          "dueDate": "2026-11-13",
+          "status": "todo",
+          "notes": ""
+        }
+      ]
+    }
+  ]
+}

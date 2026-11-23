@@ -1,5 +1,6 @@
 import catalog from '../data/projects/catalog.json' with { type: 'json' }
 import milestones from '../data/projects/milestones.json' with { type: 'json' }
+import weeks from '../data/projects/weeks.json' with { type: 'json' }
 import simsdotnet202609 from '../data/projects/simsdotnet/2026-09/report.json' with { type: 'json' }
 import simsdotnet202610 from '../data/projects/simsdotnet/2026-10/report.json' with { type: 'json' }
 import pms202610 from '../data/projects/performance-management-system-pms/2026-10/report.json' with { type: 'json' }
@@ -16,6 +17,8 @@ export const seedProjects = catalog.map(project => ({
   ...project,
   milestones: milestones[project.id] ?? [],
   milestoneImportRevision: 'sdlc-gates-2026-11-20-v1',
+  weeks: weeks[project.id] ?? [],
+  weeklyImportRevision: 'weekly-2026-11-03-to-13-v1',
   months: project.months.map(month => ({
     ...month,
     ...(reports[`${project.id}/${month.id}`] ? { report: reports[`${project.id}/${month.id}`] } : {}),

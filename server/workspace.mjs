@@ -4,6 +4,7 @@ import { dirname, resolve } from 'node:path'
 import * as vercelBlob from '@vercel/blob'
 import { seedProjects } from './seed.mjs'
 import { importTimelineMilestones } from './milestone-import.mjs'
+import { importWeeklyPlans } from './weekly-import.mjs'
 
 const MAX_BODY = 1024 * 1024
 const BLOB_PATH = 'project-lens/workspace.json'
@@ -279,7 +280,7 @@ export function createHandlers({ env = process.env, blob = vercelBlob, now = Dat
   }
   async function readState() {
     const result = await readStoredState()
-    return { ...result, state: importTimelineMilestones(result.state, projects) }
+    return { ...result, state: importWeeklyPlans(importTimelineMilestones(result.state, projects), projects) }
   }
   async function saveState(state,etag) {
     if (env.BLOB_READ_WRITE_TOKEN) {
