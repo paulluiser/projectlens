@@ -1,9 +1,9 @@
 /* Delivery reports: readable documents with clear navigation and honest data. */
 .report-shell {
-  --report-ink: #20252b;
-  --report-muted: #606970;
-  --report-rule: #dde2e6;
-  --report-blue: #2563a6;
+  --report-ink: var(--foreground);
+  --report-muted: var(--muted-foreground);
+  --report-rule: var(--border);
+  --report-blue: var(--brand);
   color: var(--report-ink);
   padding-top: 32px;
   padding-bottom: 48px;
@@ -13,14 +13,14 @@
   border-color: var(--report-rule);
 }
 .report-shell .report-crumb {
-  font-size: 13px;
+  font-size: var(--t-caption);
   color: var(--report-muted);
 }
 .report-shell .report-workflow {
   margin-top: 18px;
   gap: 12px;
   color: var(--report-muted);
-  font-size: 12px;
+  font-size: var(--t-xs);
 }
 .report-shell .report-context {
   margin-top: 12px;
@@ -32,19 +32,19 @@
 .report-shell .report-title h1 {
   font-size: clamp(24px, 2.4vw, 32px);
   line-height: 1.2;
-  letter-spacing: -0.035em;
+  letter-spacing: -0.02em;
 }
 .report-shell .report-period {
   margin-left: 6px;
 }
 .report-shell .report-period select {
   min-height: 40px;
-  border: 1px solid #b5bec6;
+  border: 1px solid var(--input);
   border-radius: 6px;
   padding-inline: 10px;
   color: var(--report-ink);
-  background: #fff;
-  font-size: 13px;
+  background: var(--card);
+  font-size: var(--t-caption);
 }
 .report-shell .report-workbench {
   margin-top: 0;
@@ -66,7 +66,7 @@
   border-radius: 0;
   border-bottom: 2px solid transparent;
   color: var(--report-muted);
-  font-size: 13px;
+  font-size: var(--t-caption);
   transition: none;
 }
 .report-shell .chapter-nav a:hover {
@@ -77,7 +77,7 @@
   color: var(--report-blue);
   border-bottom-color: var(--report-blue);
   background: transparent;
-  font-weight: 650;
+  font-weight: 600;
 }
 .report-shell .chapter-nav a > span {
   width: 16px;
@@ -96,11 +96,11 @@
   letter-spacing: -0.015em;
 }
 .report-shell h2 {
-  font-size: 17px;
-  font-weight: 650;
+  font-size: var(--t-lede);
+  font-weight: 600;
 }
 .report-shell h3 {
-  font-size: 15px;
+  font-size: var(--t-sm);
 }
 .report-shell .panel-heading {
   gap: 9px;
@@ -133,7 +133,7 @@
   margin-top: 6px;
   max-width: 68ch;
   color: var(--report-muted);
-  font-size: 14px;
+  font-size: var(--t-sm);
   line-height: 1.6;
 }
 .report-shell .status-body {
@@ -147,21 +147,21 @@
   margin-top: 20px;
 }
 .report-shell .completion-reading strong {
-  font-size: 32px;
+  font-size: var(--t-h1);
   line-height: 1.2;
   font-weight: 600;
-  letter-spacing: -0.035em;
+  letter-spacing: -0.02em;
   font-variant-numeric: tabular-nums;
 }
 .report-shell .completion-reading > span {
   color: var(--report-muted);
-  font-size: 13px;
+  font-size: var(--t-caption);
 }
 .report-shell .completion-track {
   height: 8px;
   margin: 16px 0 20px;
   border-radius: 2px;
-  background: #e9edf0;
+  background: var(--muted);
 }
 .report-shell .completion-track > span {
   display: block;
@@ -171,7 +171,7 @@
 }
 .report-shell .status-legend {
   gap: 8px;
-  font-size: 13px;
+  font-size: var(--t-caption);
 }
 .report-shell .status-legend dt {
   color: var(--report-muted);
@@ -184,13 +184,13 @@
 }
 .report-shell .task-comparison figcaption {
   color: var(--report-muted);
-  font-size: 13px;
+  font-size: var(--t-caption);
   font-weight: 500;
 }
 .report-shell .task-track {
   height: 8px;
   border-radius: 2px;
-  background: #e9edf0;
+  background: var(--muted);
 }
 .report-shell .task-fill,
 .report-shell .task-fill[data-over-plan="true"] {
@@ -204,7 +204,7 @@
 }
 .report-shell .task-key dt {
   color: var(--report-muted);
-  font-size: 13px;
+  font-size: var(--t-caption);
 }
 .report-shell .progress-bento .summary-metrics {
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -223,12 +223,12 @@
   flex-direction: column;
 }
 .report-shell .progress-bento .metric-card dt {
-  font-size: 12px;
+  font-size: var(--t-xs);
   line-height: 1.4;
   color: var(--report-muted);
 }
 .report-shell .progress-bento .metric-card dd {
-  font-size: 21px;
+  font-size: var(--t-h3);
   font-weight: 600;
   line-height: 1.4;
 }
@@ -246,7 +246,7 @@
 .report-shell .compliance-bars > div {
   grid-template-columns: minmax(120px, 1fr) minmax(0, 1fr);
   gap: 16px;
-  font-size: 13px;
+  font-size: var(--t-caption);
 }
 .report-shell .compliance-bars dt {
   color: var(--report-muted);
@@ -259,7 +259,7 @@
 .report-shell .bar-track {
   height: 6px;
   border-radius: 2px;
-  background: #e9edf0;
+  background: var(--muted);
 }
 .report-shell .bar-track > span {
   background: var(--report-blue);
@@ -268,7 +268,7 @@
   gap: 12px 24px;
 }
 .report-shell .workstream-counts > li {
-  font-size: 13px;
+  font-size: var(--t-caption);
   color: var(--report-muted);
 }
 .report-shell .comparison {
@@ -281,18 +281,18 @@
 }
 .report-shell .comparison dt {
   color: var(--report-muted);
-  font-size: 13px;
+  font-size: var(--t-caption);
 }
 .report-shell .comparison dd {
   margin-top: 6px;
-  font-size: 20px;
+  font-size: var(--t-h3);
   font-weight: 600;
   font-variant-numeric: tabular-nums;
 }
 .report-shell .comparison-delta {
   margin-top: 7px;
   color: var(--report-muted);
-  font-size: 12px;
+  font-size: var(--t-xs);
   font-weight: 400;
   line-height: 1.6;
 }
@@ -309,7 +309,7 @@
 }
 .report-shell .chapter-copy > .panel-heading .lozenge {
   margin-left: auto;
-  background: #f0f3f4;
+  background: var(--muted);
   color: var(--report-muted);
   font-weight: 500;
 }
@@ -327,7 +327,7 @@
 .report-shell .achievement-mark {
   display: inline-flex;
   padding-top: 2px;
-  color: #357255;
+  color: var(--accent-foreground);
 }
 .report-shell .achievement-mark i,
 .report-shell .achievement-mark::before,
@@ -335,7 +335,7 @@
   display: none;
 }
 .report-shell .wins-list strong {
-  font-size: 15px;
+  font-size: var(--t-sm);
   line-height: 1.5;
   font-weight: 600;
 }
@@ -343,14 +343,14 @@
   max-width: 72ch;
   margin-top: 6px;
   color: var(--report-muted);
-  font-size: 14px;
+  font-size: var(--t-sm);
   line-height: 1.7;
 }
 .report-shell .wins-list .win-value {
   padding: 4px 8px;
-  background: #edf3ef;
-  color: #356249;
-  font-size: 12px;
+  background: var(--accent);
+  color: var(--accent-foreground);
+  font-size: var(--t-xs);
   font-weight: 500;
 }
 .report-shell .blockers-list li {
@@ -364,19 +364,19 @@
   background: transparent;
 }
 .report-shell .blockers-list h3 {
-  font-size: 15px;
+  font-size: var(--t-sm);
   font-weight: 600;
 }
 .report-shell .blockers-list p {
   max-width: 68ch;
   margin-top: 6px;
   color: var(--report-muted);
-  font-size: 14px;
+  font-size: var(--t-sm);
   line-height: 1.7;
 }
 .report-shell .blocker-response {
   padding: 0 0 0 20px;
-  border-left: 2px solid #dce5ed;
+  border-left: 2px solid var(--border);
   border-radius: 0;
   background: transparent;
 }
@@ -385,13 +385,13 @@
 }
 .report-shell .blocker-response strong {
   color: var(--report-blue);
-  font-size: 13px;
+  font-size: var(--t-caption);
   font-weight: 600;
 }
 .report-shell .chapter-description {
   padding-block: 12px 32px;
   color: var(--report-muted);
-  font-size: 14px;
+  font-size: var(--t-sm);
 }
 .report-shell .chapter-controls {
   position: static;
@@ -407,16 +407,16 @@
   display: none;
 }
 .report-shell .plan-heading h2 {
-  font-size: 20px;
+  font-size: var(--t-h3);
 }
 .report-shell .plan-heading p {
   margin-top: 5px;
-  font-size: 13px;
+  font-size: var(--t-caption);
 }
 .report-shell .plan-time-context {
   margin-top: 8px;
   color: var(--report-muted);
-  font-size: 12px;
+  font-size: var(--t-xs);
 }
 .report-shell .plan-workbench {
   display: grid;
@@ -439,21 +439,21 @@
   gap: 6px;
 }
 .report-shell .calendar-toolbar h3 {
-  font-size: 13px;
+  font-size: var(--t-caption);
 }
 .report-shell .calendar-reset {
-  font-size: 12px;
+  font-size: var(--t-xs);
   color: var(--report-blue);
 }
 .report-shell .plan-calendar th {
   padding: 10px 2px;
-  background: #f7f8f9;
+  background: var(--card);
   color: var(--report-muted);
   font-weight: 500;
 }
 .report-shell .plan-calendar td {
   height: 52px;
-  border-color: #e6eaed;
+  border-color: var(--border);
 }
 .report-shell .calendar-day,
 .report-shell .calendar-deadline {
@@ -462,19 +462,19 @@
   padding: 6px;
 }
 .report-shell .calendar-outside {
-  background: #fafbfc;
+  background: var(--card);
 }
 .report-shell .calendar-stamp {
   display: none;
 }
 .report-shell .calendar-deadline {
-  background: #f0f5fa;
+  background: var(--accent);
 }
 .report-shell .calendar-deadline:hover {
-  background: #e3edf6;
+  background: var(--accent);
 }
 .report-shell .calendar-deadline[aria-pressed="true"] {
-  background: #e3edf6;
+  background: var(--accent);
   box-shadow: inset 0 0 0 2px var(--report-blue);
 }
 .report-shell .calendar-count {
@@ -497,7 +497,7 @@
   border-top: 1px solid var(--report-rule);
   background: transparent;
   color: var(--report-muted);
-  font-size: 12px;
+  font-size: var(--t-xs);
 }
 .report-shell .deadline-group + .deadline-group h4 {
   border-top: 1px solid var(--report-rule);
@@ -514,16 +514,16 @@
   padding-top: 14px;
 }
 .report-shell .plan-action strong {
-  font-size: 14px;
+  font-size: var(--t-sm);
   line-height: 1.65;
 }
 .report-shell .plan-action p {
   margin-top: 6px;
-  font-size: 13px;
+  font-size: var(--t-caption);
   line-height: 1.6;
 }
 .report-shell .action-owner {
-  font-size: 12px;
+  font-size: var(--t-xs);
   color: var(--report-muted);
 }
 .report-shell .plan-context {
@@ -534,7 +534,7 @@
 }
 .report-shell .plan-context :is(p, li) {
   color: var(--report-muted);
-  font-size: 14px;
+  font-size: var(--t-sm);
   line-height: 1.65;
 }
 .report-shell .plan-context .panel-heading {
@@ -549,11 +549,11 @@
 }
 .report-shell.presentation-index {
   color: var(--report-ink);
-  background: #fbfbf9;
+  background: var(--card);
   padding-top: 32px;
 }
 .workspace:has(.report-shell.presentation-index) {
-  background: #fbfbf9;
+  background: var(--card);
 }
 .report-shell .presentation-brand .brand-wordmark > span {
   color: var(--report-muted);
@@ -563,8 +563,8 @@
 }
 .report-shell .presentation-topbar .action[data-slot="button"] {
   color: var(--report-ink);
-  border-color: #b5bec6;
-  background: #fff;
+  border-color: var(--input);
+  background: var(--card);
 }
 .report-shell .presentation-stage {
   grid-template-columns: minmax(0, 1.4fr) minmax(240px, 0.6fr);
@@ -573,18 +573,18 @@
 }
 .report-shell .presentation-hero p {
   color: var(--report-muted);
-  font-size: 15px;
+  font-size: var(--t-sm);
   margin-bottom: 14px;
 }
 .report-shell .presentation-hero h1 {
   max-width: 20ch;
   font-size: clamp(30px, 4vw, 52px);
   line-height: 1.15;
-  letter-spacing: -0.04em;
+  letter-spacing: -0.02em;
 }
 .report-shell .presentation-hero .action[data-slot="button"] {
-  color: #fff;
-  background: var(--report-blue);
+  color: var(--launch-bg);
+  background: var(--launch-text);
 }
 .report-shell .presentation-reading {
   display: block;
@@ -599,20 +599,20 @@
   gap: 10px;
 }
 .report-shell .presentation-figure strong {
-  font-size: 36px;
+  font-size: var(--t-h1);
   font-weight: 600;
   line-height: 1.2;
 }
 .report-shell .presentation-figure span {
   color: var(--report-muted);
-  font-size: 14px;
+  font-size: var(--t-sm);
 }
 .report-shell .presentation-progress {
   height: 6px;
   margin-block: 6px;
   border-radius: 2px;
   overflow: hidden;
-  background: #e5eaee;
+  background: var(--muted);
 }
 .report-shell .presentation-progress > span {
   display: block;
@@ -637,15 +637,15 @@
   color: var(--report-ink);
 }
 .report-shell .presentation-tile:hover {
-  background: #f0f3f4;
+  background: var(--muted);
 }
 .report-shell .presentation-tile > span:last-child {
   color: var(--report-muted);
-  font-size: 14px;
+  font-size: var(--t-sm);
 }
 .report-shell .presentation-back {
   margin: 0;
-  font-size: 12px;
+  font-size: var(--t-xs);
 }
 .report-shell.presentation-index :focus-visible {
   outline-color: var(--report-blue);
@@ -697,7 +697,7 @@
   }
   .report-shell .chapter-nav a {
     min-height: 52px;
-    font-size: 13px;
+    font-size: var(--t-caption);
   }
   .report-shell .chapter-nav a > span {
     display: none;
@@ -726,7 +726,7 @@
     padding: 0;
   }
   .report-shell .progress-bento .metric-card dd {
-    font-size: 20px;
+    font-size: var(--t-h3);
   }
   .report-shell .compliance-bars > div {
     grid-template-columns: minmax(110px, 1fr) minmax(0, 1fr);

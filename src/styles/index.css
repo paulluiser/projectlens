@@ -1,0 +1,13 @@
+/* Cascade order: the earlier sheets sit in the `legacy` layer (Tailwind's own layers nest inside it),
+   so the Kern layers below always win without !important or selector inflation. */
+@layer legacy;
+@import "./tokens.css";
+@import "../styles.css" layer(legacy);
+@import "./forms.css" layer(legacy);
+@import "./mac.css" layer(legacy);
+@import "./review-experience.css" layer(legacy);
+@import "./milestones.css" layer(legacy);
+@import "./workspace-remake.css" layer(legacy);
+@import "./reports-remake.css" layer(legacy);
+@import "./kern.css";
+@import "./kern-app.css";

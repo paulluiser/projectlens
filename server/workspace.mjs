@@ -59,6 +59,48 @@ function validateMilestone(data) {
   if (data.forecast !== undefined && typeof data.forecast !== 'boolean') throw failure(400, 'Forecast flag must be a boolean.')
   return { ...fields, sample: data.sample ?? false, forecast: data.forecast ?? false }
 }
+const validDate = date => typeof date === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(date) && validMonth(date.slice(0, 7)) &&
+  Number.isFinite(Date.parse(date)) && new Date(date).toISOString().slice(0, 10) === date
+export const taskStatuses = ['todo', 'in-progress', 'blocked', 'done']
+// A weekly bracket is set by hand: any start and end up to 31 days apart.
+function validateWeek(data) {
+  const fields = strings(data, ['start', 'end'], ['label'])
+  if (!validDate(fields.start) || !validDate(fields.end)) throw failure(400, 'Week dates must be valid calendar dates.')
+  if (fields.start > fields.end) throw failure(400, 'The week must start on or before it ends.')
+  if ((Date.parse(fields.end) - Date.parse(fields.start)) / 86400000 > 30) throw failure(400, 'A week can span at most 31 days.')
+  if ((fields.label?.length ?? 0) > 80) throw failure(400, 'Week label is too long.')
+  return { start: fields.start, end: fields.end, label: fields.label ?? '' }
+}
+function validateTask(data) {
+  const fields = strings(data, ['title', 'owner', 'dueDate', 'status'], ['notes'])
+  if (fields.title.length > 160 || fields.owner.length > 120 || (fields.notes?.length ?? 0) > 2000) throw failure(400, 'Task text is too long.')
+  if (!validDate(fields.dueDate)) throw failure(400, 'Task target date must be a valid calendar date.')
+  if (!taskStatuses.includes(fields.status)) throw failure(400, 'Invalid task status.')
+  return { title: fields.title, owner: fields.owner, dueDate: fields.dueDate, status: fields.status, notes: fields.notes ?? '' }
+}
+function changeWeekly(project, action, weekId, taskId, data) {
+  const weeks = project.weeks ?? []
+  if (action === 'createWeek') {
+    if (weeks.length >= 200) throw failure(400, 'A project can have up to 200 weeks.')
+    project.weeks = [...weeks, { id: randomUUID(), ...validateWeek(data), tasks: [] }].sort((a, b) => a.start.localeCompare(b.start))
+    return
+  }
+  if (!validId(weekId)) throw failure(400, 'Invalid week ID.')
+  const week = weeks.find(item => item.id === weekId)
+  if (!week) throw failure(404, 'Week not found.')
+  if (action === 'deleteWeek') { project.weeks = weeks.filter(item => item.id !== weekId); return }
+  if (action === 'updateWeek') { Object.assign(week, validateWeek(data)); project.weeks = [...weeks].sort((a, b) => a.start.localeCompare(b.start)); return }
+  const tasks = week.tasks ?? []
+  if (action === 'createTask') {
+    if (tasks.length >= 200) throw failure(400, 'A week can have up to 200 tasks.')
+    week.tasks = [...tasks, { id: randomUUID(), ...validateTask(data) }]
+    return
+  }
+  if (!validId(taskId)) throw failure(400, 'Invalid task ID.')
+  if (!tasks.some(item => item.id === taskId)) throw failure(404, 'Task not found.')
+  week.tasks = action === 'deleteTask' ? tasks.filter(item => item.id !== taskId) : tasks.map(item => item.id === taskId ? { id: item.id, ...validateTask(data) } : item)
+}
+const weeklyActions = ['createWeek', 'updateWeek', 'deleteWeek', 'createTask', 'updateTask', 'deleteTask']
 function validateReport(data, monthId) {
   object(data, 'Report')
   const progress = object(data.progress, 'Progress')
@@ -96,8 +138,8 @@ function change(state, body, now) {
   object(body,'Request')
   if (typeof body.expectedVersion !== 'string' || !body.expectedVersion) throw failure(400,'expectedVersion is required.')
   if (body.expectedVersion !== state.version) throw failure(409,'The workspace changed. Reload and try again.')
-  const { action, projectId, monthId, milestoneId, data } = body
-  if (!['createProject','updateProject','deleteProject','createReport','updateReport','publishReport','deleteReport','createMilestone','updateMilestone','deleteMilestone'].includes(action)) throw failure(400,'Unknown action.')
+  const { action, projectId, monthId, milestoneId, weekId, taskId, data } = body
+  if (!['createProject','updateProject','deleteProject','createReport','updateReport','publishReport','deleteReport','createMilestone','updateMilestone','deleteMilestone',...weeklyActions].includes(action)) throw failure(400,'Unknown action.')
   if (action === 'createProject') {
     const fields = strings(data,['name'],['description'])
     if (fields.name.length > 120 || (fields.description?.length ?? 0) > 2000) throw failure(400,'Project text is too long.')
@@ -116,6 +158,8 @@ function change(state, body, now) {
       if (fields.name.length > 120 || (fields.description?.length ?? 0) > 2000) throw failure(400,'Project text is too long.')
       project.name = fields.name
       if (fields.description !== undefined) project.description = fields.description
+    } else if (weeklyActions.includes(action)) {
+      changeWeekly(project, action, weekId, taskId, data)
     } else if (['createMilestone', 'updateMilestone', 'deleteMilestone'].includes(action)) {
       const milestones = project.milestones ?? []
       if (action === 'createMilestone') {

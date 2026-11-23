@@ -2,13 +2,14 @@ import { ProjectMark } from './ProjectMark'
 import { ProjectTabs } from './ProjectTabs'
 import { useEffect } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { ArrowRightIcon, ProjectIcon, SearchIcon, SuccessIcon, ClockIcon } from '@/components/ui/icons'
+import { ArrowRightIcon, SearchIcon, SuccessIcon, ClockIcon } from '@/components/ui/icons'
 import { Link, useNavigate, useParams, useSearchParams, useLocation } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { fade, useReducedMotion } from '@/lib/motion'
 import { useWorkspace, WorkspaceNotice } from '@/lib/workspace'
 import { RecordEditor, DeleteRecord } from './RecordEditor'
 import { projectPath, projectsPath, reportPath } from '@/lib/routes.mjs'
+import { ChartIllustration, SearchIllustration } from './Illustrations'
 
 export function Library() {
   return <WorkspaceNotice><LoadedLibrary /></WorkspaceNotice>
@@ -49,14 +50,14 @@ function LoadedLibrary() {
 
 
   useEffect(() => {
-    document.title = `${unknownProject ? 'Project unavailable' : project ? project.name : 'Projects'} · Project Lens`
+    document.title = `${unknownProject ? 'Project unavailable' : project ? project.name : 'Projects'} · Lens`
   }, [unknownProject, project?.name])
 
   if (unknownProject) {
     return (
       <main id="main-content" tabIndex={-1} className="site-width missing-page">
         <h1>Project unavailable</h1>
-        <Link to={projectsPath} className="text-link">Back to the report library <ArrowRightIcon label="" /></Link>
+        <Link to={projectsPath} className="text-link">Back to projects <ArrowRightIcon label="" /></Link>
       </main>
     )
   }
@@ -75,8 +76,7 @@ function LoadedLibrary() {
   return (
     <main id="main-content" tabIndex={-1} className="site-width library">
       <div className="page-heading directory-heading">
-        <span className="section-icon"><ProjectIcon label="" /></span>
-        <div><h1>{project?.name ?? 'Projects'}</h1><p>{project?.description || 'Monthly reports for this project.'}</p></div>
+        <div><p className="page-eyebrow"><Link to={projectsPath}>Projects</Link></p><h1>{project?.name ?? 'Projects'}</h1><p>{project?.description || 'Monthly reports for this project.'}</p></div>
         <div className="record-toolbar">
           <RecordEditor kind="project" project={project} onSaved={(next, data) => {
             const saved = project ?? next.projects.find((entry) => entry.name === data.name)
@@ -110,14 +110,14 @@ function LoadedLibrary() {
                       if (!event.defaultPrevented && !window.getSelection()?.toString()) navigate(destination)
                     } : undefined}>
                     <td role="cell" data-label="Report month">{destination ? <Link to={destination} aria-label={`${entry.name} ${item.label} review`}>{item.label}</Link> : item?.label ?? 'No reports yet'}</td>
-                    <td role="cell" data-label="Status">{item && <span className={`lozenge ${item.report ? 'success' : 'neutral'}`}>{item.report ? <SuccessIcon label="" size="small" /> : <ClockIcon label="" size="small" />}{item.draft ? item.report ? 'Published with draft changes' : 'Draft' : item.report ? 'Published' : 'Awaiting report'}</span>}</td>
+                    <td role="cell" data-label="Status">{item && <span className={`lozenge ${item.report ? 'success' : item.draft ? 'neutral' : 'pending'}`}>{item.report ? <SuccessIcon label="" size="small" /> : <ClockIcon label="" size="small" />}{item.draft ? item.report ? 'Published with draft changes' : 'Draft' : item.report ? 'Published' : 'Awaiting report'}</span>}</td>
                     <td role="cell" data-label="Related plan">{plan && <Link className="pending-link" to={reportPath(entry.id, plan.id, 'next-month')}>See plan <ArrowRightIcon label="" size="small" /></Link>}</td>
                     <td role="cell" data-label="Manage" hidden={!workspace.canEdit}><div className="row-actions">{item ? <><RecordEditor compact kind="report" project={entry} month={item} onSaved={(_, data, id) => navigate(reportPath(entry.id, id) + '?preview=1')} /><DeleteRecord project={entry} month={item} /></> : <RecordEditor kind="report" project={entry} onSaved={(_, data, monthId) => navigate(reportPath(entry.id, monthId) + '?preview=1')} />}</div></td>
                   </tr>
                 })}
               </tbody>
             </table>
-            {rows.length === 0 && <div className="empty-state"><h2>{projects.length ? 'No matching reports' : 'Create your first project'}</h2><p>{projects.length ? 'Clear your search to see all reports for this project.' : 'Start with a project, then add a monthly review.'}</p>{projects.length > 0 && <Button variant="outline" className="action" onClick={() => updateQuery('q','')}>Clear search</Button>}</div>}
+            {rows.length === 0 && <div className="empty-state"><SearchIllustration /><h2>{projects.length ? 'No matching reports' : 'Create your first project'}</h2><p>{projects.length ? 'Clear your search to see all reports for this project.' : 'Start with a project, then add a monthly review.'}</p>{projects.length > 0 && <Button variant="outline" className="action" onClick={() => updateQuery('q','')}>Clear search</Button>}</div>}
           </motion.div>
         </AnimatePresence>
       </section>
@@ -146,8 +146,7 @@ function ProjectDashboard({ query }) {
   ]
   return <main id="main-content" tabIndex={-1} className="site-width library project-dashboard">
     <div className="page-heading directory-heading">
-      <span className="section-icon"><ProjectIcon label="" /></span>
-      <div><h1>Projects</h1></div>
+      <div><p className="page-eyebrow">Workspace</p><h1>Projects</h1><p>Every project’s monthly reviews, with how much of the reporting is published.</p></div>
       <div className="record-toolbar"><RecordEditor kind="project" onSaved={(next, data) => {
         const saved = next.projects.find(project => project.name === data.name)
         if (saved) navigate(projectPath(saved.id))
@@ -177,7 +176,7 @@ function ProjectDashboard({ query }) {
             <td role="cell" data-label="Open"><Link className="text-link" to={projectPath(project.id)} aria-label={`Open ${project.name}`}>Open project <ArrowRightIcon label="" /></Link></td>
           </tr>
         })}</tbody>
-      </table> : <div className="empty-state"><h2>{query ? 'No matching projects' : 'Create your first project'}</h2><p>{query ? 'Try a different project name or report title.' : 'Use Create project above to start your first monthly review.'}</p>{query && <Button variant="outline" className="action" onClick={() => navigate(projectsPath)}>Clear search</Button>}</div>}
+      </table> : <div className="empty-state">{query ? <SearchIllustration /> : <ChartIllustration />}<h2>{query ? 'No matching projects' : 'Create your first project'}</h2><p>{query ? 'Try a different project name or report title.' : 'Use Create project above to start your first monthly review.'}</p>{query && <Button variant="outline" className="action" onClick={() => navigate(projectsPath)}>Clear search</Button>}</div>}
     </section>
   </main>
 }

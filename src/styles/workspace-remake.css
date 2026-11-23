@@ -15,10 +15,10 @@ h1,
 h2,
 h3 {
   color: var(--foreground);
-  letter-spacing: -0.025em;
+  letter-spacing: -0.02em;
 }
 h1 {
-  font-weight: 650;
+  font-weight: 600;
 }
 a,
 button,
@@ -46,8 +46,8 @@ textarea {
   caret-color: var(--primary);
 }
 ::selection {
-  background: #cfe1f5;
-  color: #162b43;
+  background: var(--accent);
+  color: var(--accent-foreground);
 }
 .workspace {
   background: var(--background);
@@ -63,9 +63,9 @@ textarea {
   gap: 12px;
 }
 .site-header .brand {
-  font-size: 15px;
+  font-size: var(--t-sm);
   font-weight: 600;
-  letter-spacing: -0.025em;
+  letter-spacing: -0.02em;
 }
 .site-header .global-search {
   border: 1px solid var(--input);
@@ -79,7 +79,7 @@ textarea {
   outline: 2px solid var(--accent);
 }
 .site-header .global-search input {
-  font-size: 13px;
+  font-size: var(--t-caption);
 }
 .site-header .global-search .icon-button {
   min-height: 32px;
@@ -90,7 +90,7 @@ textarea {
   border-right: 1px solid var(--border);
 }
 .site-sidebar .sidebar-group-label {
-  font-size: 12px;
+  font-size: var(--t-xs);
   line-height: 1.4;
   text-transform: none;
   letter-spacing: 0;
@@ -103,16 +103,16 @@ textarea {
   border-radius: 6px;
   margin-block: 2px;
   padding: 8px 12px;
-  color: #495460;
-  font-size: 14px;
+  color: var(--muted-foreground);
+  font-size: var(--t-sm);
 }
 .site-sidebar .sidebar-link[aria-current] {
-  background: #e5ebf2;
-  color: #203c5a;
+  background: var(--accent);
+  color: var(--accent-foreground);
   font-weight: 600;
 }
 .site-sidebar .sidebar-link:hover {
-  background: #e9edf1;
+  background: var(--muted);
 }
 .site-sidebar .sidebar-project-group {
   margin-top: 32px;
@@ -137,15 +137,15 @@ textarea {
 .overview-header h1,
 .milestone-page h1,
 .missing-page h1 {
-  font-size: 28px;
+  font-size: var(--t-h1);
   line-height: 1.25;
-  font-weight: 650;
+  font-weight: 600;
 }
 .page-heading p,
 .overview-header p {
   color: var(--muted-foreground);
   margin-top: 6px;
-  font-size: 14px;
+  font-size: var(--t-sm);
   max-width: 65ch;
 }
 .page-heading > .section-icon {
@@ -157,13 +157,13 @@ textarea {
   justify-content: flex-end;
 }
 .local-editor-label {
-  font-size: 12px;
+  font-size: var(--t-xs);
   color: var(--muted-foreground);
 }
 .action[data-slot="button"] {
   border-radius: var(--radius-control);
   min-height: 36px;
-  font-size: 13px;
+  font-size: var(--t-caption);
   font-weight: 500;
   padding: 8px 12px;
   box-shadow: none;
@@ -202,18 +202,18 @@ textarea {
   background: white;
 }
 .report-table thead {
-  background: #f6f7f8;
+  background: var(--muted);
 }
 .report-table th {
   color: var(--muted-foreground);
-  font-size: 12px;
+  font-size: var(--t-xs);
   font-weight: 500;
   padding: 12px 16px;
   border-bottom: 1px solid var(--border);
 }
 .report-table td {
   padding: 18px 16px;
-  font-size: 14px;
+  font-size: var(--t-sm);
   border-bottom: 1px solid var(--border);
 }
 .report-table tbody tr:nth-child(even) {
@@ -223,7 +223,7 @@ textarea {
   border-bottom: 0;
 }
 .report-table tbody tr:hover {
-  background: #f8f9fa;
+  background: var(--card);
 }
 .report-table a {
   color: var(--foreground);
@@ -243,7 +243,7 @@ textarea {
 .lozenge {
   border-radius: 4px;
   padding: 3px 7px;
-  font-size: 12px;
+  font-size: var(--t-xs);
   font-weight: 500;
 }
 .lozenge.success {
@@ -259,13 +259,13 @@ textarea {
   gap: 16px;
 }
 .library-filter label {
-  font-size: 12px;
+  font-size: var(--t-xs);
   font-weight: 500;
   margin-bottom: 6px;
   color: var(--muted-foreground);
 }
 .library-count {
-  font-size: 13px;
+  font-size: var(--t-caption);
 }
 .filter-trigger[data-slot="select-trigger"] {
   border-radius: 6px;
@@ -276,9 +276,7 @@ textarea {
 [data-slot="select-content"] {
   border-radius: 8px;
   border: 1px solid var(--border);
-  box-shadow:
-    0 4px 8px #1423360a,
-    0 12px 24px #14233614;
+  box-shadow: var(--shadow);
 }
 .portfolio-summary {
   display: grid;
@@ -300,10 +298,10 @@ textarea {
 }
 .portfolio-summary dt {
   color: var(--muted-foreground);
-  font-size: 13px;
+  font-size: var(--t-caption);
 }
 .portfolio-summary dd {
-  font-size: 28px;
+  font-size: var(--t-h1);
   line-height: 1.2;
   font-weight: 600;
   font-variant-numeric: tabular-nums;
@@ -315,16 +313,16 @@ textarea {
   align-content: start;
 }
 .portfolio-coverage > span {
-  font-size: 13px;
+  font-size: var(--t-caption);
   color: var(--muted-foreground);
 }
 .portfolio-coverage strong {
-  font-size: 14px;
+  font-size: var(--t-sm);
   font-variant-numeric: tabular-nums;
 }
 .portfolio-coverage p {
   grid-column: 1/-1;
-  font-size: 12px;
+  font-size: var(--t-xs);
   color: var(--muted-foreground);
 }
 .portfolio-coverage progress {
@@ -346,7 +344,7 @@ progress::-webkit-progress-value {
 }
 .overview-recent h2,
 .project-index h2 {
-  font-size: 15px;
+  font-size: var(--t-sm);
   font-weight: 600;
   margin-bottom: 16px;
 }
@@ -367,13 +365,13 @@ progress::-webkit-progress-value {
   background: var(--muted);
 }
 .overview-review-name strong {
-  font-size: 14px;
+  font-size: var(--t-sm);
   font-weight: 600;
 }
 .overview-review-name > span,
 .overview-month {
   color: var(--muted-foreground);
-  font-size: 13px;
+  font-size: var(--t-caption);
 }
 .empty-state,
 .overview-empty,
@@ -388,25 +386,23 @@ progress::-webkit-progress-value {
 .missing-page p,
 .loading-error p {
   color: var(--muted-foreground);
-  font-size: 14px;
+  font-size: var(--t-sm);
   max-width: 60ch;
 }
 .empty-state h2 {
-  font-size: 18px;
+  font-size: var(--t-lede);
   margin-bottom: 8px;
 }
 /* Forms share one readable heading, one scroll region and persistent actions. */
 .editor-overlay {
-  background: #18222e66;
+  background: var(--dialog-scrim);
   backdrop-filter: none;
 }
 .editor-dialog {
-  border: 1px solid #ffffff99;
+  border: 1px solid var(--border);
   border-radius: 12px;
   background: var(--card);
-  box-shadow:
-    0 8px 16px #172b401a,
-    0 24px 64px #172b4030;
+  box-shadow: var(--shadow-lg);
 }
 .editor-dialog .dialog-header {
   background: white;
@@ -417,14 +413,14 @@ progress::-webkit-progress-value {
   display: none;
 }
 .editor-heading h2 {
-  font-size: 20px;
+  font-size: var(--t-h3);
   font-weight: 600;
   line-height: 1.3;
-  letter-spacing: -0.025em;
+  letter-spacing: -0.02em;
 }
 .editor-description {
   margin-top: 6px;
-  font-size: 13px;
+  font-size: var(--t-caption);
   color: var(--muted-foreground);
 }
 .editor-dialog .dialog-close {
@@ -439,7 +435,7 @@ progress::-webkit-progress-value {
 }
 .editor-field {
   gap: 7px;
-  font-size: 13px;
+  font-size: var(--t-caption);
   font-weight: 500;
 }
 .editor-field :is(input, textarea, select) {
@@ -447,7 +443,7 @@ progress::-webkit-progress-value {
   border-color: var(--input);
   background: white;
   box-shadow: none;
-  font-size: 14px;
+  font-size: var(--t-sm);
   font-weight: 400;
   min-height: 40px;
 }
@@ -456,7 +452,7 @@ progress::-webkit-progress-value {
   min-height: 96px;
 }
 .editor-field :is(input, textarea, select):focus {
-  outline: 2px solid #b4cee9;
+  outline: 2px solid var(--ring);
   border-color: var(--primary);
   outline-offset: 1px;
 }
@@ -464,7 +460,7 @@ progress::-webkit-progress-value {
   gap: 20px;
 }
 .field-hint {
-  font-size: 12px;
+  font-size: var(--t-xs);
   line-height: 1.5;
   color: var(--muted-foreground);
   font-weight: 400;
@@ -476,44 +472,44 @@ progress::-webkit-progress-value {
   gap: 4px;
   border-bottom: 1px solid var(--border);
   padding: 8px 20px;
-  background: #fafbfc;
+  background: var(--card);
 }
 .editor-section-nav button {
   border: 0;
   border-radius: 5px;
   min-height: 36px;
   padding: 8px 10px;
-  font-size: 13px;
+  font-size: var(--t-caption);
   color: var(--muted-foreground);
 }
 .editor-section-nav button[aria-current] {
   color: var(--primary);
-  background: #e8f0f8;
+  background: var(--accent);
   font-weight: 600;
   box-shadow: none;
 }
 .editor-scroll h3 {
-  font-size: 16px;
+  font-size: var(--t-base);
   font-weight: 600;
 }
 .editor-footer {
   border-top: 1px solid var(--border);
   padding: 16px 24px;
-  background: #fafbfc;
+  background: var(--card);
   gap: 8px;
 }
 .editor-repeat-row,
 .carry-entry {
   border: 1px solid var(--border);
   border-radius: 8px;
-  background: #fafbfc;
+  background: var(--card);
   padding: 16px;
 }
 .editor-error {
   border-radius: 6px;
   background: var(--destructive-surface);
   color: var(--destructive);
-  font-size: 13px;
+  font-size: var(--t-caption);
   line-height: 1.55;
 }
 .delete-confirm[data-slot="button"] {
@@ -522,23 +518,23 @@ progress::-webkit-progress-value {
 }
 .recovery-notice {
   border-color: var(--warning-border);
-  background: #fff9ee;
+  background: var(--warning-surface);
   border-radius: 8px;
-  font-size: 13px;
+  font-size: var(--t-caption);
 }
 .save-message {
   border: 1px solid var(--border);
   border-radius: 8px;
-  background: #fff;
+  background: var(--card);
   color: var(--foreground);
-  box-shadow: 0 4px 12px #182a4014;
+  box-shadow: var(--shadow);
 }
 .workspace-refresh {
   background: var(--card);
   color: var(--muted-foreground);
   border-color: var(--border);
-  box-shadow: 0 4px 12px #182a400a;
-  font-size: 12px;
+  box-shadow: var(--shadow-sm);
+  font-size: var(--t-xs);
 }
 .workspace-spinner {
   width: 16px;
@@ -562,7 +558,7 @@ progress::-webkit-progress-value {
 }
 .skeleton {
   border-radius: 4px;
-  background: #edf0f2;
+  background: var(--muted);
   animation: none;
 }
 .workspace-entry-veil {
@@ -594,7 +590,7 @@ progress::-webkit-progress-value {
 }
 @media (max-width: 760px) {
   body {
-    font-size: 16px;
+    font-size: var(--t-base);
   }
   .site-width {
     padding: 24px 16px 32px;
@@ -603,7 +599,7 @@ progress::-webkit-progress-value {
     min-height: 60px;
   }
   .workspace .site-sidebar {
-    background: #f7f8fa;
+    background: var(--card);
   }
   .page-heading,
   .overview-header {
@@ -614,7 +610,7 @@ progress::-webkit-progress-value {
   .page-heading h1,
   .overview-header h1,
   .milestone-page h1 {
-    font-size: 24px;
+    font-size: var(--t-h2);
   }
   .page-heading > .record-toolbar {
     margin-left: 0;
@@ -622,7 +618,7 @@ progress::-webkit-progress-value {
     justify-content: flex-start;
   }
   .record-toolbar .action {
-    font-size: 13px;
+    font-size: var(--t-caption);
   }
   .overview-recent a {
     padding: 16px;
@@ -640,10 +636,10 @@ progress::-webkit-progress-value {
     gap: 16px;
   }
   .portfolio-summary dt {
-    font-size: 12px;
+    font-size: var(--t-xs);
   }
   .portfolio-summary dd {
-    font-size: 24px;
+    font-size: var(--t-h2);
   }
   .portfolio-coverage {
     border-top: 1px solid var(--border);
@@ -667,11 +663,11 @@ progress::-webkit-progress-value {
   .report-table td {
     padding: 8px 0;
     border-bottom: 0;
-    font-size: 14px;
+    font-size: var(--t-sm);
   }
   .report-table td::before {
     color: var(--muted-foreground);
-    font-size: 13px;
+    font-size: var(--t-caption);
   }
   .editor-dialog {
     max-height: calc(100dvh - 24px);
@@ -690,7 +686,7 @@ progress::-webkit-progress-value {
     padding: 20px 16px;
   }
   .editor-field :is(input, textarea, select) {
-    font-size: 16px;
+    font-size: var(--t-base);
   }
   .editor-section-nav {
     padding: 8px 12px;
@@ -722,14 +718,14 @@ progress::-webkit-progress-value {
 .sidebar-editor-access { flex: none; margin-top: 16px; border-top: 1px solid var(--border); padding: 16px 4px 0; }
 .sidebar-editor-access .action, .sidebar-editor-access .editor-session { width: 100%; }
 .sidebar-editor-access .editor-session { display: grid; gap: 8px; }
-.sidebar-editor-access :is(.local-editor-label, .storage-note) { display: block; padding: 8px; font-size: 12px; line-height: 1.5; color: var(--muted-foreground); }
+.sidebar-editor-access :is(.local-editor-label, .storage-note) { display: block; padding: 8px; font-size: var(--t-xs); line-height: 1.5; color: var(--muted-foreground); }
 
 .project-report-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin: 20px 0 16px; }
 .project-report-toolbar .library-count { margin: 0; }
 .project-report-tools { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
-.report-sort { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--muted-foreground); }
-.report-sort select { min-height: 36px; padding: 6px 10px; border: 1px solid var(--input); border-radius: 6px; background: var(--card); color: var(--foreground); font: inherit; font-size: 13px; }
+.report-sort { display: flex; align-items: center; gap: 8px; font-size: var(--t-xs); color: var(--muted-foreground); }
+.report-sort select { min-height: 36px; padding: 6px 10px; border: 1px solid var(--input); border-radius: 6px; background: var(--card); color: var(--foreground); font: inherit; font-size: var(--t-caption); }
 @media (max-width: 760px) {
   .project-report-toolbar { flex-wrap: wrap; gap: 12px; }
-  .report-sort select { min-height: 44px; font-size: 16px; max-width: 100%; }
+  .report-sort select { min-height: 44px; font-size: var(--t-base); max-width: 100%; }
 }

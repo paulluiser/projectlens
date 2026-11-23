@@ -1,6 +1,6 @@
 import { useEffect, useId, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { CalendarIcon, ChevronDownIcon, ChevronUpIcon, FlagIcon, PeopleIcon, PersonIcon, TargetIcon } from '@/components/ui/icons'
+import { CalendarIcon, ChecklistIcon, ChevronDownIcon, ChevronUpIcon, FlagIcon, PeopleIcon, PersonIcon } from '@/components/ui/icons'
 import { fade } from '@/lib/motion'
 
 const shortDate = new Intl.DateTimeFormat('en', { year: 'numeric', month: 'short', day: 'numeric', timeZone: 'UTC' })
@@ -95,7 +95,6 @@ export function NextMonthPlan({ report, reduced }) {
   return (
     <section className="next-plan">
       <div className="plan-heading">
-        <span className="section-icon" aria-hidden="true"><CalendarIcon label="" /></span>
         <div>
           <h2>{month} plan</h2>
           <p>{items.length} {items.length === 1 ? 'action' : 'actions'} across {deadlines.length} {deadlines.length === 1 ? 'deadline' : 'deadlines'}</p>
@@ -108,7 +107,7 @@ export function NextMonthPlan({ report, reduced }) {
         <div className="plan-layout">
           <section className="workspace-panel plan-actions" aria-labelledby="plan-actions-title">
             <div className="panel-heading">
-              <TargetIcon label="" /><h3 id="plan-actions-title">{activeDate ? `Planned actions · ${dayLabel(activeDate)}` : 'Planned actions'}</h3>
+              <ChecklistIcon label="" /><h3 id="plan-actions-title">{activeDate ? `Planned actions · ${dayLabel(activeDate)}` : 'Planned actions'}</h3>
             </div>
             <p className="sr-only" role="status">{count} {count === 1 ? 'action' : 'actions'} shown</p>
             {items.length === 0 && <p className="plan-empty">No actions are listed for this month.</p>}

@@ -1,10 +1,10 @@
-# Project Lens design system
+# Lens design system
 
-Updated November 19, 2026 after the end-to-end visual audit. The reporting content leads the interface. Keep the existing Project Lens identity, routes, fields, publication model and editor workflows.
+Updated November 23, 2026: Lens now uses the Kern design system (from `~/Documents/Groundwork`), rebranded as Lens. Reference screenshots of Kern are in `docs/design-references/kern/`. Lens keeps its own aperture logo; Kern's logo is not used. The reporting content leads the interface. Keep the existing Project Lens identity, routes, fields, publication model and editor workflows.
 
 ## Direction and references
 
-Use a calm reporting workspace: white reading surfaces, pale neutral navigation, dark ink and one blue action colour. Public pages use an editorial introduction and the report's real four-chapter outline. Workspace pages use aligned data, compact controls and clear separators.
+Quiet, exact, tool-like, as in Kern: warm paper surfaces, near-black ink, one green. Public pages follow the live Kern site (https://kern-ai.vercel.app/): a centred hero whose headline retypes the audience (project leads, delivery teams, stakeholders) in green with a block cursor, a "What you get" grid with green icons, three figures that resolve into place, one dark call-to-action band, and a four-column footer. Inner pages use an eyebrow, an h1 and the same icon grid. Everything is scoped to `.lx` in kern.css. Workspace pages use aligned data, compact controls and clear separators.
 
 References inform hierarchy and interaction, rather than copying another product:
 
@@ -15,13 +15,15 @@ References inform hierarchy and interaction, rather than copying another product
 
 ## Tokens
 
-`src/styles/tokens.css` is authoritative. Ink is #20252b, secondary text #59636e, primary blue #2563a6, hover #1c4f85, canvas #f6f7f8, surfaces white, dividers #dce1e6 and input boundaries #8995a1. Destructive, warning and success colours communicate actual state and always have a text equivalent. Do not infer success from a numerical increase.
+`src/styles/tokens.css` is authoritative, and its values come from Kern's Design system v2. Page #F5F3EE, raised surfaces #FBFAF7 (no pure white anywhere), tints #ECE9E2 and #E3DFD6, lines #E2DED5, control edges #8E8A83. Ink #111110, secondary text #3D3B37, muted #67645E. Primary buttons are ink with paper text; secondary buttons are hairline outlines. Focus rings are blue (#1F5FA6).
 
-Use the system sans stack for functional text. Georgia is limited to the public home headline. Body text is generally 14–16px; supporting text 13px; page titles 24px. Phone inputs use 16px text. Use the 4px spacing scale. Controls have 6px corners and surfaces 8px corners. Avoid nested rounded cards where rows and separators explain the relationship.
+One green (#17734D, soft #E7F3EC) marks progress and position only: completion bars, the current navigation row, today markers, done states and the landing headline's last phrase. Destructive (#B42318), warning (#8A5300), and success colours communicate actual state and always have a text equivalent. Do not infer success from a numerical increase.
+
+Geist Mono for everything (loaded from `@fontsource/geist-mono` at 400, 500 and 600 only; never use 700). Hierarchy comes from size, weight and colour. Use the scale tokens `--t-micro` 11 through `--t-display`; headings and display are tracked at -0.02em at most. Sentence case for headings, tabs and buttons; headings and buttons end without a period. Phone inputs use 16px text. Use the 4px spacing scale. Controls have 8px corners, surfaces 10px, cards 14px. Depth comes from borders; shadows only on layers that float. Top bars are translucent paper with a hairline, and section navigation is a segmented control on a tint. Avoid nested rounded cards where rows and separators explain the relationship.
 
 ## Navigation and layout
 
-The desktop toolbar is 60px high and the sidebar 232px wide. Narrow screens use an accessible navigation drawer and expandable search. Preserve focus trapping, Escape dismissal, scroll locking and trigger focus restoration. Keep one primary page heading, a skip link and labelled icon controls.
+The desktop toolbar is 56px high and the sidebar 248px wide. Narrow screens use an accessible navigation drawer and expandable search. Preserve focus trapping, Escape dismissal, scroll locking and trigger focus restoration. Keep one primary page heading, a skip link and labelled icon controls.
 
 Projects is the all-project dashboard. A project opens its monthly report directory, with Reports and Milestones as sibling tabs. Desktop tables become labelled records on phones. Empty and filtered states explain the next action. Keep visible context when refreshing or recovering from an error.
 
@@ -33,7 +35,7 @@ Milestones use compact aligned rows on wide screens and cards at 1024px or below
 
 Keep all report sections mounted for native validation, with section shortcuts and a separate action footer. Required fields, optional markers, helper text and errors must remain clear. Dialogs share a single close control, labelled title, constrained scrolling and consistent gutters. Keep entered values after failures. Unsaved recovery is browser-local; Save draft persists to the shared store.
 
-Primary actions use blue; destructive final actions use red and explicit confirmation. Touch targets are at least 44px. Inputs, selection, invalid, disabled, busy and focus states must be discernible. Measured input boundary contrast is 3.05:1 on white; primary button contrast is 6.15:1.
+Primary actions use ink; destructive final actions use red and explicit confirmation. Touch targets are at least 44px. Inputs, selection, invalid, disabled, busy and focus states must be discernible. Measured input boundary contrast is 3.05:1 on white; primary button contrast is 6.15:1.
 
 Drafts remain editor-only. Publication replaces the reader snapshot. Shared URLs open the publication. Concurrent changes retain the existing version check and explicit recovery. Do not change these rules for appearance.
 
@@ -41,8 +43,35 @@ Drafts remain editor-only. Publication replaces the reader snapshot. Shared URLs
 
 No decorative orb, WebGL dependency, number scrambling or artificial navigation delay. Report chapters render immediately. Small state transitions use 140–240ms and respect reduced motion. Busy indicators and page-shaped skeletons communicate actual loading; no fabricated percentages. CSS animations pause in hidden tabs.
 
-React, shadcn/ui/Radix, Tailwind, existing CSS and Framer Motion remain. New surface rules are scoped in workspace-remake.css, public-remake.css and reports-remake.css; milestone rules live in milestones.css.
+React, shadcn/ui/Radix, Tailwind, existing CSS and Framer Motion remain. New surface rules are scoped in workspace-remake.css, public-remake.css and reports-remake.css; milestone rules live in milestones.css. Kern's component signatures (header bar, segmented nav, headline, buttons) live in kern.css, which loads last.
 
 ## Verification
 
 See [the November 19 audit](docs/ui-ux-audit-2026-11-19.md) for scope, findings, measurements and remaining device/assistive-technology checks. Browser measurements cover actual CSS widths, accounting for browser zoom. Automated interaction tests complement visual inspection; neither replaces real screen-reader and mobile-device testing.
+
+
+## Guidelines
+
+Audited against the Vercel Web Interface Guidelines on November 23, 2026. Lens deliberately keeps Kern's sentence case instead of the guidelines' Title Case. Global rules in kern.css cover balanced headings, `touch-action: manipulation`, scroll margins under the sticky header, explicit colours on native selects and a theme colour that matches the page.
+
+## Workspace recreation (November 23, 2026)
+
+Every workspace screen is rebuilt on Kern's components in `src/styles/kern-app.css`. `src/styles/index.css` puts the older sheets in a `legacy` cascade layer, so the Kern layers (`kern.css`, `kern-app.css`) always win without `!important`.
+
+- Pages open with an eyebrow, an h1 at `--t-h1` and a muted description; actions sit on the right. Icon tiles beside titles are gone.
+- Overview follows Kern's home: one dark spotlight (latest review), a stats card with a green meter, then a row list where the latest row is tinted green.
+- Projects are marked with Kern's monogram (initials on the green tint), not colour-coded shapes, because colour is kept for meaning.
+- Section switches (project tabs, report chapters, milestone views and filters) are Kern's segmented control.
+- Status marks use Kern's verdict shape code: solid for published or completed, outlined for draft or in progress, dashed for awaiting or planned. Counts are neutral pills.
+- Cards are 14px corners on raised paper, lists and tables are bordered row groups, dialogs and menus follow Kern's dialog and dropdown recipes, and progress bars are 8px green meters.
+- Milestone filter, search and view are kept in the URL (`?status=`, `?search=`, `?view=`).
+- Every font size uses a Kern scale token; there are no px font sizes left.
+
+## Projects, Weekly and charts (November 23, 2026)
+
+- **Sidebar:** each project is a disclosure group with four sections in a fixed order: Overview, Reports, Milestones, Weekly. The current project opens automatically. The page tabs repeat the same four sections.
+- **Weekly:** each project has weeks with an editor-set start and end (up to 31 days) and an optional label. Tasks have a title, owner, target date, status (to do, in progress, blocked, done) and notes. The board is the default view and the list is the alternative; every card has a status menu as the keyboard and touch alternative to dragging. Week, view, search and owner live in the URL.
+- **Status palette** (tokens `--status-done`, `--status-active`, `--status-blocked`, `--status-todo`): green, blue, red and grey. It is validated with the dataviz checker in bar order (done, in progress, blocked, to do). Statuses always carry a label, and marks follow Kern's verdict shapes: solid for done, outlined for in progress, dashed for not started.
+- **Charts** are built in `Charts.jsx` and follow the dataviz mark specs: columns at most 24px, 4px rounded tops, hairline grid, a legend for two or more series, a hover tooltip per mark, and a table view. The neutral series is `#CFC9BE`; it relies on labels and the table, never on contrast alone.
+- **Illustrations** are in `Illustrations.jsx`: hairline ink, paper fill and one green, decorative only, used in empty and "not found" states.
+- The full analysis is in [docs/ui-ux-analysis-2026-11-23.md](docs/ui-ux-analysis-2026-11-23.md).

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { Link, useParams, useSearchParams } from 'react-router-dom'
 import { Dialog, DropdownMenu } from 'radix-ui'
 import AddGlyph from '@atlaskit/icon/core/add'
 import EditGlyph from '@atlaskit/icon/core/edit'
@@ -10,8 +10,10 @@ import { ModalHeader } from '@/components/ui/modal-header'
 import { useWorkspace, WorkspaceNotice } from '@/lib/workspace'
 import { projectsPath } from '@/lib/routes.mjs'
 import { ProjectTabs } from './ProjectTabs'
-import { ProjectMark } from './ProjectMark'
 import { milestoneStatuses as statuses, milestoneDate as dateFormat, shortMilestoneDate, milestoneTime, milestoneTimeline, milestoneCalendarDays, shiftMilestoneMonth } from '@/lib/milestones.mjs'
+import { RoadmapIllustration, SearchIllustration } from './Illustrations'
+
+const stampMonth = new Intl.DateTimeFormat(undefined, { month: 'short', timeZone: 'UTC' })
 
 const AddIcon = AddGlyph.default ?? AddGlyph
 const EditIcon = EditGlyph.default ?? EditGlyph
@@ -79,9 +81,9 @@ function MilestoneDialog({ project, item, intent = 'create' }) {
           <div className="editor-scroll">
             {error && <p className="editor-error" role="alert">{error}</p>}
             {deleting ? <p>Delete <strong>{item.title}</strong>?</p> : <fieldset className="editor-form-fields" disabled={busy}>
-              <label className="editor-field"><span>Milestone title</span><input name="title" required maxLength={160} value={form.title ?? ''} onChange={update} /></label>
+              <label className="editor-field"><span>Milestone title</span><input name="title" autoComplete="off" required maxLength={160} value={form.title ?? ''} onChange={update} /></label>
               <div className="editor-grid">
-                <label className="editor-field"><span>Owner</span><input name="owner" required maxLength={120} value={form.owner ?? ''} onChange={update} /></label>
+                <label className="editor-field"><span>Owner</span><input name="owner" autoComplete="off" required maxLength={120} value={form.owner ?? ''} onChange={update} /></label>
                 <label className="editor-field"><span>Target date <span className="field-optional">(optional)</span></span><input aria-label="Target date" name="dueDate" type="date" min="1900-01-01" max="9999-12-31" value={form.dueDate ?? ''} onChange={update} /></label>
               </div>
               <div className="editor-grid">
@@ -267,12 +269,22 @@ function MilestonePage() {
   const { projectId } = useParams()
   const { workspace } = useWorkspace()
   const project = workspace.projects.find(item => item.id === projectId)
-  const [status, setStatus] = useState('all')
-  const [search, setSearch] = useState('')
-  const [view, setView] = useState('roadmap')
-  useEffect(() => { setStatus('all'); setSearch('') }, [projectId])
-  useEffect(() => { document.title = `Milestones · ${project?.name ?? 'Project unavailable'} · Project Lens` }, [project?.name])
-  if (!project) return <main className="site-width missing-page" id="main-content"><h1>Project unavailable</h1><Link to={projectsPath}>Back to projects</Link></main>
+  // Filter, search and view live in the URL so they survive reloads and can be shared
+  const [params, setParams] = useSearchParams()
+  const status = params.get('status') in statuses ? params.get('status') : 'all'
+  const search = params.get('search') ?? ''
+  const view = ['calendar', 'list'].includes(params.get('view')) ? params.get('view') : 'roadmap'
+  const setParam = (key, value, fallback) => setParams(previous => {
+    const next = new URLSearchParams(previous)
+    if (!value || value === fallback) next.delete(key)
+    else next.set(key, value)
+    return next
+  }, { replace: true, preventScrollReset: true })
+  const setStatus = value => setParam('status', value, 'all')
+  const setSearch = value => setParam('search', value, '')
+  const setView = value => setParam('view', value, 'roadmap')
+  useEffect(() => { document.title = `Milestones · ${project?.name ?? 'Project unavailable'} · Lens` }, [project?.name])
+  if (!project) return <main className="site-width missing-page" id="main-content" tabIndex={-1}><h1>Project unavailable</h1><p>This project may have been renamed or removed.</p><Link className="text-link" to={projectsPath}>Back to projects</Link></main>
   const items = [...(project.milestones ?? [])].sort((a, b) => (a.dueDate || '9999-12-31').localeCompare(b.dueDate || '9999-12-31'))
   const counts = Object.fromEntries(Object.keys(statuses).map(key => [key, items.filter(item => item.status === key).length]))
   const completed = counts.completed
@@ -286,8 +298,7 @@ function MilestonePage() {
   const filtered = items.filter(item => (status === 'all' || item.status === status) && `${item.title} ${item.owner}`.toLowerCase().includes(search.trim().toLowerCase()))
   return <main className="site-width milestone-page" id="main-content" tabIndex={-1}>
     <div className="page-heading directory-heading">
-      <span className="section-icon"><ProjectMark project={project} /></span>
-      <div><h1>{project.name}</h1><p>Milestones</p></div>
+      <div><p className="page-eyebrow"><Link to={projectsPath}>Projects</Link></p><h1>{project.name}</h1><p>Milestones, owners and dates for this project.</p></div>
       <div className="record-toolbar"><MilestoneDialog project={project} /></div>
     </div>
     <ProjectTabs projectId={project.id} />
@@ -302,24 +313,27 @@ function MilestonePage() {
       </div>
       <div className="milestone-next">
         {next ? <>
-          <div className="milestone-date-stamp" aria-hidden="true"><span>{new Date(milestoneTime(next.dueDate)).toLocaleDateString('en', { month: 'short', timeZone: 'UTC' })}</span><strong>{next.dueDate.slice(-2)}</strong></div>
+          <div className="milestone-date-stamp" aria-hidden="true"><span>{stampMonth.format(milestoneTime(next.dueDate))}</span><strong>{next.dueDate.slice(-2)}</strong></div>
           <div><h2>Earliest open checkpoint</h2><p className="milestone-next-title">{next.title}</p><span className="milestone-next-owner"><PersonIcon label="" size="small" />{next.owner}<span aria-hidden="true">·</span><time dateTime={next.dueDate}>{dateFormat.format(milestoneTime(next.dueDate))}</time></span></div>
           <span className="sr-only">Due {dateFormat.format(milestoneTime(next.dueDate))}.</span>
         </> : <><span className="milestone-finished-symbol"><SuccessIcon label="" /></span><div><h2>{items.length && completed === items.length ? 'All milestones completed' : items.length ? 'Awaiting target dates' : 'Ready for your first milestone'}</h2><p>{items.length && completed === items.length ? 'Every checkpoint is complete.' : items.length ? `${undated} milestones are not scheduled yet.` : 'Add an outcome and a target date.'}</p></div></>}
       </div>
     </section>
     <div className="milestone-toolbar">
-      <div className="milestone-statuses" role="group" aria-label="Filter milestones by status">
-        {Object.entries({ all: 'All milestones', ...statuses }).map(([value, label]) =>
-          <button key={value} type="button" data-status={value} aria-pressed={status === value} onClick={() => setStatus(value)}><i aria-hidden="true" />{label}<span>{value === 'all' ? items.length : counts[value]}</span></button>)}
+      <div className="milestone-filters">
+        <label className="milestone-search"><SearchIcon label="" size="small" /><span className="sr-only">Search milestones</span><input type="search" name="milestone-search" autoComplete="off" spellCheck={false} placeholder="Search milestones…" value={search} onChange={event => setSearch(event.target.value)} /></label>
+        <label className="milestone-status-filter">
+          <span className="sr-only">Filter by status</span>
+          <select name="milestone-status" value={status} onChange={event => setStatus(event.target.value)}>
+            <option value="all">All statuses · {items.length}</option>
+            {Object.entries(statuses).map(([value, label]) => <option key={value} value={value}>{label} · {counts[value]}</option>)}
+          </select>
+        </label>
       </div>
-      <div className="milestone-toolbar-controls">
-        <label className="milestone-search"><SearchIcon label="" size="small" /><span className="sr-only">Search milestones</span><input type="search" placeholder="Search milestones…" value={search} onChange={event => setSearch(event.target.value)} /></label>
-        <div className="milestone-view-toggle" role="group" aria-label="Milestone view">
-          <button type="button" aria-pressed={view === 'roadmap'} onClick={() => setView('roadmap')}><PlanIcon label="" size="small" />Roadmap</button>
-          <button type="button" aria-pressed={view === 'calendar'} onClick={() => setView('calendar')}><CalendarIcon label="" size="small" />Calendar</button>
-          <button type="button" aria-pressed={view === 'list'} onClick={() => setView('list')}><ChecklistIcon label="" size="small" />List</button>
-        </div>
+      <div className="milestone-view-toggle" role="group" aria-label="Milestone view">
+        <button type="button" aria-pressed={view === 'roadmap'} onClick={() => setView('roadmap')}><PlanIcon label="" size="small" />Roadmap</button>
+        <button type="button" aria-pressed={view === 'calendar'} onClick={() => setView('calendar')}><CalendarIcon label="" size="small" />Calendar</button>
+        <button type="button" aria-pressed={view === 'list'} onClick={() => setView('list')}><ChecklistIcon label="" size="small" />List</button>
       </div>
     </div>
     <p className="sr-only" role="status">{filtered.length} milestones shown</p>
@@ -338,7 +352,7 @@ function MilestonePage() {
         {filtered.map(item => <MilestoneRow project={project} item={item} timeline={timeline} today={today} key={item.id} />)}
       </ol>
       <div className="milestone-board-footer"><span>{items.some(item => item.sample) ? 'Sample milestones · edit or replace with real outcomes' : `${filtered.length} of ${items.length} milestones${undated ? ` · ${undated} not scheduled` : ''}`}</span><span><i className="milestone-diamond" />Target date</span></div>
-    </section> : <div className="milestone-empty"><FlagIcon label="" /><h2>{items.length ? 'No matching milestones' : 'No milestones yet'}</h2><p>{items.length ? 'Try another status or search.' : 'Create a milestone to track an outcome, owner, and deadline.'}</p>
+    </section> : <div className="milestone-empty">{items.length ? <SearchIllustration /> : <RoadmapIllustration />}<h2>{items.length ? 'No matching milestones' : 'No milestones yet'}</h2><p>{items.length ? 'Try another status or search.' : 'Create a milestone to track an outcome, owner, and deadline.'}</p>
       {items.length > 0 && <Button variant="outline" className="action" onClick={() => { setStatus('all'); setSearch('') }}>Clear filters</Button>}
     </div>}
   </main>

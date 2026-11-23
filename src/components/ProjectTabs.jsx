@@ -1,10 +1,16 @@
-import { NavLink } from 'react-router-dom'
-import { CalendarIcon, FlagIcon } from '@/components/ui/icons'
-import { milestonesPath, projectPath } from '@/lib/routes.mjs'
+import { NavLink, useLocation } from 'react-router-dom'
+import { projectSections } from '@/lib/routes.mjs'
+import { projectSection, sectionIcons } from './ProjectNav'
 
 export function ProjectTabs({ projectId }) {
+  const { pathname } = useLocation()
+  const current = projectSection(pathname, projectId)
   return <nav className="project-tabs" aria-label="Project sections">
-    <NavLink to={projectPath(projectId)} end><CalendarIcon label="" /> Reports</NavLink>
-    <NavLink to={milestonesPath(projectId)} end><FlagIcon label="" /> Milestones</NavLink>
+    {projectSections.map(section => {
+      const Icon = sectionIcons[section.id]
+      return <NavLink key={section.id} to={section.path(projectId)} end aria-current={current === section.id ? 'page' : undefined}>
+        <Icon label="" /> {section.label}
+      </NavLink>
+    })}
   </nav>
 }

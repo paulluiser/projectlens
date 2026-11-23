@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 
+const savedAtFormat = new Intl.DateTimeFormat(undefined, { dateStyle: 'medium', timeStyle: 'short' })
+
 export function recoveryKey(kind, projectId, monthId) {
   return `lens-recovery:${kind}:${projectId ?? 'new'}:${monthId ?? 'new'}`
 }
@@ -32,6 +34,6 @@ export function useRecovery(initial, key, onDirty) {
     return () => window.removeEventListener('beforeunload', warn)
   }, [dirty])
   function discard() { try { localStorage.removeItem(key) } catch { /* Storage may be unavailable. */ } setCandidate(null) }
-  const recovery = <>{candidate && <div className="recovery-notice"><p>A recovery copy from {new Date(candidate.savedAt).toLocaleString()} is available on this device.</p><button type="button" className="text-link" onClick={() => { setValue(candidate.value); setCandidate(null) }}>Restore recovery copy</button><button type="button" className="text-link" onClick={discard}>Discard recovery copy</button></div>}{storageError && <p role="alert">{storageError}</p>}</>
+  const recovery = <>{candidate && <div className="recovery-notice"><p>A recovery copy from {savedAtFormat.format(new Date(candidate.savedAt))} is available on this device.</p><button type="button" className="text-link" onClick={() => { setValue(candidate.value); setCandidate(null) }}>Restore recovery copy</button><button type="button" className="text-link" onClick={discard}>Discard recovery copy</button></div>}{storageError && <p role="alert">{storageError}</p>}</>
   return { value, setValue, recovery }
 }

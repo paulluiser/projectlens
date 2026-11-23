@@ -1,59 +1,118 @@
+/* Lens design tokens, taken from the Kern design system (Design system v2):
+   warm paper surfaces, near-black ink, one green, Geist Mono, hairline borders, quiet depth.
+   Every colour in the app comes from here; never hard-code one in a component stylesheet. */
 :root {
   color-scheme: light;
-  --launch-bg: #0b1427;
-  --launch-text: #f5f8ff;
-  --launch-muted: #becce4;
-  --launch-accent: #99c6ff;
-  --launch-rule: #ffffff30;
-  --launch-glow: #172e59;
-  --font-ui: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  --desktop: #f6f7f8;
-  --window-shadow: #20365129;
-  --toolbar: #ffffff;
-  --sidebar: #f5f6f7;
-  --ink: #20252b;
-  --ink-muted: #bac6d2;
-  --drawer-scrim: #20252b66;
-  --dialog-scrim: #20252b80;
-  --sheet-header: #ffffff;
-  --field-surface: #ffffff;
-  --disabled-surface: #eef0f2;
-  --disabled-text: #626b75;
-  --sheet-shadow: #182d4b3d;
-  --focus-on-dark: #b2d7ff;
-  --cloud: #f3f4f5;
-  --jet: #20252b;
-  --blue: #2563a6;
-  --background: #ffffff;
-  --foreground: var(--jet);
-  --card: #ffffff;
+
+  /* Kern palette */
+  --paper: #F5F3EE;          /* page */
+  --paper-raised: #FBFAF7;   /* cards, header, inputs; also text on ink or green */
+  --tint: #ECE9E2;
+  --tint-2: #E3DFD6;
+  --line: #E2DED5;
+  --line-strong: #8E8A83;    /* control edges, 3:1 */
+  --ink-1: #111110;
+  --ink-2: #3D3B37;
+  --ink-3: #67645E;
+  --brand: #17734D;          /* the one green: progress, position, current, done */
+  --brand-hover: #115E3E;
+  --brand-soft: #E7F3EC;
+  --brand-line: #9CCBB3;
+  --brand-ink: #0F5034;
+  --info: #1F5FA6;
+  --info-soft: #E8F0F9;
+  --idea: #6A3DBF;
+  --idea-soft: #F1EBFB;
+
+  /* Status palette, validated with the dataviz checker in this bar order (done, in progress, blocked, to do):
+     CVD and normal-vision separation pass; to do is a deliberate neutral and always carries its label. */
+  --status-done: #17734D;
+  --status-active: #1F5FA6;
+  --status-active-soft: #E8F0F9;
+  --status-blocked: #B42318;
+  --status-todo: #8E8A83;
+
+  /* Type: Geist Mono for everything, weights 400 / 500 / 600 only */
+  --font-ui: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --font-mono: var(--font-ui);
+  --t-micro: 11px;
+  --t-xs: 12px;
+  --t-caption: 13px;
+  --t-sm: 14px;
+  --t-base: 16px;
+  --t-lede: 18px;
+  --t-h3: 20px;
+  --t-h2: 24px;
+  --t-h1: clamp(28px, 3.2vw, 40px);
+  --t-display: clamp(36px, 5.4vw, 64px);
+  --lh-tight: 1.1;
+  --lh-snug: 1.3;
+  --lh-text: 1.5;
+  --lh-body: 1.6;
+
+  /* Depth: borders first; shadows only on layers that float */
+  --shadow-sm: 0 1px 2px rgba(17, 17, 16, .06);
+  --shadow: 0 1px 2px rgba(17, 17, 16, .04), 0 8px 24px -12px rgba(17, 17, 16, .16);
+  --shadow-lg: 0 2px 4px rgba(17, 17, 16, .04), 0 24px 48px -16px rgba(17, 17, 16, .24);
+
+  /* Presentation mode (dark stage) on Kern's ink */
+  --launch-bg: #111110;
+  --launch-text: #FBFAF7;
+  --launch-muted: #B5B2AC;
+  --launch-accent: #4CC38A;
+  --launch-rule: #FBFAF730;
+  --launch-glow: #1C1C1A;
+
+  /* Lens semantic tokens, pointed at the Kern palette */
+  --desktop: var(--paper);
+  --window-shadow: rgba(17, 17, 16, .12);
+  --toolbar: var(--paper);
+  --sidebar: var(--paper);
+  --ink: var(--ink-1);
+  --ink-muted: var(--line-strong);
+  --drawer-scrim: rgba(17, 17, 16, .4);
+  --dialog-scrim: rgba(17, 17, 16, .4);
+  --sheet-header: var(--paper-raised);
+  --field-surface: var(--paper-raised);
+  --disabled-surface: var(--tint);
+  --disabled-text: var(--ink-3);
+  --sheet-shadow: rgba(17, 17, 16, .24);
+  --focus-on-dark: #80B4F0;
+  --cloud: var(--paper);
+  --jet: var(--ink-1);
+  --blue: var(--info);
+  --background: var(--paper);
+  --foreground: var(--ink-1);
+  --card: var(--paper-raised);
   --card-foreground: var(--foreground);
   --popover: var(--card);
   --popover-foreground: var(--foreground);
-  --primary: var(--blue);
-  --primary-hover: #1c4f85;
-  --primary-foreground: #fff;
-  --secondary: #eceff2;
+  --primary: var(--ink-1);           /* primary buttons are ink, as in Kern */
+  --primary-hover: #2B2A27;
+  --primary-active: #3D3B37;
+  --primary-foreground: var(--paper-raised);
+  --secondary: var(--tint);
   --secondary-foreground: var(--foreground);
-  --muted: #f3f5f6;
-  --muted-foreground: #59636e;
-  --accent: #e8f0f9;
-  --accent-foreground: #205a98;
-  --destructive: #b42318;
-  --destructive-surface: #fef0ee;
-  --destructive-hover: #8f1c13;
-  --warning-border: #b4883a;
-  --border: #dce1e6;
-  --input: #8995a1;
-  --ring: var(--blue);
-  --success: #256647;
-  --success-surface: #edf5ef;
-  --warning: #865300;
-  --warning-surface: #fcf4e6;
-  --chart-success: var(--blue);
-  --chart-remaining: var(--secondary);
-  --header-height: 60px;
-  --sidebar-width: 232px;
+  --muted: var(--tint);
+  --muted-foreground: var(--ink-3);
+  --accent: var(--brand-soft);       /* current / selected rows */
+  --accent-foreground: var(--brand-ink);
+  --destructive: #B42318;
+  --destructive-surface: #FCEBE9;
+  --destructive-hover: #8F1C13;
+  --warning-border: #B4883A;
+  --border: var(--line);
+  --input: var(--line-strong);
+  --ring: var(--info);               /* focus stays blue for contrast, as in Kern */
+  --success: var(--brand);
+  --success-surface: var(--brand-soft);
+  --warning: #8A5300;
+  --warning-surface: #FBF1DC;
+  --chart-success: var(--brand);
+  --chart-remaining: var(--tint-2);
+
+  --header-height: 56px;
+  --sidebar-width: 248px;
   --space-1: 4px;
   --space-2: 8px;
   --space-3: 12px;
@@ -63,14 +122,15 @@
   --space-8: 32px;
   --space-10: 40px;
   --space-12: 48px;
-  --text-caption: 13px;
-  --text-small: 14px;
-  --text-body: 16px;
-  --text-title: 24px;
-  --radius-control: 6px;
-  --radius-surface: 8px;
+  --text-caption: var(--t-caption);
+  --text-small: var(--t-sm);
+  --text-body: var(--t-base);
+  --text-title: var(--t-h2);
+  --radius-control: 8px;
+  --radius-surface: 10px;
+  --radius-lg: 14px;
   --duration-fast: 140ms;
   --duration-base: 180ms;
   --duration-slow: 240ms;
-  --ease-out: cubic-bezier(.22, 1, .36, 1);
+  --ease-out: cubic-bezier(.2, .8, .2, 1);
 }

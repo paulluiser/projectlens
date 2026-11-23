@@ -1,11 +1,11 @@
-const symbols = ['folder', 'square', 'diamond', 'circle']
-const colors = ['blue', 'violet', 'teal', 'amber', 'rose']
+/* Kern's monogram: up to two initials on the green tint, like the path avatar in Kern's header.
+   Colour never varies by project, because Kern keeps colour for meaning (status, progress, position). */
+export function projectInitials(name = '') {
+  const words = name.replace(/([a-z])([A-Z])/g, '$1 $2').split(/[\s\-_.]+/).filter(word => /^[A-Za-z0-9]/.test(word) && !/^(and|of|the)$/i.test(word))
+  const letters = words.length > 1 ? [words[0][0], words.at(-1)[0]] : [...(words[0] ?? '?')].slice(0, 2)
+  return letters.join('').toUpperCase()
+}
 
 export function ProjectMark({ project }) {
-  const hash = [...project.id].reduce((value, character) => (Math.imul(value, 31) + character.charCodeAt(0)) >>> 0, 0)
-  return (
-    <span className="project-avatar project-mark" data-color={colors[hash % colors.length]} aria-hidden="true">
-      <i data-shape={symbols[Math.floor(hash / colors.length) % symbols.length]} />
-    </span>
-  )
+  return <span className="project-avatar project-mark" aria-hidden="true" translate="no">{projectInitials(project.name)}</span>
 }

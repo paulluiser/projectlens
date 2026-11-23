@@ -70,7 +70,7 @@ export function ShareReport({ projectId, monthId, chapterId, published }) {
           <Button variant="outline" className="action" disabled={!published} onClick={() => copy('progress')}>Copy report link</Button>
           <Button variant="outline" className="action" disabled={!published} onClick={() => copy(chapterId)}>Copy chapter link</Button>
           <p role="status">{message}</p>
-          {fallback && <label>Share link<input readOnly value={fallback} onFocus={event => event.target.select()} /></label>}
+          {fallback && <label>Share link<input readOnly name="share-link" spellCheck={false} value={fallback} onFocus={event => event.target.select()} /></label>}
         </Popover.Content>
       </Popover.Portal>
     </Popover.Root>

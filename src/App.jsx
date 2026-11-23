@@ -1,11 +1,12 @@
 import { lazy, Suspense, useEffect, useRef, useState, useSyncExternalStore } from 'react'
 import { AnimatePresence, MotionConfig, motion, useIsPresent } from 'framer-motion'
-import { ArrowDownRightIcon, ProjectsIcon, HomeIcon, SidebarIcon, SearchIcon } from '@/components/ui/icons'
+import { ArrowDownRightIcon, ArrowRightIcon, ProjectsIcon, HomeIcon, SidebarIcon, SearchIcon } from '@/components/ui/icons'
 import { Link, NavLink, Navigate, Route, Routes, useLocation, useNavigate, useParams } from 'react-router-dom'
 import { LoadingScreen, WorkspaceSpinner, SidebarSkeleton } from './components/LoadingScreen'
 import { Home } from './components/Home'
 import { ProjectBrand } from './components/ProjectBrand'
 import { Overview } from './components/Overview'
+import { SearchIllustration } from './components/Illustrations'
 import { landingPath, overviewPath, projectsPath, publicTabs, reportPath } from './lib/routes.mjs'
 import { fade, useReducedMotion } from './lib/motion'
 import { useWorkspace, WorkspaceProvider } from './lib/workspace'
@@ -13,6 +14,8 @@ import { useWorkspace, WorkspaceProvider } from './lib/workspace'
 const Library = lazy(() => import('./components/Library').then(({ Library }) => ({ default: Library })))
 const Report = lazy(() => import('./components/Report').then(({ Report }) => ({ default: Report })))
 const Milestones = lazy(() => import('./components/Milestones').then(({ Milestones }) => ({ default: Milestones })))
+const Weekly = lazy(() => import('./components/Weekly').then(({ Weekly }) => ({ default: Weekly })))
+const ProjectOverview = lazy(() => import('./components/ProjectOverview').then(({ ProjectOverview }) => ({ default: ProjectOverview })))
 
 const EditorAccess = lazy(() => import('./components/RecordEditor').then(({ EditorAccess }) => ({ default: EditorAccess })))
 const ProjectNav = lazy(() => import('./components/ProjectNav').then(({ ProjectNav }) => ({ default: ProjectNav })))
@@ -37,6 +40,19 @@ function Header({ expanded, onToggle, onNavigate, narrow }) {
     if (searchInput.current) searchInput.current.value = search
   }, [search])
 
+  // Kern's search shortcut: "/" focuses search unless you're typing or a dialog is open
+  useEffect(() => {
+    function onKey(event) {
+      if (event.key !== '/' || event.metaKey || event.ctrlKey || event.altKey || event.defaultPrevented) return
+      if (event.target instanceof Element && event.target.closest('input, textarea, select, [contenteditable], [role="dialog"]')) return
+      event.preventDefault()
+      if (narrow) setSearchOpen(true)
+      else searchInput.current?.focus()
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [narrow])
+
   function findReports(event) {
     event.preventDefault()
     const query = new FormData(event.currentTarget).get('q').trim()
@@ -52,14 +68,15 @@ function Header({ expanded, onToggle, onNavigate, narrow }) {
           aria-controls="workspace-sidebar" aria-expanded={expanded} onClick={onToggle}>
           <SidebarIcon label="" />
         </button>
-        <Link className="brand" to={landingPath} aria-label="Project Lens home" onClick={onNavigate}>
+        <Link className="brand" to={landingPath} aria-label="Lens home" onClick={onNavigate}>
           <ProjectBrand />
         </Link>
       </div>
       <button ref={searchToggle} type="button" className="icon-button mobile-search-toggle" aria-label={searchOpen ? 'Close search' : 'Open search'} aria-controls="global-search-form" aria-expanded={searchOpen} onClick={() => { onNavigate(); setSearchOpen(value => !value) }}><SearchIcon label="" /></button>
       <form id="global-search-form" className="global-search" role="search" onSubmit={findReports} onKeyDown={event => { if (event.key === 'Escape' && narrow) { event.preventDefault(); setSearchOpen(false); searchToggle.current?.focus() } }}>
         <SearchIcon label="" aria-hidden="true" />
-        <input ref={searchInput} name="q" type="search" aria-label="Search projects and reports" placeholder="Search projects and reports…" defaultValue={search} enterKeyHint="search" />
+        <input ref={searchInput} name="q" type="search" aria-label="Search projects and reports" placeholder="Search…" defaultValue={search} enterKeyHint="search" autoComplete="off" spellCheck={false} />
+        <kbd className="search-kbd" aria-hidden="true">/</kbd>
         <button type="submit" className="icon-button search-submit" aria-label="Submit search"><ArrowDownRightIcon label="" /></button>
       </form>
     </header>
@@ -85,11 +102,13 @@ function Sidebar({ showProjects, onNavigate, modal, onClose }) {
 }
 
 function MissingPage() {
-  useEffect(() => { document.title = 'Page unavailable · Project Lens' }, [])
+  useEffect(() => { document.title = 'Page unavailable · Lens' }, [])
   return (
     <main id="main-content" tabIndex={-1} className="site-width missing-page">
+      <SearchIllustration />
       <h1>Page unavailable</h1>
-      <Link className="text-link" to={projectsPath}>Open the report library <ArrowDownRightIcon label="" /></Link>
+      <p>This address doesn’t match a page in Lens. Check the link, or go back to your projects.</p>
+      <Link className="text-link" to={projectsPath}>Back to projects <ArrowRightIcon label="" /></Link>
     </main>
   )
 }
@@ -120,6 +139,8 @@ function RouteFrame({ page, location, reduced, covered }) {
         <Routes location={location}>
           <Route path={overviewPath} element={<Overview />} />
           <Route path={`${projectsPath}/:projectId/milestones`} element={<Milestones />} />
+          <Route path={`${projectsPath}/:projectId/weekly`} element={<Weekly />} />
+          <Route path={`${projectsPath}/:projectId/overview`} element={<ProjectOverview />} />
           <Route path={`${projectsPath}/:projectId?`} element={<Library />} />
           <Route path={`${projectsPath}/:projectId/:monthId/:chapterId?`} element={<Report />} />
           <Route path="/reports" element={<LegacyLibrary />} />
@@ -213,7 +234,7 @@ export function App() {
 
   const path = location.pathname.replace(/\/$/, '') || '/'
   const relative = path.startsWith(projectsPath + '/') ? path.slice(projectsPath.length + 1) : ''
-  const page = relative.endsWith('/milestones') ? path : relative.includes('/') ? 'report' : relative ? projectsPath : path
+  const page = /\/(milestones|weekly|overview)$/.test(relative) ? path : relative.includes('/') ? 'report' : relative ? projectsPath : path
 
   const publicPage = publicTabs.find(tab => tab.path === (path === '/' ? landingPath : path))
   if (publicPage) return <Home key={publicPage.id} page={publicPage} />

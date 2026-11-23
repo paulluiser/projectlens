@@ -379,3 +379,57 @@ test('milestone saves use the strong Blob ETag instead of the compressed weak va
   assert.equal(second.status,200,JSON.stringify(second.body))
   assert.equal((await update(initial.version,'2026-06-03')).status,409,'genuine stale edits remain protected')
 })
+
+test('weekly brackets and tasks support full CRUD with validation and conflict protection', async t => {
+  const h = await fixture(t)
+  let { body: state } = await call(h.workspace)
+  const post = (action, version, extra) => call(h.workspace, 'POST', { action, expectedVersion: version, projectId: 'simsdotnet', ...extra })
+  // a manually set bracket, not tied to calendar weeks
+  const week = { start: '2026-11-19', end: '2026-11-26', label: 'Sprint 14' }
+  for (const bad of [{ ...week, end: '2026-11-18' }, { ...week, start: '2026-02-30' }, { ...week, end: '2026-12-31' }, { ...week, label: 'x'.repeat(81) }, { end: '2026-11-26' }]) {
+    assert.equal((await post('createWeek', state.version, { data: bad })).status, 400)
+  }
+  const created = await post('createWeek', state.version, { data: week })
+  assert.equal(created.status, 200)
+  const saved = created.body.projects[0].weeks.at(-1)
+  assert.deepEqual({ start: saved.start, end: saved.end, label: saved.label, tasks: saved.tasks }, { ...week, tasks: [] })
+  assert.equal((await post('createWeek', state.version, { data: week })).status, 409, 'stale version is rejected')
+  state = created.body
+
+  const task = { title: 'Regression test AP module', owner: 'Rica', dueDate: '2026-11-24', status: 'todo', notes: 'Use the October build' }
+  for (const bad of [{ ...task, status: 'doing' }, { ...task, dueDate: '' }, { ...task, owner: '' }, { ...task, title: 'x'.repeat(161) }]) {
+    assert.equal((await post('createTask', state.version, { weekId: saved.id, data: bad })).status, 400)
+  }
+  assert.equal((await post('createTask', state.version, { weekId: 'missing', data: task })).status, 404)
+  const withTask = await post('createTask', state.version, { weekId: saved.id, data: task })
+  assert.equal(withTask.status, 200)
+  const savedTask = withTask.body.projects[0].weeks.at(-1).tasks[0]
+  assert.equal(savedTask.title, task.title)
+  state = withTask.body
+
+  const moved = await post('updateTask', state.version, { weekId: saved.id, taskId: savedTask.id, data: { ...task, status: 'done' } })
+  assert.equal(moved.status, 200)
+  assert.equal(moved.body.projects[0].weeks.at(-1).tasks[0].status, 'done')
+  state = moved.body
+  assert.equal((await post('updateTask', state.version, { weekId: saved.id, taskId: 'missing', data: task })).status, 404)
+
+  const renamed = await post('updateWeek', state.version, { weekId: saved.id, data: { ...week, label: 'Sprint 14 (extended)', end: '2026-11-28' } })
+  assert.equal(renamed.status, 200)
+  assert.equal(renamed.body.projects[0].weeks.at(-1).end, '2026-11-28')
+  assert.equal(renamed.body.projects[0].weeks.at(-1).tasks.length, 1, 'editing the bracket keeps its tasks')
+  state = renamed.body
+
+  const removedTask = await post('deleteTask', state.version, { weekId: saved.id, taskId: savedTask.id })
+  assert.equal(removedTask.status, 200)
+  assert.equal(removedTask.body.projects[0].weeks.at(-1).tasks.length, 0)
+  const removedWeek = await post('deleteWeek', removedTask.body.version, { weekId: saved.id })
+  assert.equal(removedWeek.status, 200)
+  assert.equal((await call(h.workspace)).body.projects[0].weeks.length, 0)
+})
+
+test('weekly writes require editor access', async t => {
+  const h = await fixture(t, { LENS_EDITOR_PASSWORD: 'secret' })
+  const { body } = await call(h.workspace)
+  const result = await call(h.workspace, 'POST', { action: 'createWeek', projectId: 'simsdotnet', expectedVersion: body.version, data: { start: '2026-11-19', end: '2026-11-26' } })
+  assert.equal(result.status, 401)
+})

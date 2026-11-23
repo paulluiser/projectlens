@@ -16,6 +16,7 @@ import { RecordEditor, DeleteRecord, EditorAccess } from './RecordEditor'
 import { chapters, libraryReturnPath, projectPath, projectsPath, reportPath, stepChapter } from '@/lib/routes.mjs'
 import { easing, fade, useReducedMotion } from '@/lib/motion'
 
+const publishedFormat = new Intl.DateTimeFormat(undefined, { dateStyle: 'medium', timeStyle: 'short' })
 const chapterIcons = [ProgressIcon, MilestoneIcon, BlockerIcon, PlanIcon]
 
 const copyByChapter = {
@@ -91,12 +92,12 @@ function ChapterNavigation({ project, month, activeId, suffix }) {
 
 function ReportUnavailable({ project, month }) {
   const navigate = useNavigate()
-  useEffect(() => { document.title = 'Review unavailable · Project Lens' }, [])
+  useEffect(() => { document.title = 'Review unavailable · Lens' }, [])
   return (
     <main className="site-width missing-page" id="main-content" tabIndex={-1}>
       <h1>{month ? `${month.label} review` : 'Review unavailable'}</h1>
       {month && <p>The {project.name} report for this month is awaiting content.</p>}
-      <Link className="text-link" to={libraryReturnPath()}>Back to the report library <ArrowRightIcon label="" /></Link>
+      <Link className="text-link" to={libraryReturnPath()}>Back to projects <ArrowRightIcon label="" /></Link>
       {project && <div className="record-toolbar"><EditorAccess /><RecordEditor kind="report" project={project} month={month} onSaved={(_, data, id) => navigate(reportPath(project.id, id) + '?preview=1')} />{month?.draft && <Link className="text-link" to={reportPath(project.id, month.id) + '?preview=1'}>Preview saved draft</Link>}</div>}
     </main>
   )
@@ -267,7 +268,7 @@ function ReportReader({ project, month, report, chapterIndex, preview }) {
           <ChevronRightIcon label="" />
           <Link to={projectPath(project.id)}>{project.name}</Link>
         </nav>
-        <div className="report-workflow"><span className={`lozenge ${preview ? 'neutral' : 'success'}`}>{preview ? 'Draft preview (editors only)' : 'Published review'}</span>{month.publishedAt && <span>Published {new Date(month.publishedAt).toLocaleString()}</span>}{workspace.canEdit && month.draft && !preview && <Link className="text-link" to={reportPath(project.id, month.id, chapter.id) + '?preview=1'}>Preview draft</Link>}{preview && month.report && <Link className="text-link" to={reportPath(project.id, month.id, chapter.id)}>View published version</Link>}{preview && <PublishReport project={project} month={month} onPublished={() => navigate(reportPath(project.id, month.id, chapter.id))} />}</div>
+        <div className="report-workflow"><span className={`lozenge ${preview ? 'neutral' : 'success'}`}>{preview ? 'Draft preview (editors only)' : 'Published review'}</span>{month.publishedAt && <span>Published {publishedFormat.format(new Date(month.publishedAt))}</span>}{workspace.canEdit && month.draft && !preview && <Link className="text-link" to={reportPath(project.id, month.id, chapter.id) + '?preview=1'}>Preview draft</Link>}{preview && month.report && <Link className="text-link" to={reportPath(project.id, month.id, chapter.id)}>View published version</Link>}{preview && <PublishReport project={project} month={month} onPublished={() => navigate(reportPath(project.id, month.id, chapter.id))} />}</div>
         <div className="report-context">
           <div className="report-title">
             <ProjectMark project={project} />
@@ -299,7 +300,7 @@ function ReportReader({ project, month, report, chapterIndex, preview }) {
           {presenting && <Link className="text-link presentation-back" to={currentPath + presentationSuffix}><ArrowLeftIcon label="" /> Presentation overview</Link>}
         </div>
         <div className="report-reading">
-          {ended && <section className="workspace-panel review-ended"><h2 ref={endHeading} tabIndex={-1}>Review complete</h2><p>You’ve reached the end of {month.label}. Revisit the plan or return to the report library.</p><Button className="action" variant="outline" onClick={() => setEnded(false)}>Revisit the plan</Button><Button className="action action-primary" onClick={() => navigate(libraryReturn)}>Return to library</Button></section>}
+          {ended && <section className="workspace-panel review-ended"><h2 ref={endHeading} tabIndex={-1}>Review complete</h2><p>You’ve reached the end of {month.label}. Revisit the plan, or go back to your projects.</p><div className="review-ended-actions"><Button className="action action-primary" onClick={() => navigate(libraryReturn)}>Back to projects</Button><Button className="action" variant="outline" onClick={() => setEnded(false)}>Revisit the plan</Button></div></section>}
           <div hidden={ended}>
             <AnimatePresence mode="wait" custom={direction} initial={false}>
               <ChapterPane className="chapter-content" key={chapter.id} ref={focusChapter} custom={direction}

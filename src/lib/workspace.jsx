@@ -91,7 +91,7 @@ export function WorkspaceProvider({ active, children }) {
       })
       setWorkspace(result)
       setError('')
-      const entity = operation.action.endsWith('Project') ? 'Project' : operation.action.endsWith('Milestone') ? 'Milestone' : 'Report'
+      const entity = operation.action.endsWith('Project') ? 'Project' : operation.action.endsWith('Milestone') ? 'Milestone' : operation.action.endsWith('Week') ? 'Week' : operation.action.endsWith('Task') ? 'Task' : 'Report'
       const verb = operation.action === 'publishReport' ? 'published' : operation.action.startsWith('delete') ? 'deleted' : operation.action.startsWith('create') ? 'created' : 'saved'
       setNotice(`${entity} ${verb}.${operation.action.endsWith('Report') && ['createReport', 'updateReport'].includes(operation.action) ? ' Preview the draft, then publish when ready.' : ''}`)
       return result

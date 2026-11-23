@@ -4,8 +4,8 @@ export const projectsPath = `${landingPath}/projects`
 export const publicTabs = [
   { id: 'home', label: 'Home', path: landingPath },
   { id: 'features', label: 'Features', path: `${landingPath}/features` },
-  { id: 'how-it-works', label: 'How It Works', path: `${landingPath}/how-it-works` },
-  { id: 'use-cases', label: 'Use Cases', path: `${landingPath}/use-cases` },
+  { id: 'how-it-works', label: 'How it works', path: `${landingPath}/how-it-works` },
+  { id: 'use-cases', label: 'Use cases', path: `${landingPath}/use-cases` },
   { id: 'updates', label: 'Updates', path: `${landingPath}/updates` },
 ]
 
@@ -23,6 +23,22 @@ export function projectPath(projectId) {
 export function milestonesPath(projectId) {
   return `${projectPath(projectId)}/milestones`
 }
+
+export function projectOverviewPath(projectId) {
+  return `${projectPath(projectId)}/overview`
+}
+
+export function weeklyPath(projectId) {
+  return `${projectPath(projectId)}/weekly`
+}
+
+// Sections of a project, in sidebar and tab order. Reports keeps the project's base path.
+export const projectSections = [
+  { id: 'overview', label: 'Overview', path: projectOverviewPath },
+  { id: 'reports', label: 'Reports', path: projectPath },
+  { id: 'milestones', label: 'Milestones', path: milestonesPath },
+  { id: 'weekly', label: 'Weekly', path: weeklyPath },
+]
 
 export function reportPath(projectId, monthId, chapter = 'progress') {
   return `${projectPath(projectId)}/${encodeURIComponent(monthId)}/${encodeURIComponent(chapter)}`

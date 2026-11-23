@@ -83,7 +83,7 @@ try {
   assert.ok(document.querySelector('.sidebar-editor-access').textContent.includes('Local editor'))
   assert.equal(document.querySelector('.record-toolbar')?.textContent.includes('Local editor'),false)
   assert.equal(document.querySelector('.loading-screen'),null,'skeleton clears when data arrives')
-  await click(document.querySelector('a[aria-label="Project Lens home"]'))
+  await click(document.querySelector('a[aria-label="Lens home"]'))
   await until(()=>document.querySelector('.public-landing'), 'public landing')
   assert.equal(document.querySelector('.site-sidebar'), null)
   assert.equal(document.body.textContent.includes('SIMSDotNet'), false)

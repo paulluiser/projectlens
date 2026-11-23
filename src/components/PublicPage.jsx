@@ -1,7 +1,4 @@
-import { Link } from 'react-router-dom'
-import { Button } from '@/components/ui/button'
-import { overviewPath } from '@/lib/routes.mjs'
-import { ArrowRightIcon, CalendarIcon, ChartIcon, ChecklistIcon, PeopleIcon, ProgressIcon, TargetIcon } from '@/components/ui/icons'
+import { CalendarIcon, ChartIcon, ChecklistIcon, PeopleIcon, ProgressIcon, TargetIcon } from '@/components/ui/icons'
 
 export const workflow = [
   { title: 'Plan', section: 'how-it-works', Icon: CalendarIcon, summary: 'Set monthly priorities', detail: 'Assign owners and deadlines to the work that needs to happen next.' },
@@ -11,7 +8,8 @@ export const workflow = [
 
 const content = {
   features: {
-    heading: 'See the whole month clearly.',
+    eyebrow: 'Features',
+    heading: 'See the whole month clearly',
     description: 'Each review connects the work you planned, the progress you made, and the decisions that carry into next month.',
     items: [
       { title: 'Progress at a glance', Icon: ProgressIcon, detail: 'Compare planned and completed tasks on one bar and see overall project completion, hours, and reporting compliance.' },
@@ -20,12 +18,14 @@ const content = {
     ],
   },
   'how-it-works': {
-    heading: 'From monthly review to next month’s plan.',
+    eyebrow: 'How it works',
+    heading: 'From monthly review to next month’s plan',
     description: 'Open a project and choose a report month. Follow the same sequence each time you review the work.',
     items: workflow,
   },
   'use-cases': {
-    heading: 'One review for different roles.',
+    eyebrow: 'Use cases',
+    heading: 'One review for different roles',
     description: 'Use the same report in a live discussion, a project handoff, or an asynchronous update.',
     items: [
       { title: 'Project leads', Icon: TargetIcon, detail: 'Walk through progress and blockers, then review upcoming deadlines and owners with the team.' },
@@ -34,7 +34,9 @@ const content = {
     ],
   },
   updates: {
-    heading: 'What’s new in Project Lens.',
+    eyebrow: 'Updates',
+    heading: 'What’s new in Lens',
+    description: 'Recent changes to how reviews are read, written and shared.',
     items: [
       { title: 'Planned and completed in one view', Icon: ProgressIcon, detail: 'The Progress chapter now puts completed work and the monthly target on the same bar.' },
       { title: 'An easier way to move between chapters', Icon: ChecklistIcon, detail: 'Progress, Accomplishments, Blockers, and Next month now sit above the report.' },
@@ -44,21 +46,22 @@ const content = {
 }
 
 export function PublicPage({ section, pageLabel }) {
-  const { heading, description, items } = content[section]
-  const workflowPage = section === 'how-it-works'
-  const List = workflowPage ? 'ol' : 'ul'
+  const { eyebrow, heading, description, items } = content[section]
+  const steps = section === 'how-it-works'
+  const List = steps ? 'ol' : 'ul'
 
-  return <div className="public-content" data-section={section}>
-    <header className="public-intro">
+  return <div className="lx-section lx-page" data-section={section}>
+    <header className="lx-page-intro">
+      <p className="lx-eyebrow">{eyebrow}</p>
       <h1>{heading}</h1>
-      {description && <p>{description}</p>}
+      <p>{description}</p>
     </header>
-    <List className="public-details" aria-label={pageLabel}>
-      {items.map(({ title, detail, Icon }, index) => <li key={title}>
-        <span className="public-detail-number" aria-hidden="true">{workflowPage ? `0${index + 1}` : <Icon label="" />}</span>
-        <div><h2>{title}</h2><p>{detail}</p></div>
+    <List className="lx-page-list" aria-label={pageLabel}>
+      {items.map(({ title, detail, Icon }, index) => <li key={title} className="lx-feature">
+        <span className="lx-feature-icon" aria-hidden="true">{steps ? <span className="lx-step">{index + 1}</span> : <Icon label="" size="small" />}</span>
+        <h2>{title}</h2>
+        <p>{detail}</p>
       </li>)}
     </List>
-    <div className="public-page-action"><p>Put the review into practice.</p><Button asChild className="public-explore"><Link to={overviewPath}>Explore <ArrowRightIcon label="" /></Link></Button></div>
   </div>
 }

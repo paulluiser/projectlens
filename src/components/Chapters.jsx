@@ -92,7 +92,7 @@ export function WinsCopy({ report }) {
     <section className="workspace-panel chapter-copy">
       <div className="panel-heading">
         <SuccessIcon label="" /><h2>Accomplishments</h2>
-        <span className="lozenge success">{report.wins.length} {report.wins.length === 1 ? 'highlight' : 'highlights'}</span>
+        <span className="lozenge count">{report.wins.length} {report.wins.length === 1 ? 'highlight' : 'highlights'}</span>
       </div>
       {report.wins.length > 0 ? (
         <ul className="wins-list">
@@ -100,7 +100,7 @@ export function WinsCopy({ report }) {
             <li key={win.title}>
               <span className="achievement-mark" aria-hidden="true"><SuccessIcon label="" /></span>
               <span><strong>{win.title}</strong><small>{win.detail}</small></span>
-              <span className="lozenge success win-value">{win.value}</span>
+              <span className="lozenge count win-value">{win.value}</span>
             </li>
           ))}
         </ul>
@@ -114,7 +114,7 @@ export function BlockersCopy({ report }) {
     <section className="workspace-panel chapter-copy">
       <div className="panel-heading">
         <ImpactIcon label="" /><h2>Blockers</h2>
-        <span className="lozenge neutral">{report.blockers.length} reported</span>
+        <span className="lozenge count">{report.blockers.length} reported</span>
       </div>
       {report.blockers.length > 0 ? (
         <ul className="blockers-list">

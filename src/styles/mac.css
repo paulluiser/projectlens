@@ -11,7 +11,7 @@ h1, h2, h3 { min-width: 0; overflow-wrap: break-word; }
   backdrop-filter: blur(16px) saturate(1.2);
 }
 .header-brand { gap: 8px; padding-inline: 16px; }
-.brand { font-size: 15px; font-weight: 650; }
+.brand { font-size: var(--t-sm); font-weight: 600; }
 .brand-mark, .home-app-icon {
   color: var(--primary-foreground);
   background: var(--primary);
@@ -29,7 +29,7 @@ h1, h2, h3 { min-width: 0; overflow-wrap: break-word; }
   padding: 24px 12px;
   background: var(--sidebar);
 }
-.sidebar-group-label { margin: 0 8px 8px; color: var(--muted-foreground); font-size: 12px; font-weight: 650; }
+.sidebar-group-label { margin: 0 8px 8px; color: var(--muted-foreground); font-size: var(--t-xs); font-weight: 600; }
 .sidebar-project-group { margin-top: 28px; }
 .sidebar-projects { margin: 0; }
 .site-sidebar .sidebar-link { min-width: 0; border-radius: 8px; color: var(--foreground); overflow-wrap: anywhere; }
@@ -48,7 +48,7 @@ h1, h2, h3 { min-width: 0; overflow-wrap: break-word; }
 .report-table th, .metric-card dt, .report-workflow,
 .library-count, .project-draft-count, .library-filter label, .loading-caption,
 .plan-action p, .action-owner, .wins-list small, .comparison dt, .comparison-delta {
-  font-size: 13px;
+  font-size: var(--t-caption);
 }
 .chapter-description, .stage-description, .blockers-list p { line-height: 1.55; }
 .site-header .global-search, .filter-trigger[data-slot=select-trigger] {
@@ -64,7 +64,7 @@ h1, h2, h3 { min-width: 0; overflow-wrap: break-word; }
   background: var(--disabled-surface);
   color: var(--disabled-text);
 }
-.chapter-nav a[aria-current], .site-sidebar .sidebar-link[aria-current] { font-weight: 650; }
+.chapter-nav a[aria-current], .site-sidebar .sidebar-link[aria-current] { font-weight: 600; }
 
 /* Start a review from the introduction or try any chapter directly. */
 .home {
@@ -89,7 +89,7 @@ h1, h2, h3 { min-width: 0; overflow-wrap: break-word; }
 }
 .home-app-icon { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 12px; margin-bottom: 28px; }
 .home-app-icon svg { width: 24px; height: 24px; }
-.home-intro h1 { font-size: clamp(34px, 4.2vw, 64px); line-height: 1.04; letter-spacing: -.04em; text-wrap: balance; }
+.home-intro h1 { font-size: clamp(34px, 4.2vw, 64px); line-height: 1.04; letter-spacing: -.02em; text-wrap: balance; }
 .home-intro > p { margin-block: 16px 24px; max-width: 45ch; color: var(--ink-muted); }
 .home-intro .action:focus-visible { outline-color: var(--focus-on-dark); }
 .home .review-walkthrough {
@@ -102,7 +102,7 @@ h1, h2, h3 { min-width: 0; overflow-wrap: break-word; }
   background: var(--toolbar);
 }
 .preview-heading { padding: 20px 24px 12px; }
-.preview-heading h2 { font-size: 16px; }
+.preview-heading h2 { font-size: var(--t-base); }
 .preview-workspace { display: grid; grid-template-columns: minmax(0, 1fr); }
 .walkthrough-steps {
   display: grid;
@@ -132,10 +132,10 @@ h1, h2, h3 { min-width: 0; overflow-wrap: break-word; }
   padding: 16px 0 24px;
   border-bottom: 1px solid var(--border);
 }
-.directory-heading h1, .report-title h1 { font-size: 32px; letter-spacing: -.03em; }
+.directory-heading h1, .report-title h1 { font-size: var(--t-h1); letter-spacing: -.02em; }
 .directory-heading .section-icon { width: 44px; border-radius: 12px; }
 .project-dashboard-results { gap: 12px; margin-bottom: 16px; }
-.project-dashboard-summary { gap: 16px; margin: 0 0 0 auto; font-size: 13px; }
+.project-dashboard-summary { gap: 16px; margin: 0 0 0 auto; font-size: var(--t-caption); }
 .project-index .report-table, .library-results .report-table { border-collapse: separate; border-spacing: 0; }
 .report-table th { border-bottom-width: 1px; background: var(--toolbar); }
 .report-table td { border-bottom-color: var(--border); }
@@ -165,14 +165,14 @@ h1, h2, h3 { min-width: 0; overflow-wrap: break-word; }
 .metric-card { border: 0; border-radius: 0; padding: 12px 16px; background: transparent; }
 .metric-card + .metric-card { border-left: 1px solid var(--border); }
 .metric-card .tile-icon { display: none; }
-.metric-card dd { font-size: 22px; }
+.metric-card dd { font-size: var(--t-h2); }
 .summary-grid { gap: 16px; }
 .chapter-copy, .progress-visual { padding: 16px; }
 .chapter-stage { border-color: transparent; background: var(--toolbar); }
 .progress-visual { display: block; }
 .chart-area { display: block; width: auto; aspect-ratio: auto; margin: 16px 0; }
 .chart-reading { display: flex; align-items: baseline; flex-wrap: wrap; gap: 8px; }
-.chart-reading strong { font-size: 32px; }
+.chart-reading strong { font-size: var(--t-h1); }
 .completion-track { height: 12px; margin-top: 8px; border-radius: 8px; overflow: clip; background: var(--chart-remaining); }
 .completion-fill { width: 100%; height: 100%; transform-origin: left; background: var(--chart-success); }
 .chart-legend { display: flex; flex-wrap: wrap; gap: 8px 16px; }
@@ -217,7 +217,7 @@ h1, h2, h3 { min-width: 0; overflow-wrap: break-word; }
   .home-app-icon { margin-bottom: 16px; }
   .walkthrough-steps button { min-height: 44px; }
   .walkthrough-content { padding: 16px; }
-  .directory-heading h1, .report-title h1 { font-size: 26px; }
+  .directory-heading h1, .report-title h1 { font-size: var(--t-h2); }
   .project-dashboard-summary { margin-left: 0; }
   .project-index .project-description { margin-left: 0; }
   .project-index td:first-child { width: auto; }

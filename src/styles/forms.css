@@ -14,16 +14,16 @@
 .dialog-heading-copy { flex: 1; min-width: 0; }
 .dialog-symbol { display: grid; flex: none; place-items: center; width: 40px; height: 40px; border-radius: 12px; background: var(--accent); color: var(--accent-foreground); }
 .dialog-destructive .dialog-symbol { background: var(--destructive-surface); color: var(--destructive); }
-.editor-heading h2 { min-width: 0; margin-top: 0; font-size: 22px; font-weight: 650; line-height: 1.3; overflow-wrap: anywhere; }
-.editor-description { max-width: 65ch; margin-top: 4px; color: var(--muted-foreground); font-size: 14px; line-height: 1.5; }
+.editor-heading h2 { min-width: 0; margin-top: 0; font-size: var(--t-h2); font-weight: 600; line-height: 1.3; overflow-wrap: anywhere; }
+.editor-description { max-width: 65ch; margin-top: 4px; color: var(--muted-foreground); font-size: var(--t-sm); line-height: 1.5; }
 .editor-form { display: flex; flex-direction: column; flex: 1 1 auto; min-height: 0; min-width: 0; overflow: hidden; }
 .editor-scroll, .dialog-body { flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain; scrollbar-gutter: stable; padding: 24px var(--dialog-gutter); }
 .editor-form-fields { display: grid; min-width: 0; gap: 24px; margin: 0; border: 0; padding: 0; }
-.editor-field { display: flex; flex-direction: column; align-self: start; min-width: 0; gap: 8px; font-size: 14px; line-height: 1.45; }
+.editor-field { display: flex; flex-direction: column; align-self: start; min-width: 0; gap: 8px; font-size: var(--t-sm); line-height: 1.45; }
 .field-label, .editor-field > span { color: var(--foreground); font-weight: 600; }
-.field-optional { color: var(--muted-foreground); font-size: 13px; font-weight: 400; }
+.field-optional { color: var(--muted-foreground); font-size: var(--t-caption); font-weight: 400; }
 .field-required { color: var(--destructive); }
-.editor-field input, .editor-field textarea, .editor-field select { box-sizing: border-box; width: 100%; min-width: 0; min-height: 44px; margin: 0; border: 1px solid var(--input); border-radius: 8px; padding: 8px 12px; background: var(--field-surface); color: var(--foreground); font: inherit; font-size: 14px; line-height: 1.45; transition: border-color var(--motion-feedback), background-color var(--motion-feedback); }
+.editor-field input, .editor-field textarea, .editor-field select { box-sizing: border-box; width: 100%; min-width: 0; min-height: 44px; margin: 0; border: 1px solid var(--input); border-radius: 8px; padding: 8px 12px; background: var(--field-surface); color: var(--foreground); font: inherit; font-size: var(--t-sm); line-height: 1.45; transition: border-color var(--motion-feedback), background-color var(--motion-feedback); }
 .editor-field textarea { min-height: 96px; resize: vertical; }
 .editor-field select { padding-right: 28px; }
 .editor-field input:hover:not(:disabled):not([readonly]), .editor-field textarea:hover:not(:disabled), .editor-field select:hover:not(:disabled) { border-color: var(--muted-foreground); }
@@ -33,16 +33,16 @@
 .editor-field input::placeholder, .editor-field textarea::placeholder { color: var(--muted-foreground); opacity: 1; }
 .editor-field [aria-invalid=true] { border-color: var(--destructive); }
 .editor-field [aria-invalid=true]:focus-visible { outline-color: var(--destructive); border-color: var(--destructive); }
-.field-hint, .field-error { font-size: 13px; line-height: 1.5; overflow-wrap: anywhere; }
+.field-hint, .field-error { font-size: var(--t-caption); line-height: 1.5; overflow-wrap: anywhere; }
 .field-hint { color: var(--muted-foreground); }
 .field-error { color: var(--destructive); }
 .editor-grid, .editor-row-fields { display: grid; min-width: 0; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
 .editor-metrics { grid-template-columns: repeat(3, minmax(0, 1fr)); margin-top: 12px; }
 .editor-metrics input { font-variant-numeric: tabular-nums; }
 .editor-section-heading { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
-.editor-section-heading h3, .report-editor section > h3 { font-size: 16px; font-weight: 650; }
+.editor-section-heading h3, .report-editor section > h3 { font-size: var(--t-base); font-weight: 600; }
 .editor-rows, .carry-editor { border-top: 1px solid var(--border); padding-top: 24px; }
-.editor-empty { padding: 8px 12px; border-radius: 8px; background: var(--toolbar); color: var(--muted-foreground); font-size: 13px; }
+.editor-empty { padding: 8px 12px; border-radius: 8px; background: var(--toolbar); color: var(--muted-foreground); font-size: var(--t-caption); }
 .editor-list-row { display: flex; align-items: flex-start; gap: 12px; margin-top: 12px; border: 1px solid var(--border); border-radius: 8px; padding: 16px; background: var(--background); animation: row-enter .16s var(--motion-ease); }
 .editor-row-fields { flex: 1; }
 .editor-row-fields .editor-field:has(textarea) { grid-column: 1 / -1; }
@@ -50,21 +50,21 @@
 .remove-row:hover { color: var(--destructive); background: var(--destructive-surface); }
 .editor-footer { flex: none; display: flex; justify-content: flex-end; align-items: center; gap: 12px; border-top: 1px solid var(--border); padding: 16px var(--dialog-gutter); background: var(--toolbar); }
 .editor-footer .action { min-height: 40px; min-width: 88px; }
-.editor-error { flex: 0 1 auto; overflow: auto; max-height: 25dvh; display: grid; gap: 8px; margin: 16px var(--dialog-gutter) 0; border: 1px solid var(--destructive); border-radius: 6px; padding: 12px; background: var(--destructive-surface); color: var(--destructive-hover); font-size: 13px; overflow-wrap: anywhere; }
+.editor-error { flex: 0 1 auto; overflow: auto; max-height: 25dvh; display: grid; gap: 8px; margin: 16px var(--dialog-gutter) 0; border: 1px solid var(--destructive); border-radius: 6px; padding: 12px; background: var(--destructive-surface); color: var(--destructive-hover); font-size: var(--t-caption); overflow-wrap: anywhere; }
 .editor-scroll .editor-error, .dialog-body .editor-error { margin: 16px 0 0; }
 .editor-error .text-link { color: inherit; text-decoration: underline; }
-.recovery-notice { display: flex; flex-wrap: wrap; gap: 12px; border: 1px solid var(--warning-border); border-radius: 6px; padding: 12px; background: var(--warning-surface); color: var(--warning); font-size: 13px; }
+.recovery-notice { display: flex; flex-wrap: wrap; gap: 12px; border: 1px solid var(--warning-border); border-radius: 6px; padding: 12px; background: var(--warning-surface); color: var(--warning); font-size: var(--t-caption); }
 .recovery-notice > p { flex-basis: 100%; }
 .editor-scroll > .recovery-notice { margin-bottom: 20px; }
 .editor-dialog > .recovery-notice { flex: 0 1 auto; max-height: 30dvh; overflow: auto; margin: 16px var(--dialog-gutter); }
 .recovery-notice .text-link { color: inherit; text-decoration: underline; }
 .editor-section-nav { display: flex; flex: none; gap: 4px; overflow-x: auto; border-bottom: 1px solid var(--border); padding: 8px var(--dialog-gutter); background: var(--toolbar); }
-.editor-section-nav button { flex: none; min-height: 40px; border-radius: 8px; padding: 8px 12px; color: var(--foreground); font-size: 14px; font-weight: 550; }
+.editor-section-nav button { flex: none; min-height: 40px; border-radius: 8px; padding: 8px 12px; color: var(--foreground); font-size: var(--t-sm); font-weight: 500; }
 .editor-section-nav button:hover { background: var(--muted); }
-.editor-section-nav button[aria-current] { background: var(--accent); color: var(--accent-foreground); font-weight: 650; }
+.editor-section-nav button[aria-current] { background: var(--accent); color: var(--accent-foreground); font-weight: 600; }
 .report-editor [id] { scroll-margin-top: 8px; }
 .carry-entry { display: grid; gap: 12px; margin-top: 16px; border-top: 1px solid var(--border); padding-top: 16px; }
-.carry-entry p { color: var(--muted-foreground); font-size: 13px; }
+.carry-entry p { color: var(--muted-foreground); font-size: var(--t-caption); }
 .carry-entry .action, .carry-entry > .text-link { justify-self: start; }
 .delete-confirm[data-slot=button] { background: var(--destructive); color: var(--primary-foreground); }
 .delete-confirm[data-slot=button]:hover { background: var(--destructive-hover); }
@@ -78,11 +78,11 @@
   .editor-dialog.wide { top: var(--visible-viewport-top, 0px); left: 0; width: 100%; height: var(--visible-viewport-height, 100dvh); max-height: var(--visible-viewport-height, 100dvh); transform: none; border-radius: 0; }
   .editor-heading { gap: 12px; }
   .dialog-header { padding-bottom: 16px; }
-  .editor-heading h2 { font-size: 20px; }
+  .editor-heading h2 { font-size: var(--t-h3); }
   .remove-row, .dialog-close { width: 44px; height: 44px; }
   .dialog-close { flex-basis: 44px; }
-  .editor-description { font-size: 14px; }
-  .editor-field :is(input, textarea, select) { min-height: 46px; font-size: 16px; }
+  .editor-description { font-size: var(--t-sm); }
+  .editor-field :is(input, textarea, select) { min-height: 46px; font-size: var(--t-base); }
   .editor-grid, .editor-row-fields { grid-template-columns: minmax(0, 1fr); gap: 16px; }
   .editor-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .editor-list-row { padding: 12px; gap: 8px; }
