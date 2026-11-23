@@ -513,7 +513,7 @@ fieldset:disabled { opacity: 1; }
 [data-status="planned"] { --dot: var(--line-strong); }
 .milestone-distribution [data-status="in-progress"], .milestone-status-option[data-status="in-progress"] > i { background: var(--status-active); }
 .milestone-statuses [data-status] i, .milestone-distribution-key [data-status] i { background: var(--dot); }
-.milestone-status-trigger[data-status="in-progress"] { border-color: var(--status-active); color: var(--status-active); background: var(--status-active-soft); }
+.milestone-status-trigger[data-status="in-progress"] { border-color: var(--status-active); color: var(--status-active-ink); background: var(--status-active-soft); }
 /* title and chevron stay together when a title wraps */
 .milestone-detail-toggle { display: inline-block; min-height: 24px; padding-block: 1px; text-align: left; line-height: var(--lh-text); }
 .milestone-detail-toggle > span { display: inline-flex; margin-left: 4px; vertical-align: -2px; color: var(--muted-foreground); }
@@ -674,7 +674,7 @@ fieldset:disabled { opacity: 1; }
 .task-status i, .status-legend i, .task-column-heading i, .task-status-option > i { width: 8px; height: 8px; flex: none; border-radius: 50%; background: var(--dot); }
 .task-status[data-status="done"] { border-color: var(--status-done); background: var(--status-done); color: var(--primary-foreground); }
 .task-status[data-status="done"] i { background: var(--primary-foreground); }
-.task-status[data-status="in-progress"] { border-color: var(--status-active); background: var(--status-active-soft); color: var(--status-active); }
+.task-status[data-status="in-progress"] { border-color: var(--status-active); background: var(--status-active-soft); color: var(--status-active-ink); }
 .task-status[data-status="blocked"] { border-color: var(--status-blocked); background: var(--destructive-surface); color: var(--status-blocked); }
 .task-status[data-status="todo"] { border-style: dashed; color: var(--muted-foreground); }
 .task-status-trigger:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }

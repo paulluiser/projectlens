@@ -55,7 +55,7 @@ Severity: **H** blocks or misleads, **M** slows people down, **L** polish.
 - **L:** filters, search, view and the selected week live in the URL, so Back, reload and shared links all restore them.
 
 ### Consistency and standards
-- **M:** status colours differed between the bar, the legend and the filters (in progress was black in one place, light green in another). *Fixed:* one validated status palette (done green, in progress blue, blocked red, to do grey) used for milestones, tasks, charts and legends. The palette passes the colour-blindness and normal-vision checks in the order the bars use.
+- **M:** status colours differed between the bar, the legend and the filters (in progress was black in one place, light green in another). *Fixed:* one validated status palette (done blue, the accent; in progress amber; blocked red; to do grey, revised when the accent moved from green to the logo's blue) used for milestones, tasks, charts and legends. The palette passes the colour-blindness and normal-vision checks in the order the bars use.
 - **L:** status marks follow Kern's verdict shape code: solid for confirmed (done or completed), outlined for in progress, dashed for not started.
 
 ### Error prevention
@@ -92,7 +92,7 @@ Severity: **H** blocks or misleads, **M** slows people down, **L** polish.
 | Workspace Overview | Projects at a glance (completion bars) | Compares projects on one shared scale |
 | Weekly | Status split and workload by owner (stacked done/open bars) | Shows balance: who is overloaded, who is blocked |
 
-**Illustrations.** Five line drawings in Kern's style (hairline ink, paper fill, one green), used only in empty and "not found" states: week bracket, board, chart, search, and roadmap. They're decorative (`aria-hidden`); the text beside each one carries the meaning.
+**Illustrations.** Five line drawings in Kern's style (hairline ink, paper fill, the blue accent), used only in empty and "not found" states: week bracket, board, chart, search, and roadmap. They're decorative (`aria-hidden`); the text beside each one carries the meaning.
 
 ## Accessibility notes
 - Every chart has a text alternative (`role="img"` with a full description) and a table view. Status is never shown by colour alone.

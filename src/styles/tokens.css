@@ -1,12 +1,12 @@
 /* Lens design tokens, taken from the Kern design system (Design system v2):
-   warm paper surfaces, near-black ink, one green, Geist Mono, hairline borders, quiet depth.
+   warm paper surfaces, near-black ink, one blue accent (the logo's blue), Geist Mono, hairline borders, quiet depth.
    Every colour in the app comes from here; never hard-code one in a component stylesheet. */
 :root {
   color-scheme: light;
 
   /* Kern palette */
   --paper: #F5F3EE;          /* page */
-  --paper-raised: #FBFAF7;   /* cards, header, inputs; also text on ink or green */
+  --paper-raised: #FBFAF7;   /* cards, header, inputs; also text on ink or blue */
   --tint: #ECE9E2;
   --tint-2: #E3DFD6;
   --line: #E2DED5;
@@ -14,22 +14,23 @@
   --ink-1: #111110;
   --ink-2: #3D3B37;
   --ink-3: #67645E;
-  --brand: #17734D;          /* the one green: progress, position, current, done */
-  --brand-hover: #115E3E;
-  --brand-soft: #E7F3EC;
-  --brand-line: #9CCBB3;
-  --brand-ink: #0F5034;
+  --brand: #2563A6;          /* the one blue accent (logo blue): progress, position, current, done */
+  --brand-hover: #1D4F86;
+  --brand-soft: #E9F0F8;
+  --brand-line: #A9C3E3;
+  --brand-ink: #173F6B;
   --info: #1F5FA6;
   --info-soft: #E8F0F9;
   --idea: #6A3DBF;
   --idea-soft: #F1EBFB;
 
-  /* Status palette, validated with the dataviz checker in this bar order (done, in progress, blocked, to do):
+  /* Status palette, validated with the dataviz checker in this bar order (done #2563A6, in progress #C2780A, blocked #A1121D, to do):
      CVD and normal-vision separation pass; to do is a deliberate neutral and always carries its label. */
-  --status-done: #17734D;
-  --status-active: #1F5FA6;
-  --status-active-soft: #E8F0F9;
-  --status-blocked: #B42318;
+  --status-done: var(--brand);
+  --status-active: #C2780A;      /* marks only; text uses the ink below */
+  --status-active-soft: #FBF0DC;
+  --status-active-ink: #8A5300;
+  --status-blocked: #A1121D;
   --status-todo: #8E8A83;
 
   /* Type: Geist Mono for everything, weights 400 / 500 / 600 only */
@@ -59,7 +60,7 @@
   --launch-bg: #111110;
   --launch-text: #FBFAF7;
   --launch-muted: #B5B2AC;
-  --launch-accent: #4CC38A;
+  --launch-accent: #6FA6E0;
   --launch-rule: #FBFAF730;
   --launch-glow: #1C1C1A;
 
