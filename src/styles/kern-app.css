@@ -836,7 +836,7 @@ fieldset:disabled { opacity: 1; }
 .chart-table thead th { color: var(--muted-foreground); font-weight: 500; }
 
 @media (max-width: 760px) {
-  .week-bar .record-toolbar { margin-left: 0; }
+  .week-bar .record-toolbar { margin-left: auto; }
   .week-select select { max-width: 220px; }
   .task-board { grid-template-columns: repeat(4, minmax(240px, 82vw)); scroll-snap-type: x mandatory; overscroll-behavior-x: contain; }
   .task-column { scroll-snap-align: start; }
@@ -920,3 +920,23 @@ fieldset:disabled { opacity: 1; }
 .task-card { min-width: 0; }
 .task-flag { padding: 1px 8px; }
 .task-table-wrap { position: relative; }
+
+/* Week bar: one joined switcher (previous · picker · next), quiet meta, compact actions. */
+.week-bar { gap: 8px 12px; margin: 4px 0 16px; padding: 8px; border: 1px solid var(--border); border-radius: var(--radius-card, 10px); background: var(--card); }
+.week-nav { gap: 0; border: 1px solid var(--input); border-radius: var(--radius-control); background: var(--field-surface); box-shadow: var(--shadow-sm); overflow: hidden; }
+.week-nav:focus-within { border-color: var(--ring); box-shadow: 0 0 0 3px var(--ring-soft); }
+.week-nav .icon-button { width: 34px; height: 34px; border: 0; border-radius: 0; background: transparent; color: var(--muted-foreground); }
+.week-nav .icon-button:hover:not(:disabled) { background: var(--muted); color: var(--foreground); }
+.week-nav .icon-button:first-child { border-right: 1px solid var(--border); }
+.week-nav .icon-button:last-child { border-left: 1px solid var(--border); }
+.week-nav .icon-button:disabled { opacity: .35; }
+.week-nav .week-select, .week-nav .week-select:focus-within { min-height: 34px; border: 0; border-radius: 0; background: transparent; box-shadow: none; }
+.week-nav .week-select select { font-weight: 600; }
+.week-bar-meta { margin: 0; align-items: center; gap: 6px; white-space: nowrap; }
+.week-bar .record-toolbar { gap: 6px; }
+.week-bar .record-toolbar .action { min-height: 34px; }
+@media (max-width: 760px) {
+  .week-bar { padding: 8px; }
+  .week-bar-meta { flex: 1; }
+  .week-bar .record-toolbar { margin-left: auto; }
+}

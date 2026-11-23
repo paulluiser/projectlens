@@ -347,7 +347,7 @@ function WeeklyPage() {
       {workspace.canEdit ? <WeekDialog project={project} onSaved={id => id && setParam({ week: id })} trigger={<Button className="action action-primary"><AddIcon label="" />New week</Button>} /> : <p className="field-hint">Editors can create weeks.</p>}
     </section> : <>
       <div className="week-bar">
-        <div className="week-nav">
+        <div className="week-nav" role="group" aria-label="Choose week">
           <button type="button" className="icon-button" aria-label="Previous week" disabled={index <= 0} onClick={() => setParam({ week: weeks[index - 1].id })}><ArrowLeftIcon label="" /></button>
           <label className="week-select"><span className="sr-only">Week</span><CalendarIcon label="" size="small" />
             <select value={week.id} onChange={event => setParam({ week: event.target.value })}>
@@ -356,9 +356,9 @@ function WeeklyPage() {
           </label>
           <button type="button" className="icon-button" aria-label="Next week" disabled={index >= weeks.length - 1} onClick={() => setParam({ week: weeks[index + 1].id })}><ArrowRightIcon label="" /></button>
         </div>
-        <div className="week-bar-meta"><span>{bracketDays(week)} days</span>{week.label && <span>{formatRange(week.start, week.end)}</span>}</div>
+        <p className="week-bar-meta"><span>{bracketDays(week)} {bracketDays(week) === 1 ? 'day' : 'days'}</span><span aria-hidden="true">·</span><span>Week {index + 1} of {weeks.length}</span></p>
         <div className="record-toolbar">
-          <WeekDialog project={project} week={week} intent="edit" trigger={<Button variant="outline" className="action"><EditIcon label="" />Edit week</Button>} />
+          <WeekDialog project={project} week={week} intent="edit" trigger={<Button variant="outline" className="action"><EditIcon label="" />Edit</Button>} />
           <WeekDialog project={project} week={week} intent="delete" onSaved={() => setParam({ week: '' })} trigger={<Button variant="outline" className="action record-icon-action" aria-label={`Delete ${weekTitle(week)}`}><DeleteIcon label="" /></Button>} />
         </div>
       </div>
