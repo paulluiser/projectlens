@@ -1,11 +1,13 @@
 import { useEffect } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import { ArrowRightIcon, CalendarIcon, ChevronRightIcon, FlagIcon, PlanIcon } from '@/components/ui/icons'
 import { Button } from '@/components/ui/button'
 import { useWorkspace, WorkspaceNotice } from '@/lib/workspace'
 import { milestonesPath, projectPath, projectsPath, reportPath, weeklyPath } from '@/lib/routes.mjs'
 import { milestoneStatuses } from '@/lib/milestones.mjs'
-import { defaultWeek, formatRange, summarize, todayIso, weekPhase, weekTitle } from '@/lib/weekly.mjs'
+import { defaultWeek, formatRange, summarize, todayIso, weekPhase, weekTitle, splitOwners, taskOwners } from '@/lib/weekly.mjs'
+import { milestoneDate, milestoneTime } from '@/lib/milestones.mjs'
+import { RecordEditor, DeleteRecord } from './RecordEditor'
 import { ColumnChart, StatusSplit } from './Charts'
 import { ChartIllustration } from './Illustrations'
 
@@ -19,6 +21,7 @@ export function ProjectOverview() {
 function OverviewPage() {
   const { workspace } = useWorkspace()
   const { projectId } = useParams()
+  const navigate = useNavigate()
   const project = workspace.projects.find(item => item.id === projectId)
   useEffect(() => { document.title = `Overview · ${project?.name ?? 'Project unavailable'} · Lens` }, [project?.name])
   if (!project) return <main className="site-width missing-page" id="main-content" tabIndex={-1}><h1>Project unavailable</h1><p>This project may have been renamed or removed.</p><Link className="text-link" to={projectsPath}>Back to projects</Link></main>
@@ -39,6 +42,19 @@ function OverviewPage() {
   const week = defaultWeek(weeks, today)
   const weekSummary = week ? summarize(week.tasks ?? []) : null
   const weekly = weeks.slice(-6).map(item => { const summary = summarize(item.tasks ?? []); return { label: weekTitle(item), short: formatRange(item.start, item.end).split(' – ')[0], axis: 'Week', done: summary.done, open: summary.total - summary.done } })
+  const owners = [...new Set([...milestones.flatMap(item => splitOwners(item.owner)), ...weeks.flatMap(item => (item.tasks ?? []).flatMap(taskOwners))])].filter(name => name.toLowerCase() !== 'unassigned').sort()
+  const openMilestones = milestones.filter(item => item.status !== 'completed').sort((a,b) => (a.dueDate || '9999').localeCompare(b.dueDate || '9999'))
+  const overdue = openMilestones.filter(item => item.dueDate && item.dueDate < today)
+  const nextMilestone = openMilestones.find(item => item.dueDate && item.dueDate >= today)
+  const numbers = new Intl.NumberFormat(undefined, { maximumFractionDigits: 2 })
+  const details = [
+    ['Latest report', latest?.label ?? 'No published report'],
+    ['Tasks completed', progress ? `${numbers.format(progress.projectCompleted)} / ${numbers.format(progress.total)}` : 'Not reported'],
+    ['Tasks remaining', progress ? numbers.format(Math.max(0, progress.total - progress.projectCompleted)) : 'Not reported'],
+    ['Total running hours', progress?.runningHours != null ? `${numbers.format(progress.runningHours)} h` : 'Not reported'],
+    ['Latest report hours', progress ? `${numbers.format(progress.hours)} h` : 'Not reported'],
+    ['Monthly delivery', progress ? `${progress.completed} completed / ${progress.planned} planned` : 'Not reported'],
+  ]
 
   const links = [
     { to: projectPath(project.id), Icon: CalendarIcon, title: `${published.length} published ${published.length === 1 ? 'review' : 'reviews'}`, text: latest ? `Latest: ${latest.label}` : 'No reviews published yet' },
@@ -49,8 +65,21 @@ function OverviewPage() {
   return <main className="site-width project-overview" id="main-content" tabIndex={-1}>
     <div className="page-heading directory-heading">
       <div><p className="page-eyebrow"><Link to={projectsPath}>Projects</Link><span aria-hidden="true"> / </span><span>Overview</span></p><h1>{project.name}</h1><p>{project.description || 'Where this project stands across reviews, milestones and the current week.'}</p></div>
-      {latest && <div className="record-toolbar"><Button asChild variant="outline" className="action"><Link to={reportPath(project.id, latest.id) + '?present=1'}>Present latest</Link></Button></div>}
+      <div className="record-toolbar">
+        {latest && <Button asChild variant="outline" className="action"><Link to={reportPath(project.id, latest.id) + '?present=1'}>Present latest</Link></Button>}
+        <RecordEditor kind="project" project={project} />
+        <DeleteRecord project={project} onDeleted={() => navigate(projectsPath)} />
+      </div>
     </div>
+
+    <section className="project-details" aria-labelledby="project-details-heading">
+      <div className="section-heading"><h2 id="project-details-heading">Project details</h2>{project.updatedAt && <small>Updated <time dateTime={project.updatedAt}>{new Intl.DateTimeFormat(undefined, { dateStyle: 'medium', timeStyle: 'short' }).format(new Date(project.updatedAt))}</time></small>}</div>
+      <dl className="project-facts">{details.map(([label,value]) => <div key={label}><dt>{label}</dt><dd>{value}</dd></div>)}</dl>
+      <div className="project-context">
+        <div><h3>Team</h3><p>{owners.join(', ') || 'No owners assigned yet'}</p></div>
+        <div><h3>Next milestone</h3><p>{nextMilestone ? <Link to={milestonesPath(project.id)}>{nextMilestone.title} · {milestoneDate.format(milestoneTime(nextMilestone.dueDate))}</Link> : openMilestones.length ? 'No upcoming target date' : 'No open milestones'}</p>{overdue.length > 0 && <Link className="text-link" to={milestonesPath(project.id)}>{overdue.length} overdue {overdue.length === 1 ? 'milestone' : 'milestones'}</Link>}</div>
+      </div>
+    </section>
 
     <section className="overview-lead" aria-label="Latest review">
       {latest ? <article className="overview-spotlight">

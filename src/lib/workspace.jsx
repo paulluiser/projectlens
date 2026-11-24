@@ -127,7 +127,7 @@ export function WorkspaceProvider({ active, children }) {
     return refresh(true)
   }
 
-  return <WorkspaceContext.Provider value={{ workspace, error, refresh, mutate, login, logout, setEditing, notify: setNotice, latestVersion }}>
+  return <WorkspaceContext.Provider value={{ workspace, error, refreshing, refresh, mutate, login, logout, setEditing, notify: setNotice, latestVersion }}>
     {active && workspace && refreshing && <div className="workspace-refresh" aria-hidden="true"><span className="busy-indicator" aria-hidden="true" /> Checking for updates…</div>}
     {children}
     <div className="save-announcement" role="status" aria-live="polite" aria-atomic="true"><AnimatePresence initial={false}>{notice && <motion.div className="save-message" key={typeof notice === 'object' ? notice.text : notice} initial={{ opacity: 0, y: reduced ? 0 : 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: reduced ? 0 : 4 }} transition={{ duration: reduced ? 0 : 0.18 }}><span>{typeof notice === 'object' ? notice.text : notice}</span>{typeof notice === 'object' && notice.action && <button type="button" className="save-message-action" onClick={() => { const { run } = notice.action; setNotice(''); run() }}>{notice.action.label}</button>}<button type="button" aria-label="Dismiss notification" onClick={() => setNotice('')}>Dismiss</button></motion.div>}</AnimatePresence></div>

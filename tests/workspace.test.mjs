@@ -31,6 +31,9 @@ test('workspace persists project and report CRUD and canonical month labels', as
   assert.equal(initial.body.projects[0].months[0].report.title, report.title)
   let result = await mutate(h, 'createProject', initial.body.version, { name: 'Example', description: 'A project' })
   assert.equal(result.status, 200)
+  assert.ok(Number.isFinite(Date.parse(result.body.updatedAt)),'save records a real workspace update timestamp')
+  assert.equal(result.body.projects.find(p=>p.id==='example').updatedAt,result.body.updatedAt)
+  assert.equal((await call(h.workspace)).body.updatedAt,result.body.updatedAt,'reads preserve the saved time')
   let version = result.body.version
   result = await mutate(h, 'createReport', version, reportFor('2027-02'), 'example', '2027-01')
   assert.equal(result.status, 200)

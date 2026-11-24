@@ -270,10 +270,12 @@ export function DeleteRecord({ project, month, onDeleted }) {
   const [version, setVersion] = useState(null)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
+  const [confirmation, setConfirmation] = useState('')
   usePauseRefresh(open)
   if (!workspace?.canEdit) return null
   const label = month ? `${month.label} report` : project.name
   async function remove() {
+    if (!month && confirmation !== project.name) return
     setBusy(true)
     try {
       await mutate({ action: month ? 'deleteReport' : 'deleteProject', projectId: project.id, monthId: month?.id }, version)
@@ -281,12 +283,13 @@ export function DeleteRecord({ project, month, onDeleted }) {
       onDeleted?.()
     } catch (failure) { setError(failure.message) } finally { setBusy(false) }
   }
-  return <Dialog.Root open={open} onOpenChange={(value) => { if (!busy) { setOpen(value); setVersion(workspace.version); setError('') } }}>
+  return <Dialog.Root open={open} onOpenChange={(value) => { if (!busy) { setOpen(value); setVersion(workspace.version); setError(''); setConfirmation('') } }}>
     <Dialog.Trigger asChild><Button variant="outline" className="action record-icon-action" data-record-delete={month ? 'report' : 'project'} aria-label={`Delete ${month ? month.label + ' report' : 'project'}`} title={`Delete ${month ? 'report' : 'project'}`}><DeleteIcon label="" /></Button></Dialog.Trigger>
     <Dialog.Portal><Dialog.Overlay className="editor-overlay" /><Dialog.Content className="editor-dialog dialog-destructive" onPointerDownOutside={(event) => event.preventDefault()} onEscapeKeyDown={(event) => { if (busy) event.preventDefault() }}>
-      <ModalHeader title={`Delete ${label}?`} icon={DeleteIcon} busy={busy} description={month ? 'This removes the report and all of its contents. This cannot be undone.' : `This removes the project and its ${project.months.length} reporting months. This cannot be undone.`} />
+      <ModalHeader title={`Delete ${label}?`} icon={DeleteIcon} busy={busy} description={month ? 'This removes the report and all of its contents. This cannot be undone.' : `This permanently removes ${project.name}, its ${project.months.length} reporting months, ${project.milestones?.length ?? 0} milestones, and ${project.weeks?.length ?? 0} weekly boards. This cannot be undone.`} />
       {error && <p className="editor-error" role="alert">{error}</p>}
-      <div className="editor-footer"><Button variant="outline" className="action" disabled={busy} onClick={() => setOpen(false)}>Cancel</Button><Button className="action delete-confirm" loading={busy} onClick={remove}>{busy ? 'Deleting…' : 'Delete'}</Button></div>
+      {!month && <div className="project-delete-confirmation"><p id="delete-project-name">Enter <strong>{project.name}</strong> to confirm.</p><label className="editor-field"><span>Type the project name to confirm</span><input value={confirmation} onChange={event => setConfirmation(event.target.value)} autoComplete="off" spellCheck={false} aria-describedby="delete-project-name" disabled={busy} /></label></div>}
+      <div className="editor-footer"><Button variant="outline" className="action" disabled={busy} onClick={() => setOpen(false)}>Cancel</Button><Button variant="destructive" className="action delete-confirm" loading={busy} disabled={!month && confirmation !== project.name} onClick={remove}>{busy ? 'Deleting…' : month ? 'Delete' : 'Delete project permanently'}</Button></div>
     </Dialog.Content></Dialog.Portal>
   </Dialog.Root>
 }

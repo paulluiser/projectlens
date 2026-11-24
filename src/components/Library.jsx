@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button'
 import { fade, useReducedMotion } from '@/lib/motion'
 import { useWorkspace, WorkspaceNotice } from '@/lib/workspace'
 import { RecordEditor, DeleteRecord } from './RecordEditor'
-import { projectPath, projectsPath, reportPath } from '@/lib/routes.mjs'
+import { projectPath, projectOverviewPath, projectsPath, reportPath } from '@/lib/routes.mjs'
 import { ChartIllustration, SearchIllustration } from './Illustrations'
 
 export function Library() {
@@ -77,11 +77,7 @@ function LoadedLibrary() {
       <div className="page-heading directory-heading">
         <div><p className="page-eyebrow"><Link to={projectsPath}>Projects</Link><span aria-hidden="true"> / </span><span>Reports</span></p><h1>{project?.name ?? 'Projects'}</h1><p>{project?.description || 'Monthly reports for this project.'}</p></div>
         <div className="record-toolbar">
-          <RecordEditor kind="project" project={project} onSaved={(next, data) => {
-            const saved = project ?? next.projects.find((entry) => entry.name === data.name)
-            if (saved) navigate(projectPath(saved.id))
-          }} />
-          {project && <><RecordEditor kind="report" project={project} onSaved={(_, data, monthId) => navigate(reportPath(project.id, monthId) + '?preview=1')} /><DeleteRecord project={project} onDeleted={() => navigate(projectsPath)} /></>}
+          <RecordEditor kind="report" project={project} onSaved={(_, data, monthId) => navigate(reportPath(project.id, monthId) + '?preview=1')} />
         </div>
       </div>
       <section aria-label="Available reports">
@@ -110,7 +106,7 @@ function LoadedLibrary() {
                     <td role="cell" data-label="Report month">{destination ? <Link to={destination} aria-label={`${entry.name} ${item.label} review`}>{item.label}</Link> : item?.label ?? 'No reports yet'}</td>
                     <td role="cell" data-label="Status">{item && <span className={`lozenge ${item.report ? 'success' : item.draft ? 'neutral' : 'pending'}`}>{item.report ? <SuccessIcon label="" size="small" /> : <ClockIcon label="" size="small" />}{item.draft ? item.report ? 'Published with draft changes' : 'Draft' : item.report ? 'Published' : 'Awaiting report'}</span>}</td>
                     <td role="cell" data-label="Related plan">{plan && <Link className="pending-link" to={reportPath(entry.id, plan.id, 'next-month')}>See plan <ArrowRightIcon label="" size="small" /></Link>}</td>
-                    <td role="cell" data-label="Manage" hidden={!workspace.canEdit}><div className="row-actions">{item ? <><RecordEditor compact kind="report" project={entry} month={item} onSaved={(_, data, id) => navigate(reportPath(entry.id, id) + '?preview=1')} /><DeleteRecord project={entry} month={item} /></> : <RecordEditor kind="report" project={entry} onSaved={(_, data, monthId) => navigate(reportPath(entry.id, monthId) + '?preview=1')} />}</div></td>
+                    <td role="cell" data-label="Manage" hidden={!workspace.canEdit}>{item && <div className="row-actions">{(item.report || item.draft) && <RecordEditor compact kind="report" project={entry} month={item} onSaved={(_, data, id) => navigate(reportPath(entry.id, id) + '?preview=1')} />}<DeleteRecord project={entry} month={item} /></div>}</td>
                   </tr>
                 })}
               </tbody>
@@ -163,15 +159,21 @@ function ProjectDashboard({ query }) {
         {query && <><span role="status">{projects.length} shown</span><Button variant="outline" className="action search-clear" onClick={() => navigate(projectsPath)}><SearchIcon label="" /> Clear “{query}”</Button></>}
       </div>
       {projects.length > 0 ? <table role="table" className="report-table" aria-label="Projects overview">
-        <thead role="rowgroup"><tr role="row"><th scope="col">Project</th><th scope="col">Reports</th><th scope="col">Latest publication</th><th scope="col"><span className="sr-only">Open project</span></th></tr></thead>
+        <thead role="rowgroup"><tr role="row"><th scope="col">Project</th><th scope="col">Progress</th><th scope="col">Milestones</th><th scope="col">Reports</th><th scope="col">Latest publication</th><th scope="col"><span className="sr-only">Open project</span></th></tr></thead>
         <tbody role="rowgroup">{projects.map(project => {
           const published = project.months.filter(month => month.report).sort((first, second) => second.id.localeCompare(first.id))
           const drafts = project.months.filter(month => month.draft).length
+          const progress = published[0]?.report.progress
+          const completion = progress?.total ? Math.round(progress.projectCompleted / progress.total * 100) : 0
+          const milestones = project.milestones ?? []
+          const done = milestones.filter(item => item.status === 'completed').length
           return <tr role="row" key={project.id}>
-            <td role="cell" data-label="Project"><Link className="project-cell" to={projectPath(project.id)}><ProjectMark project={project} /><strong>{project.name}</strong></Link>{project.description && <p className="project-description">{project.description}</p>}</td>
+            <td role="cell" data-label="Project"><Link className="project-cell" to={projectOverviewPath(project.id)}><ProjectMark project={project} /><strong>{project.name}</strong></Link>{project.description && <p className="project-description">{project.description}</p>}</td>
+            <td role="cell" data-label="Progress"><div className="project-index-progress">{progress ? <><span>{completion}% · {progress.projectCompleted} / {progress.total} tasks</span><progress value={completion} max="100" aria-label={`${project.name} completion`} />{progress.runningHours != null && <small>{new Intl.NumberFormat(undefined, { maximumFractionDigits: 2 }).format(progress.runningHours)} total hours</small>}</> : <span>Not reported</span>}</div></td>
+            <td role="cell" data-label="Milestones">{milestones.length ? `${done} / ${milestones.length} done` : 'No milestones'}</td>
             <td role="cell" data-label="Reports"><span>{published.length} published</span>{workspace.canEdit && drafts > 0 && <span className="project-draft-count">{drafts} {drafts === 1 ? 'draft' : 'drafts'}</span>}</td>
             <td role="cell" data-label="Latest publication">{published[0]?.label ?? 'No published reports'}</td>
-            <td role="cell" data-label="Open"><Link className="text-link" to={projectPath(project.id)} aria-label={`Open ${project.name}`}>Open project <ArrowRightIcon label="" /></Link></td>
+            <td role="cell" data-label="Open"><Link className="text-link" to={projectOverviewPath(project.id)} aria-label={`Open ${project.name}`}>Open project <ArrowRightIcon label="" /></Link></td>
           </tr>
         })}</tbody>
       </table> : <div className="empty-state">{query ? <SearchIllustration /> : <ChartIllustration />}<h2>{query ? 'No matching projects' : 'Create your first project'}</h2><p>{query ? 'Try a different project name or report title.' : 'Use Create project above to start your first monthly review.'}</p>{query && <Button variant="outline" className="action" onClick={() => navigate(projectsPath)}>Clear search</Button>}</div>}

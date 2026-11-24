@@ -3,6 +3,7 @@ import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 import { defineConfig, loadEnv } from 'vite'
 import { createHandlers } from './server/workspace.mjs'
+import { buildInfo } from './scripts/build-info.mjs'
 
 function workspaceApi(env) {
   const handlers = createHandlers({ env })
@@ -18,6 +19,7 @@ function workspaceApi(env) {
 }
 
 export default defineConfig(({ mode }) => ({
+  define: { __LENS_BUILD__: JSON.stringify(buildInfo()) },
   plugins: [react(), tailwindcss(), workspaceApi({ ...loadEnv(mode, process.cwd(), ''), ...process.env })],
   resolve: {
     alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) },

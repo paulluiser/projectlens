@@ -7,6 +7,7 @@ import { Home } from './components/Home'
 import { ProjectBrand } from './components/ProjectBrand'
 import { Overview } from './components/Overview'
 import { SearchIllustration } from './components/Illustrations'
+import { WorkspaceSettings } from './components/WorkspaceSettings'
 import { landingPath, overviewPath, projectsPath, publicTabs, reportPath } from './lib/routes.mjs'
 import { fade, useReducedMotion } from './lib/motion'
 import { useWorkspace, WorkspaceProvider } from './lib/workspace'
@@ -79,6 +80,7 @@ function Header({ expanded, onToggle, onNavigate, narrow }) {
         <kbd className="search-kbd" aria-hidden="true">/</kbd>
         <button type="submit" className="icon-button search-submit" aria-label="Submit search"><ArrowDownRightIcon label="" /></button>
       </form>
+      <WorkspaceSettings onOpen={() => { setSearchOpen(false); onNavigate() }} />
     </header>
   )
 }
@@ -96,7 +98,10 @@ function Sidebar({ showProjects, onNavigate, modal, onClose }) {
         <NavLink className="sidebar-link" to={projectsPath} end><ProjectsIcon label="" /> Projects</NavLink>
         {showProjects && <Suspense fallback={<SidebarSkeleton />}><ProjectNav /></Suspense>}
       </nav>
-      {workspace && <div className="sidebar-editor-access"><Suspense fallback={null}><EditorAccess /></Suspense></div>}
+      <div className="sidebar-editor-access">
+        {workspace && <Suspense fallback={null}><EditorAccess /></Suspense>}
+        <small className="sidebar-last-updated" title="Application build time · Asia/Manila">Last updated <time dateTime={__LENS_BUILD__.builtAt}>{new Intl.DateTimeFormat('en', { dateStyle: 'medium', timeStyle: 'short', timeZone: 'Asia/Manila' }).format(new Date(__LENS_BUILD__.builtAt))} PHT</time></small>
+      </div>
     </aside>
   )
 }
@@ -172,6 +177,7 @@ export function App() {
     return () => { document.removeEventListener('visibilitychange', pauseMotion); delete document.documentElement.dataset.motionPaused }
   }, [])
   const reduced = useReducedMotion()
+  useEffect(() => { document.documentElement.dataset.reducedMotion = String(reduced); return () => { delete document.documentElement.dataset.reducedMotion } }, [reduced])
   const narrow = useSyncExternalStore(subscribeToSidebarBreakpoint, () => mobileSidebar.matches)
   const mode = narrow ? 'mobile' : 'desktop'
   const [sidebars, setSidebars] = useState({ mobile: false, desktop: true })

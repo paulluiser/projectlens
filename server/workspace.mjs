@@ -249,6 +249,9 @@ function change(state, body, now) {
       }
     }
   }
+  state.updatedAt = new Date(now()).toISOString()
+  const updatedProject = action === 'createProject' ? state.projects.at(-1) : state.projects.find(project => project.id === projectId)
+  if (updatedProject) updatedProject.updatedAt = state.updatedAt
   state.version = randomUUID()
   return state
 }

@@ -72,3 +72,12 @@ The `@vercel/cli-config` Zod dependency is overridden to 4.6.6 to address the co
 Loading screens match the directory and report chapter layouts. Long initial requests offer a retry after ten seconds; background refresh keeps current data on screen. Saves, sign-in, publishing, and deletion show disabled busy buttons. Dialogs, chapter navigation, editor rows, and success messages have short transitions. Reduced motion keeps feedback static, and CSS animations pause in hidden tabs.
 
 The component test holds requests to verify initial skeletons, busy-submit protection, content arrival, report skeleton selection, and slow-load retry behavior. These checks do not verify rendered animation smoothness or layout.
+
+
+## Project overview and workspace settings
+
+Project names and **Open project** in the Projects directory lead to the project's Overview. It shows the latest published task totals, remaining tasks, running hours, report hours, assigned team, milestone deadlines, and existing report/weekly charts. Figures come from saved records; missing figures are labelled as not reported. **Edit project** and **Delete project** are available to editors on Overview. Deletion lists the affected contents and requires typing the exact project name; report deletion keeps its separate confirmation. Reports has one **Create report** action above the table.
+
+The settings icon beside global search opens device motion preferences, workspace access/storage details, a manual refresh, and build information. Motion preferences are saved on this device; system reduced motion is always respected. The sidebar's **Last updated** timestamp refers to the app build. Settings' **Last saved** timestamp refers to the latest successful workspace write and appears once a write has recorded it. Reads and failed writes do not change that saved timestamp.
+
+Versions use `buildnumber.MMDDYYYY.HHmm`, with date and time in Asia/Manila. Vite embeds the build timestamp when it starts/builds, so every client receives the same deployment version. The build number follows the Git revision count, with `build-info.json` as a baseline for shallow deployment clones; update the baseline for future releases when building from shallow clones.
