@@ -18,7 +18,6 @@ const Milestones = lazy(() => import('./components/Milestones').then(({ Mileston
 const Weekly = lazy(() => import('./components/Weekly').then(({ Weekly }) => ({ default: Weekly })))
 const ProjectOverview = lazy(() => import('./components/ProjectOverview').then(({ ProjectOverview }) => ({ default: ProjectOverview })))
 
-const EditorAccess = lazy(() => import('./components/RecordEditor').then(({ EditorAccess }) => ({ default: EditorAccess })))
 const ProjectNav = lazy(() => import('./components/ProjectNav').then(({ ProjectNav }) => ({ default: ProjectNav })))
 const mobileSidebar = matchMedia('(max-width: 760px), (max-height: 500px) and (pointer: coarse) and (max-width: 1050px)')
 
@@ -86,7 +85,6 @@ function Header({ expanded, onToggle, onNavigate, narrow }) {
 }
 
 function Sidebar({ showProjects, onNavigate, modal, onClose }) {
-  const { workspace } = useWorkspace()
   return (
     <aside className="site-sidebar" id="workspace-sidebar" role={modal ? 'dialog' : undefined} aria-modal={modal || undefined} aria-label={modal ? 'Navigation' : undefined}>
       <div className="mobile-drawer-heading"><strong>Navigation</strong><button type="button" className="icon-button" aria-label="Close navigation" onClick={onClose}><SidebarIcon label="" /></button></div>
@@ -99,7 +97,6 @@ function Sidebar({ showProjects, onNavigate, modal, onClose }) {
         {showProjects && <Suspense fallback={<SidebarSkeleton />}><ProjectNav /></Suspense>}
       </nav>
       <div className="sidebar-editor-access">
-        {workspace && <Suspense fallback={null}><EditorAccess /></Suspense>}
         <small className="sidebar-last-updated" title="Application build time · Asia/Manila">Last updated <time dateTime={__LENS_BUILD__.builtAt}>{new Intl.DateTimeFormat('en', { dateStyle: 'medium', timeStyle: 'short', timeZone: 'Asia/Manila' }).format(new Date(__LENS_BUILD__.builtAt))} PHT</time></small>
       </div>
     </aside>

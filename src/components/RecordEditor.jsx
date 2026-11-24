@@ -294,25 +294,42 @@ export function DeleteRecord({ project, month, onDeleted }) {
   </Dialog.Root>
 }
 
-export function EditorAccess() {
+export function EditorAccess({ onBusyChange }) {
   const { workspace, login, logout } = useWorkspace()
   const [open, setOpen] = useState(false)
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [busy, setBusy] = useState(false)
-  usePauseRefresh(open)
-  if (!workspace?.storageReady) return <span className="storage-note">Shared storage needs configuration.</span>
-  if (workspace.canEdit) return workspace.authRequired ? <div className="editor-session">{error && <span role="alert">{error}</span>}<Button variant="outline" className="action" onClick={async () => { try { await logout() } catch (failure) { setError(failure.message) } }}>Sign out</Button></div> : <span className="local-editor-label">Local editor</span>
-  if (!workspace.authRequired) return <span className="storage-note">Editor access needs configuration.</span>
-  return <Dialog.Root open={open} onOpenChange={(value) => { if (!busy) { setOpen(value); setError(''); setPassword('') } }}>
-    <Dialog.Trigger asChild><Button variant="outline" className="action">Editor sign-in</Button></Dialog.Trigger>
-    <Dialog.Portal><Dialog.Overlay className="editor-overlay" /><Dialog.Content className="editor-dialog" onEscapeKeyDown={event => { if (busy) event.preventDefault() }} onPointerDownOutside={event => event.preventDefault()}>
-      <ModalHeader title="Editor sign-in" icon={PersonIcon} busy={busy} description="Enter the shared editor password to manage projects and reports." />
-      <form className="editor-form" onSubmit={async (event) => { event.preventDefault(); setBusy(true); setError(''); try { await login(password); setOpen(false); setPassword('') } catch (failure) { setError(failure.message) } finally { setBusy(false) } }}>
-        <div className="editor-scroll"><fieldset className="editor-form-fields" disabled={busy}><Field label="Editor password" type="password" autoComplete="current-password" required value={password} onChange={(event) => setPassword(event.target.value)} />
-        {error && <p className="editor-error" role="alert">{error}</p>}
-        </fieldset></div><EditorFooter busy={busy} close={() => setOpen(false)} label="Sign in" />
-      </form>
-    </Dialog.Content></Dialog.Portal>
-  </Dialog.Root>
+  usePauseRefresh(open || busy)
+  if (!workspace) return <p className="settings-account-note" role="status">Loading workspace access…</p>
+  const shared = workspace.storageReady && workspace.authRequired
+  const title = workspace.canEdit ? shared ? 'Editor access' : 'Local editor' : 'Read-only access'
+  const detail = !workspace.storageReady ? 'Shared storage is not configured.' : workspace.canEdit ? shared ? 'You can manage projects and reports.' : 'Editing is enabled on this device.' : shared ? 'Sign in to manage projects and reports.' : 'Editor access is not configured.'
+  async function authenticate(event) {
+    event.preventDefault()
+    setBusy(true); onBusyChange(true); setError('')
+    try { await login(password); setPassword(''); setOpen(false) }
+    catch (failure) { setError(failure.message) }
+    finally { setBusy(false); onBusyChange(false) }
+  }
+  async function signOut() {
+    setBusy(true); onBusyChange(true); setError('')
+    try { await logout(); setPassword(''); setOpen(false) }
+    catch (failure) { setError(failure.message) }
+    finally { setBusy(false); onBusyChange(false) }
+  }
+  return <div className="settings-account">
+    <div className="settings-account-row">
+      <span className="settings-account-icon" aria-hidden="true"><PersonIcon label="" /></span>
+      <div className="settings-account-copy"><strong>{title}</strong><p>{detail}</p></div>
+      {shared && (workspace.canEdit
+        ? <Button variant="outline" className="action" loading={busy} onClick={signOut}>{busy ? 'Signing out…' : 'Sign out'}</Button>
+        : !open && <Button className="action action-primary" onClick={() => { setOpen(true); setError('') }}>Editor sign-in</Button>)}
+    </div>
+    {shared && !workspace.canEdit && open && <form className="settings-sign-in" onSubmit={authenticate}>
+      <Field label="Editor password" type="password" autoComplete="current-password" required autoFocus disabled={busy} value={password} onChange={event => setPassword(event.target.value)} />
+      <div className="settings-sign-in-actions"><Button type="submit" className="action action-primary" loading={busy} disabled={!password}>{busy ? 'Signing in…' : 'Sign in'}</Button><Button type="button" variant="ghost" className="action" disabled={busy} onClick={() => { setOpen(false); setPassword(''); setError('') }}>Cancel</Button></div>
+    </form>}
+    {error && <p className="editor-error" role="alert">{error}</p>}
+  </div>
 }

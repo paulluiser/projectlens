@@ -12,7 +12,7 @@ import { useMetricReveal } from './AnimatedMetric'
 import { MonthComparison, CommitmentOutcomes, PublishReport, ShareReport } from './ReviewTools'
 import { NextMonthPlan } from './NextMonthPlan'
 import { useWorkspace, WorkspaceNotice } from '@/lib/workspace'
-import { RecordEditor, DeleteRecord, EditorAccess } from './RecordEditor'
+import { RecordEditor, DeleteRecord } from './RecordEditor'
 import { chapters, libraryReturnPath, projectPath, projectsPath, reportPath, stepChapter } from '@/lib/routes.mjs'
 import { easing, fade, useReducedMotion } from '@/lib/motion'
 
@@ -98,7 +98,7 @@ function ReportUnavailable({ project, month }) {
       <h1>{month ? `${month.label} review` : 'Review unavailable'}</h1>
       {month && <p>The {project.name} report for this month is awaiting content.</p>}
       <Link className="text-link" to={libraryReturnPath()}>Back to projects <ArrowRightIcon label="" /></Link>
-      {project && <div className="record-toolbar"><EditorAccess /><RecordEditor kind="report" project={project} month={month} onSaved={(_, data, id) => navigate(reportPath(project.id, id) + '?preview=1')} />{month?.draft && <Link className="text-link" to={reportPath(project.id, month.id) + '?preview=1'}>Preview saved draft</Link>}</div>}
+      {project && <div className="record-toolbar"><RecordEditor kind="report" project={project} month={month} onSaved={(_, data, id) => navigate(reportPath(project.id, id) + '?preview=1')} />{month?.draft && <Link className="text-link" to={reportPath(project.id, month.id) + '?preview=1'}>Preview saved draft</Link>}</div>}
     </main>
   )
 }
