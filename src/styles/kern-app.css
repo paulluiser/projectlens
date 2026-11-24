@@ -1153,3 +1153,11 @@ html[data-reduced-motion=true] *, html[data-reduced-motion=true] *::before, html
 .settings-editor-management form { display: flex; flex-wrap: wrap; align-items: end; gap: 10px; }
 .settings-editor-management form .editor-field { flex: 1 1 230px; }
 .editor-removal-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+
+.privacy-notice { width: min(100%, 76ch); margin: 0 auto; padding: 48px 24px 64px; }
+.privacy-brand { display: inline-flex; margin-bottom: 32px; color: var(--foreground); text-decoration: none; }
+.privacy-notice h1 { font-size: var(--t-h1); font-weight: 600; }
+.privacy-updated { margin: 8px 0 24px; color: var(--muted-foreground); font-size: var(--t-xs); }
+.privacy-notice > p:not(.privacy-updated), .privacy-notice section p { margin-bottom: 12px; font-size: var(--t-sm); line-height: 1.8; }
+.privacy-notice h2 { margin: 28px 0 10px; font-size: var(--t-lede); font-weight: 600; }
+.privacy-notice section a { text-decoration: underline; text-underline-offset: 3px; }

@@ -158,7 +158,7 @@ function Footer() {
       <div><p className="lx-footer-brand"><ProjectBrand size={22} /></p><p className="lx-footer-copy">Monthly project reviews for software teams: progress, accomplishments, blockers and the plan for next month.</p></div>
       <nav aria-label="Product"><p>Product</p>{publicTabs.filter(tab => tab.id !== 'home').map(tab => <Link key={tab.id} to={tab.path}>{tab.label}</Link>)}</nav>
       <nav aria-label="Workspace"><p>Workspace</p><Link to={overviewPath}>Overview</Link><Link to={projectsPath}>Projects</Link></nav>
-      <div><p>Sharing</p><span>Drafts stay with editors</span><span>Shared links open the published review</span></div>
+      <div><p>Sharing</p><span>Drafts stay with editors</span><span>Shared links open the published review</span><Link to={`${landingPath}/privacy`}>Privacy notice</Link></div>
     </div>
     <p className="lx-copyright">© {new Date().getFullYear()} <span translate="no">Lens</span></p>
   </footer>

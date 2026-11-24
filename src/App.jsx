@@ -8,6 +8,7 @@ import { ProjectBrand } from './components/ProjectBrand'
 import { Overview } from './components/Overview'
 import { SearchIllustration } from './components/Illustrations'
 import { WorkspaceSettings } from './components/WorkspaceSettings'
+import { PrivacyNotice } from './components/PrivacyNotice'
 import { landingPath, overviewPath, projectsPath, publicTabs, reportPath } from './lib/routes.mjs'
 import { fade, useReducedMotion } from './lib/motion'
 import { useWorkspace, WorkspaceProvider } from './lib/workspace'
@@ -239,6 +240,7 @@ export function App() {
   const relative = path.startsWith(projectsPath + '/') ? path.slice(projectsPath.length + 1) : ''
   const page = /\/(milestones|weekly|overview)$/.test(relative) ? path : relative.includes('/') ? 'report' : relative ? projectsPath : path
 
+  if (path === `${landingPath}/privacy`) return <PrivacyNotice />
   const publicPage = publicTabs.find(tab => tab.path === (path === '/' ? landingPath : path))
   if (publicPage) return <Home key={publicPage.id} page={publicPage} />
 
