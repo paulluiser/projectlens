@@ -8,6 +8,8 @@ import {
   createDecipheriv,
   timingSafeEqual,
 } from 'node:crypto'
+const DAY = 86400000
+const guestCodeExpiry = code => Math.min(Date.parse(code.expiresAt), Date.parse(code.createdAt) + 3 * DAY)
 const fail = (status, message, code) =>
   Object.assign(new Error(message), { status, code })
 export function createSecurity({ env, now, google, production, storageReady }) {
@@ -48,7 +50,7 @@ export function createSecurity({ env, now, google, production, storageReady }) {
     }
   }
   function setSession(res, id, expires = now() + 28800000, clearNonce = false) {
-    expires = Math.min(expires, now() + 28800000)
+    expires = Math.min(expires, now() + 7 * DAY)
     const data = Buffer.from(JSON.stringify({ id, expires })).toString(
       'base64url',
     )
@@ -140,6 +142,7 @@ export function createSecurity({ env, now, google, production, storageReady }) {
             ...(u.email ? { email: u.email } : {}),
           }
         : null,
+      ...(u?.role === 'guest' ? { sessionExpiresAt: new Date(u.expires).toISOString() } : {}),
       role: u
         ? u.role === 'guest'
           ? 'guest'
@@ -249,9 +252,12 @@ export function createSecurity({ env, now, google, production, storageReady }) {
       ...flags(req, state),
       remoteCode: decrypt(u.encryptedCode),
       guestCodes: flags(req, state).isAdmin
-        ? d.guestCodes.map(({ codeHash, ...c }) => c)
+        ? d.guestCodes.map(({ codeHash, ...c }) => ({ ...c, expiresAt: new Date(guestCodeExpiry(c)).toISOString() }))
         : [],
-      auditEvents: d.auditEvents.slice(-200).reverse(),
+      auditEvents: d.auditEvents.slice(-200).reverse().map(event => {
+        const profile = d.users.find(user => user.id === event.actor?.id)
+        return profile && !event.actor.firstName ? { ...event, actor: { ...event.actor, firstName: profile.firstName, lastName: profile.lastName } } : event
+      }),
     }
   }
   function googleUser(state, g) {
@@ -309,7 +315,7 @@ export function createSecurity({ env, now, google, production, storageReady }) {
       (c) =>
         c.codeHash === hashed &&
         !c.consumedAt &&
-        Date.parse(c.expiresAt) > now(),
+        guestCodeExpiry(c) > now(),
     )
     if (!guest) throw fail(401, 'Invalid or expired code.')
     if (!body.firstName || !body.lastName)
@@ -319,7 +325,7 @@ export function createSecurity({ env, now, google, production, storageReady }) {
       id: randomUUID(),
       ...profile,
       role: 'guest',
-      expires: Date.parse(guest.expiresAt),
+      expires: now() + 7 * DAY,
     }
     d.users.push(visitor)
     guest.consumedAt = new Date(now()).toISOString()

@@ -52,7 +52,7 @@ export function GoogleSignIn({ onBusyChange = idleBusyChange }) {
   </div>
 }
 
-function EditorAccessManager({ onBusyChange }) {
+export function EditorAccessManager({ onBusyChange }) {
   const { workspace,mutate }=useWorkspace()
   const [email,setEmail]=useState('')
   const [error,setError]=useState('')
@@ -68,7 +68,6 @@ function EditorAccessManager({ onBusyChange }) {
   }
   return <section className="settings-editor-management" aria-labelledby="manage-editors-heading">
     <h4 id="manage-editors-heading">Manage editors</h4>
-    <p className="settings-account-note">Only administrators can change access. Removed editors lose access on their next request.</p>
     <ul aria-label="Accounts with editor access">{[...administrators,...editors].map(address=><li key={address}>
       <span className="editor-access-email">{address}</span>
       {administrators.includes(address)?<span className="editor-access-role">Administrator</span>:removing===address?<div className="editor-removal-actions"><Button variant="outline" className="action" disabled={busy} onClick={()=>save(editors.filter(item=>item!==address))}>Confirm removal</Button><button type="button" className="text-link" disabled={busy} onClick={()=>setRemoving(null)}>Cancel</button></div>:<button type="button" className="text-link" disabled={busy} aria-label={`Remove editor ${address}`} onClick={()=>setRemoving(address)}>Remove</button>}
@@ -81,7 +80,7 @@ function EditorAccessManager({ onBusyChange }) {
   </section>
 }
 
-export function GoogleEditorAccess({ onBusyChange }) {
+export function GoogleEditorAccess({ onBusyChange, showManagement = true }) {
   const {workspace,logout}=useWorkspace()
   const [busy,setBusy]=useState(false)
   const [error,setError]=useState('')
@@ -90,7 +89,7 @@ export function GoogleEditorAccess({ onBusyChange }) {
       {(workspace.signedIn || workspace.canEdit) && <Button variant="outline" className="action" loading={busy} onClick={async()=>{setBusy(true);onBusyChange(true);setError('');try{await logout();window.google?.accounts?.id?.disableAutoSelect()}catch(failure){setError(failure.message)}finally{setBusy(false);onBusyChange(false)}}}>{busy?'Signing out…':'Sign out'}</Button>}
     </div>
     {!workspace.signedIn && !workspace.canEdit && workspace.authReady && <GoogleSignIn onBusyChange={onBusyChange} />}
-    {workspace.canEdit && workspace.isAdmin && workspace.editorAccess && <EditorAccessManager onBusyChange={onBusyChange} />}
+    {showManagement && workspace.canEdit && workspace.isAdmin && workspace.editorAccess && <EditorAccessManager onBusyChange={onBusyChange} />}
     {error && <p className="editor-error" role="alert">{error}</p>}
   </div>
 }

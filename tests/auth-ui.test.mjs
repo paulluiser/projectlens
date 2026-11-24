@@ -138,6 +138,12 @@ test('public entry, identity onboarding, account changes during saves and sessio
     assert.equal(context.workspace, null, 'session revocation clears private records while an editor is open')
     assert.equal(calls.filter(call => call.path === '/api/workspace' && call.method === 'GET').length, workspaceReadsBeforeRevocation, 'revoked sessions do not request workspace data')
     await act(async () => context.setEditing(false))
+    session = { ...editor, role: 'guest', canEdit: false, isAdmin: false, sessionExpiresAt: new Date(Date.now() + 80).toISOString() }
+    await act(async () => context.refresh(true))
+    await act(async () => { await new Promise(resolve => setTimeout(resolve, 100)) })
+    assert.equal(context.signedIn, false, 'guest access expires even without another navigation or refresh')
+    assert.equal(context.workspace, null, 'guest expiry removes loaded workspace content')
+    assert.ok(calls.some(call => call.path === '/api/session' && call.method === 'DELETE'), 'guest expiry clears the session cookie')
     await act(async () => root.unmount())
     root = createRoot(document.getElementById('root'))
     const { App } = await vite.ssrLoadModule('/src/App.jsx')

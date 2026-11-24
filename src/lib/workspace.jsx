@@ -107,6 +107,19 @@ export function WorkspaceProvider({ active, children }) {
     }
   }, [active, refresh])
 
+  useEffect(() => {
+    if (!session?.sessionExpiresAt) return
+    const remaining = Date.parse(session.sessionExpiresAt) - Date.now()
+    const timer = setTimeout(() => {
+      accountGeneration.current++
+      sequence.current++
+      setWorkspace(null)
+      setSession({ signedIn: false })
+      request('/api/session', { method: 'DELETE' }).catch(() => {})
+    }, Math.max(0, remaining))
+    return () => clearTimeout(timer)
+  }, [session?.sessionExpiresAt])
+
   async function mutate(operation, expectedVersion, options = {}) {
     if (writing.current) throw new Error('Another change is saving. Please wait a moment.')
     const writeId = Symbol('workspace-write')

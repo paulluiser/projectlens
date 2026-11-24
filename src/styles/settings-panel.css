@@ -1,0 +1,32 @@
+.workspace-settings { width: min(760px, calc(100vw - 32px)); }
+.workspace-settings .dialog-header { padding: 20px 24px; }
+.workspace-settings .editor-description { display: none; }
+.settings-layout { display: grid; grid-template-columns: 154px minmax(0, 1fr); height: 340px; min-height: 0; overflow: hidden; }
+.settings-navigation { display: flex; flex-direction: column; gap: 4px; padding: 16px 12px; background: var(--muted); border-right: 1px solid var(--border); }
+.settings-navigation button { display: flex; align-items: center; gap: 10px; min-height: 36px; padding: 8px 10px; text-align: left; border: 0; border-radius: 6px; background: transparent; color: var(--muted-foreground); font: inherit; font-size: var(--t-xs); cursor: pointer; }
+.settings-navigation button:hover { color: var(--foreground); background: var(--background); }
+.settings-navigation button[data-state="active"] { background: var(--card); color: var(--foreground); font-weight: 600; box-shadow: 0 1px 2px #1111100A; }
+.settings-navigation button:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
+.settings-pane { min-height: 0; padding: 24px; overflow: auto; }
+.settings-pane:focus-visible { outline: 2px solid var(--ring); outline-offset: -3px; }
+.settings-pane .security-subsection { margin-top: 0; padding-top: 0; border: 0; }
+.settings-pane .settings-editor-management { margin: 0; padding: 0; border: 0; }
+.settings-pane .settings-account-copy { flex-basis: 160px; }
+.settings-pane .security-code-row { gap: 6px; }
+.settings-pane .security-code-row .action { padding-inline: 10px; }
+.settings-pane .security-code { min-width: 105px; }
+.settings-pane .settings-remote-group { margin-top: 0; }
+.settings-pane .settings-section-heading h3, .settings-pane .settings-section-heading h4 { margin: 0; }
+.settings-pane .security-audit-scroll { max-height: none; }
+.settings-pane .security-section:has(> .sr-only:only-child) { display: none; }
+.workspace-settings .settings-about { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 20px; font-size: 11px; }
+.workspace-settings .settings-about strong { font-size: 11px; }
+.workspace-settings .settings-about span { color: var(--muted-foreground); }
+@media (max-width: 600px) {
+  .settings-layout { grid-template-columns: 1fr; grid-template-rows: auto minmax(0, 1fr); }
+  .settings-navigation { flex-direction: row; border-right: 0; border-bottom: 1px solid var(--border); padding: 8px; gap: 2px; }
+  .settings-navigation button { flex: 1; justify-content: center; padding: 8px 5px; gap: 5px; font-size: 11px; }
+  .settings-navigation button > span { display: none; }
+  .settings-pane { padding: 20px 16px; }
+  .workspace-settings .settings-about { flex-wrap: wrap; gap: 4px; }
+}

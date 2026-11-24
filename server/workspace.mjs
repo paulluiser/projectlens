@@ -687,7 +687,7 @@ export function createHandlers({
               id: randomUUID(),
               codeHash: security.hash(code),
               createdAt: new Date(now()).toISOString(),
-              expiresAt: new Date(now() + 604800000).toISOString(),
+              expiresAt: new Date(now() + 259200000).toISOString(),
               createdBy: u.id,
             })
         } else throw failure(400, 'Unknown security action.')

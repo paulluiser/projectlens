@@ -295,7 +295,7 @@ export function DeleteRecord({ project, month, onDeleted }) {
   </Dialog.Root>
 }
 
-export function EditorAccess({ onBusyChange }) {
+export function EditorAccess({ onBusyChange, showManagement = true }) {
   const { workspace, login, logout } = useWorkspace()
   const [open, setOpen] = useState(false)
   const [password, setPassword] = useState('')
@@ -303,7 +303,7 @@ export function EditorAccess({ onBusyChange }) {
   const [busy, setBusy] = useState(false)
   usePauseRefresh(open || busy)
   if (!workspace) return <p className="settings-account-note" role="status">Loading workspace access…</p>
-  if (workspace.authMode === 'google') return <GoogleEditorAccess onBusyChange={onBusyChange} />
+  if (workspace.authMode === 'google') return <GoogleEditorAccess onBusyChange={onBusyChange} showManagement={showManagement} />
   const shared = workspace.storageReady && workspace.authRequired
   const title = workspace.canEdit ? shared ? 'Editor access' : 'Local editor' : 'Read-only access'
   const detail = !workspace.storageReady ? 'Shared storage is not configured.' : workspace.canEdit ? shared ? 'You can manage projects and reports.' : 'Editing is enabled on this device.' : shared ? 'Sign in to manage projects and reports.' : 'Editor access is not configured.'

@@ -89,6 +89,8 @@ try {
   await click(byButton('Settings'))
   assert.ok(document.querySelector('.settings-account').textContent.includes('Local editor'),'editor access lives in Settings')
   assert.match(document.querySelector('.settings-build-version').textContent,/^\d+\.\d{8}\.\d{4}$/)
+  await act(async () => { document.querySelector('[role="tab"][id$="preferences"]').dispatchEvent(new window.MouseEvent('mousedown', { bubbles: true, button: 0 })) })
+  await settled()
   await click(document.querySelector('[aria-label="Reduce animations"]'))
   assert.equal(localStorage.getItem('lens-reduce-motion'),'true')
   await click(document.querySelector('[aria-label="Reduce animations"]'))
