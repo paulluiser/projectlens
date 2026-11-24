@@ -81,3 +81,12 @@ Click any project row in the Projects directory to open its Overview. The projec
 The settings icon beside global search opens editor sign-in/sign-out, device motion preferences, workspace access/storage details, a manual refresh, and build information. Sign-in expands within the panel; cancelling or closing clears the password. Motion preferences are saved on this device; system reduced motion is always respected. The sidebar's **Last updated** timestamp refers to the app build. Settings' **Last saved** timestamp refers to the latest successful workspace write and appears once a write has recorded it. Reads and failed writes do not change that saved timestamp.
 
 Versions use `buildnumber.MMDDYYYY.HHmm`, with date and time in Asia/Manila. Vite embeds the build timestamp when it starts/builds, so every client receives the same deployment version. The build number follows the Git revision count, with `build-info.json` as a baseline for shallow deployment clones; update the baseline for future releases when building from shallow clones.
+
+
+## Formal printable reports
+
+**Print / PDF** on a monthly report opens a dedicated A4 document containing the selected published report or editor draft. The same document is used for native browser printing, regardless of the chapter being viewed. It includes the reporting period, publication/draft state, delivery and cumulative project metrics, running hours, workstreams, compliance, accomplishments, blockers and responses, next-month actions with owners/dates, and any recorded milestones, support or carry-forward outcomes. Drafts are explicitly labelled; presenter notes are excluded.
+
+Weekly **Print** uses the same document typography and page setup, with a task register and owner workload table. If filters are active, the document states that only selected tasks are included. Documents contain selectable text rather than raster screenshots. Print CSS provides repeated table headings, page-break protection, A4 margins, and page-number footers in browsers that support page margin boxes. For PDF export, choose **Save as PDF** and disable the browser's own headers/footers to avoid adding URLs and dates. The formal layout uses Arial/Helvetica body text and a serif project heading independently of the application's typeface.
+
+Formatting was informed by Anthropic's [PDF skill](https://github.com/anthropics/skills/tree/main/skills/pdf), with rendered-PDF inspection using the installed PDF verification workflow. No document-generation service or runtime dependency was added.

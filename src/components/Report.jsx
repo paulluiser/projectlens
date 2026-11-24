@@ -1,5 +1,6 @@
 import { ProjectMark } from './ProjectMark'
 import { ProjectBrand } from './ProjectBrand'
+import { MonthlyReportDocument } from './ReportDocument'
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion, useIsPresent } from 'framer-motion'
 import { ProgressIcon, ArrowLeftIcon, ArrowRightIcon, ArrowUpRightIcon, CalendarIcon, PrinterIcon, ChevronRightIcon, BlockerIcon, MilestoneIcon, MaximizeIcon, MinimizeIcon, PlanIcon } from '@/components/ui/icons'
@@ -180,13 +181,13 @@ function ReportReader({ project, month, report, chapterIndex, preview }) {
   }, [chapter.id])
 
   useEffect(() => {
-    document.title = `${chapter.label} · ${project.name} · ${month.label}`
+    document.title = printing ? `${project.name} - ${month.label} - Monthly report` : `${chapter.label} · ${project.name} · ${month.label}`
     if (lastIndex.current !== chapterIndex) {
       window.scrollTo({ top: 0, behavior: 'instant' })
     }
     setEnded(false)
     lastIndex.current = chapterIndex
-  }, [chapter.label, chapterIndex, project.name, month.label])
+  }, [chapter.label, chapterIndex, project.name, month.label, printing])
 
   useEffect(() => {
     if (!isPresent) return
@@ -275,8 +276,14 @@ function ReportReader({ project, month, report, chapterIndex, preview }) {
     )
   }
 
+  if (printing) return <main className="site-width report-shell report-document-preview" id="main-content" tabIndex={-1}>
+    <div className="print-toolbar" role="status"><span>A4 document · Save as PDF with browser headers and footers turned off.</span><Button variant="outline" className="action" onClick={() => window.print()}>Print again</Button><Button variant="outline" className="action" onClick={() => navigate(currentPath + readerSuffix, { replace: true })}>Back to report</Button></div>
+    <MonthlyReportDocument project={project} month={month} report={report} preview={preview} visible />
+  </main>
+
   return (
     <main className="site-width report-shell" id="main-content" tabIndex={-1} data-presenting={presenting}>
+      <MonthlyReportDocument project={project} month={month} report={report} preview={preview} />
       <header className="report-header">
         <nav className="report-crumb" aria-label="Report location">
           <Link to={libraryReturn}>Projects</Link>
@@ -317,14 +324,6 @@ function ReportReader({ project, month, report, chapterIndex, preview }) {
         </div>
         <div className="report-reading">
           {ended && <section className="workspace-panel review-ended"><h2 ref={endHeading} tabIndex={-1}>Review complete</h2><p>You’ve reached the end of {month.label}. Revisit the plan, or go back to your projects.</p><div className="review-ended-actions"><Button className="action action-primary" onClick={() => navigate(libraryReturn)}>Back to projects</Button><Button className="action" variant="outline" onClick={() => setEnded(false)}>Revisit the plan</Button></div></section>}
-          {printing && <div className="print-toolbar" role="status"><span>Preparing all four chapters for printing. Choose “Save as PDF” in the print dialog for a PDF.</span><Button variant="outline" className="action" onClick={() => navigate(currentPath + readerSuffix, { replace: true })}>Back to report</Button></div>}
-          {printing ? <div className="print-chapters">{chapters.map(entry => {
-            const EntryCopy = copyByChapter[entry.id]
-            return <section key={entry.id} className="print-chapter" aria-labelledby={`print-${entry.id}`}>
-              <h2 id={`print-${entry.id}`}>{entry.label}</h2>
-              {entry.id === 'progress' ? <ProgressChapter report={report} project={project} reduced /> : <EntryCopy report={report} reduced />}
-            </section>
-          })}</div> : <>
           <div hidden={ended}>
             <AnimatePresence mode="wait" custom={direction} initial={false}>
               <ChapterPane className="chapter-content" key={chapter.id} ref={focusChapter} custom={direction}
@@ -342,7 +341,6 @@ function ReportReader({ project, month, report, chapterIndex, preview }) {
               {nextPath ? <Button asChild className="action action-primary chapter-next"><Link to={nextPath}>Next <ArrowRightIcon label="" /></Link></Button> : <Button className="action action-primary chapter-next" onClick={() => { setEnded(true); window.scrollTo({ top: 0, behavior: 'instant' }) }}>Finish review <ArrowUpRightIcon label="" /></Button>}
             </div>
           </div>
-          </>}
         </div>
       </div>
     </main>

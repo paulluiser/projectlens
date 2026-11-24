@@ -1,0 +1,70 @@
+/* Reports have their own document grammar; workspace components are never printed. */
+.print-only { display: none; }
+.formal-document { color: #202020; font: 10.5pt/1.45 Arial, Helvetica, sans-serif; text-align: left; overflow-wrap: anywhere; }
+.formal-document *, .formal-document *::before, .formal-document *::after { box-sizing: border-box; }
+.document-preview { display: block; max-width: 210mm; margin: 20px auto; padding: 18mm; background: white; border: 1px solid #d4d4d4; }
+.document-header { padding-bottom: 5mm; margin-bottom: 6mm; border-bottom: 1.2pt solid #252525; }
+.document-brand { margin: 0 0 5mm; color: #555; font: bold 9pt/1.3 Arial, Helvetica, sans-serif; letter-spacing: .04em; }
+.document-header h1 { margin: 0 0 1.5mm; font: bold 23pt/1.15 Georgia, 'Times New Roman', serif; letter-spacing: -.02em; color: #111; }
+.document-title { margin: 0 0 5mm; font-size: 13pt; color: #333; }
+.document-metadata { display: flex; flex-wrap: wrap; gap: 3mm 10mm; font-size: 9pt; line-height: 1.4; }
+.document-metadata div { display: grid; gap: 1mm; }
+.document-metadata dt { color: #555; }
+.document-metadata dd { margin: 0; font-weight: 600; }
+.document-summary { margin-bottom: 6mm; }
+.formal-document h2 { margin: 6mm 0 3mm; font: bold 12pt/1.3 Arial, Helvetica, sans-serif; color: #111; letter-spacing: 0; break-after: avoid; }
+.formal-document h3 { margin: 4mm 0 2mm; font: bold 10.5pt/1.3 Arial, Helvetica, sans-serif; break-after: avoid; }
+.formal-document p { margin: 0 0 2mm; white-space: pre-line; orphans: 3; widows: 3; }
+.document-table { width: 100%; table-layout: fixed; border-collapse: collapse; border-spacing: 0; margin: 0 0 5mm; font: 9.5pt/1.4 Arial, Helvetica, sans-serif; }
+.document-table caption { padding: 1mm 0 2mm; text-align: left; font-size: 10pt; font-weight: 600; color: #333; caption-side: top; break-after: avoid; }
+.document-table :is(th, td) { padding: 2mm 2.5mm; border: .5pt solid #c7c7c7; vertical-align: top; text-align: left; overflow-wrap: anywhere; white-space: normal; }
+.document-table thead th { background: #edf0f3; color: #111; font-weight: 600; }
+.document-table tbody th { font-weight: 400; }
+.document-table td p { margin: 1mm 0 0; font-size: 9pt; color: #444; }
+.document-table strong { font-weight: 600; }
+.document-table tr { break-inside: avoid; }
+.document-table thead { display: table-header-group; }
+.document-table tfoot { display: table-footer-group; }
+.document-metrics th:first-child { width: 65%; }
+.document-metrics td { font-variant-numeric: tabular-nums; }
+.document-plan th:nth-child(1) { width: 57%; }
+.document-plan th:nth-child(2) { width: 23%; }
+.document-plan th:nth-child(3) { width: 20%; }
+.document-list { margin: 0 0 4mm; padding-left: 6mm; }
+.formal-document ol.document-list { list-style: decimal; }
+.formal-document ul.document-list { list-style: disc; }
+.document-list li { padding-left: 1mm; margin-bottom: 3mm; break-inside: avoid; }
+.document-table-pair { display: flex; gap: 5mm; align-items: flex-start; }
+.document-table-pair > table { flex: 1; min-width: 0; width: calc(50% - 2.5mm); }
+.document-weekly-tasks th:nth-child(1) { width: 43%; }
+.document-weekly-tasks th:nth-child(2) { width: 23%; }
+.document-weekly-tasks th:nth-child(3), .document-weekly-tasks th:nth-child(4) { width: 17%; }
+.document-week-label { font-weight: 600; }
+.document-filter-note { padding: 2mm 0; font-weight: 600; }
+.document-overdue { display: block; margin-top: 1mm; font-style: italic; }
+.document-end { margin-top: 7mm !important; padding-top: 3mm; border-top: .5pt solid #aaa; color: #555; font-size: 8pt; break-inside: avoid; }
+@media (max-width: 760px) {
+  .document-preview { padding: 16px; }
+  .document-table-pair { display: block; }
+  .document-table-pair > table { width: 100%; }
+}
+@media print {
+  @page {
+    size: A4;
+    margin: 18mm 18mm 20mm;
+    @bottom-left { content: 'Project Lens'; font: 8pt Arial, sans-serif; color: #666; }
+    @bottom-right { content: 'Page ' counter(page) ' of ' counter(pages); font: 8pt Arial, sans-serif; color: #666; }
+  }
+  html, body, #root, .workspace, .route-frame, .report-shell, .weekly-page { display: block !important; width: auto !important; min-width: 0 !important; min-height: 0 !important; height: auto !important; max-height: none !important; overflow: visible !important; background: white !important; transform: none !important; opacity: 1 !important; }
+  body { margin: 0 !important; padding: 0 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  *, *::before, *::after { animation: none !important; transition: none !important; box-shadow: none !important; text-shadow: none !important; }
+  .site-header, .site-sidebar, .sidebar-scrim, .skip-link, .save-announcement, .workspace-refresh, .refresh-notice, .workspace-entry-veil, .editor-overlay, .editor-dialog, .print-toolbar { display: none !important; }
+  .site-width { max-width: none !important; margin: 0 !important; padding: 0 !important; }
+  .report-shell > :not(.formal-document), .weekly-page > :not(.formal-document) { display: none !important; }
+  .formal-document { display: block !important; width: auto; max-width: none; margin: 0; padding: 0; border: 0; }
+  .formal-document a { color: inherit; text-decoration: none; }
+  .document-table-pair { display: flex; }
+  .document-table-pair > table { width: calc(50% - 2.5mm); }
+}
+.document-table thead { break-after: avoid; }
+.document-table tbody tr:first-child { break-before: avoid; }

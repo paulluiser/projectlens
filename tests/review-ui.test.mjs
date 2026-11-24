@@ -251,6 +251,20 @@ try {
   await click(byButton('Publish now'))
   await until(()=>!document.querySelector('[role="dialog"]')&&!window.location.search.includes('preview'),'publish')
   assert.ok(document.body.textContent.includes('Published review'))
+  let printCalls = 0
+  window.print = () => { printCalls++ }
+  await click(byButton('Print / PDF'))
+  await until(()=>printCalls===1,'open formal report print dialog')
+  const printDocument=document.querySelector('.monthly-document')
+  assert.ok(printDocument,'print mode uses its own document layout')
+  assert.equal(document.querySelector('.progress-bento'),null,'dashboard tiles are not reused in the print document')
+  assert.ok(printDocument.textContent.includes('123.75'))
+  assert.ok(printDocument.textContent.includes('Waiting for approval'))
+  assert.ok(printDocument.textContent.includes('Reviewer time'))
+  assert.equal(printDocument.querySelectorAll('.document-section').length>=4,true)
+  await act(async()=>window.dispatchEvent(new window.Event('afterprint')))
+  await until(()=>!window.location.search.includes('print')&&document.querySelector('.progress-bento'),'return to report after printing')
+
   await click(document.querySelector('.report-crumb a'))
   await until(() => document.querySelector('.report-table'), 'return to report list')
   await click(document.querySelector('.report-table tbody td[data-label="Status"]'))

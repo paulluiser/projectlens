@@ -1006,53 +1006,7 @@ kbd { display: inline-grid; min-width: 18px; height: 18px; place-items: center; 
 .save-message .save-message-action { margin-left: 4px; padding: 2px 8px; border: 1px solid color-mix(in srgb, var(--paper-raised) 30%, transparent); border-radius: 6px; color: var(--paper-raised); font-weight: 600; }
 .save-message .save-message-action:hover { background: color-mix(in srgb, var(--paper-raised) 12%, transparent); }
 
-/* ── Print and PDF ─────────────────────────────────────────────────────── */
-.print-only { display: none; }
-@media print {
-  @page { size: A4; margin: 14mm 14mm 16mm; }
-  :root { --background: #fff; --card: #fff; }
-  html, body, .workspace, main { background: #fff !important; }
-  body { color: #111110; font-size: 10.5pt; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-  *, *::before, *::after { box-shadow: none !important; text-shadow: none !important; animation: none !important; transition: none !important; }
-  .skip-link, .site-header, .site-sidebar, .sidebar-scrim, .save-announcement, .refresh-notice, .workspace-entry { display: none !important; }
-  .workspace { display: block !important; min-height: 0 !important; }
-  .site-width { max-width: none !important; margin: 0 !important; padding: 0 !important; }
-  a { color: inherit; text-decoration: none; }
-  .print-only { display: block !important; }
-  .print-hide { display: none !important; }
-
-  /* Weekly: print only the recap table */
-  .weekly-page > :not(.weekly-print) { display: none !important; }
-  .weekly-print h1 { margin: 2pt 0 4pt; font-size: 18pt; letter-spacing: -0.02em; }
-  .print-eyebrow { color: #555; font-size: 9pt; }
-  .print-meta { margin: 0 0 10pt; color: #333; font-size: 9.5pt; }
-  .print-table { width: 100%; border-collapse: collapse; margin-bottom: 10pt; font-size: 9.5pt; }
-  .print-table th { padding: 5pt 6pt; background: #111110 !important; color: #fff !important; text-align: left; font-weight: 600; }
-  .print-table td { padding: 5pt 6pt; border: 0.5pt solid #bbb; vertical-align: top; }
-  .print-table tbody tr:nth-child(odd) td { background: #f1f0ec !important; }
-  .print-table tr { break-inside: avoid; }
-  .print-note { display: block; margin-top: 2pt; color: #555; font-size: 8.5pt; }
-
-  /* Monthly report: chrome off, every chapter in reading order */
-  .report-shell .report-rail, .chapter-controls, .review-ended, .report-actions, .present-button, .report-workflow a, .report-workflow button, .chart-table summary, .print-toolbar { display: none !important; }
-  .report-workbench { display: block !important; }
-  .report-header { margin-bottom: 12pt !important; padding-bottom: 8pt; border-bottom: 1pt solid #111110; }
-  .report-period select { appearance: none; border: 0 !important; padding: 0 !important; background: none !important; font: inherit; color: inherit; }
-  .print-chapters { gap: 18pt !important; }
-  .print-chapter + .print-chapter { padding-top: 14pt; border-top: 1pt solid #111110; }
-  .print-chapter > h2 { margin: 0 0 8pt; font-size: 15pt; break-after: avoid; }
-  .workspace-panel, .chart, figure, li, tr { break-inside: avoid; }
-  .plan-calendar { display: none !important; }
-  .report-header .report-context, .report-header .report-title { justify-content: flex-start !important; }
-  .report-header .report-context { align-items: flex-start !important; }
-  .plan-actions { break-inside: auto !important; }
-  .plan-action, .deadline-group { break-inside: avoid; }
-  .workspace-panel { border-color: #ccc !important; }
-  .progress-bento { gap: 8pt !important; }
-}
 .print-toolbar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 12px; margin-bottom: 16px; padding: 10px 10px 10px 14px; border: 1px solid var(--brand-line); border-radius: var(--radius-surface); background: var(--brand-soft); color: var(--brand-ink); font-size: var(--t-sm); }
-.print-chapters { display: grid; gap: 32px; }
-.print-chapter > h2 { margin-bottom: 12px; font-size: var(--t-h3, 20px); letter-spacing: -0.02em; }
 @media print { .report-context .record-toolbar, .print-toolbar { display: none !important; } }
 @media (max-width: 760px) {
   .task-table tbody tr[data-selected] { border-color: var(--brand) !important; background: var(--brand-soft) !important; box-shadow: 0 0 0 1px var(--brand); }

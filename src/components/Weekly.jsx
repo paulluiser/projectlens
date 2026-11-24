@@ -11,6 +11,7 @@ import { useWorkspace, WorkspaceNotice } from '@/lib/workspace'
 import { projectsPath } from '@/lib/routes.mjs'
 import { defaultWeek, formatDay, formatOwners, formatRange, formatWeekday, bracketDays, splitOwners, statusKeys, suggestedBracket, summarize, taskFlags, taskOwners, taskStatuses, taskStatusOrder, todayIso, weekPhase, weekTitle } from '@/lib/weekly.mjs'
 import { projectInitials } from './ProjectMark'
+import { WeeklyReportDocument } from './ReportDocument'
 import { BoardIllustration, SearchIllustration, WeekIllustration } from './Illustrations'
 
 const AddIcon = AddGlyph.default ?? AddGlyph
@@ -385,22 +386,6 @@ function useSelection(visibleIds, resetKey) {
   }
 }
 
-// Print-only weekly recap, in the shape of the Monday email: one table of tasks, owners, target dates and status.
-function WeeklyRecapPrint({ project, week, tasks, today, filtered }) {
-  const summary = summarize(tasks)
-  const overdue = tasks.filter(task => taskFlags(task, week, today).overdue).length
-  return <section className="print-only weekly-print">
-    <p className="print-eyebrow">Lens · Weekly recap</p>
-    <h1>{project.name}</h1>
-    <p className="print-meta">{week.label ? `${week.label} · ` : ''}{formatRange(week.start, week.end)} · {summary.done} of {summary.total} done{overdue ? ` · ${overdue} overdue` : ''}{filtered ? ' · filtered view' : ''}</p>
-    <table className="print-table">
-      <thead><tr><th scope="col">Task</th><th scope="col">Owners</th><th scope="col">Target date</th><th scope="col">Status</th></tr></thead>
-      <tbody>{tasks.map(task => <tr key={task.id}><td>{task.title}{task.notes && <span className="print-note">{task.notes}</span>}</td><td>{formatOwners(task)}</td><td>{formatWeekday(task.dueDate)} {formatDay(task.dueDate)}{taskFlags(task, week, today).overdue ? ' (overdue)' : ''}</td><td>{taskStatuses[task.status]}</td></tr>)}</tbody>
-    </table>
-    {summary.owners.length > 0 && <p className="print-meta">Workload: {summary.owners.map(owner => `${owner.owner} ${owner.done}/${owner.total}`).join(' · ')}</p>}
-  </section>
-}
-
 // Week summary: one headline figure, the status split and workload by owner (stacked done / open).
 function WeekSummary({ week, tasks, today }) {
   const summary = summarize(tasks)
@@ -536,7 +521,7 @@ function WeeklyPage() {
         <p>Nothing in {weekTitle(week)} matches these filters.</p>
         <Button variant="outline" className="action" onClick={() => setParam({ search: '', owner: '' })}>Clear filters</Button>
       </section> : view === 'list' ? <TaskList project={project} week={week} tasks={visible} today={today} selection={selection} writes={writes} /> : <TaskBoard project={project} week={week} tasks={visible} today={today} selection={selection} writes={writes} />}
-      <WeeklyRecapPrint project={project} week={week} tasks={visible} today={today} filtered={Boolean(search || owner)} />
+      <WeeklyReportDocument project={project} week={week} tasks={visible} today={today} filtered={Boolean(search || owner)} />
     </>}
   </main>
 }
