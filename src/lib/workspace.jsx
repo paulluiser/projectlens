@@ -101,7 +101,7 @@ export function WorkspaceProvider({ active, children }) {
       else setNotice(`${entity} ${verb}.${operation.action.endsWith('Report') && ['createReport', 'updateReport'].includes(operation.action) ? ' Preview the draft, then publish when ready.' : ''}`)
       return result
     } catch (failure) {
-      if (failure.status === 409) {
+      if ([401,403,409].includes(failure.status)) {
         try {
           const latest = await request('/api/workspace')
           setWorkspace(latest)
@@ -116,6 +116,14 @@ export function WorkspaceProvider({ active, children }) {
     }
   }
 
+  const beginGoogleLogin = useCallback(() => request('/api/session'), [])
+  const loginGoogle = useCallback(async (credential) => {
+    await request('/api/session', { method: 'POST', body: JSON.stringify({ credential }) })
+    const result = await refresh(true)
+    if (!result) throw new Error('Signed in, but workspace data could not be loaded. Refresh data and try again.')
+    return result
+  }, [refresh])
+
   async function login(password) {
     await request('/api/session', { method: 'POST', body: JSON.stringify({ password }) })
     return refresh(true)
@@ -127,7 +135,7 @@ export function WorkspaceProvider({ active, children }) {
     return refresh(true)
   }
 
-  return <WorkspaceContext.Provider value={{ workspace, error, refreshing, refresh, mutate, login, logout, setEditing, notify: setNotice, latestVersion }}>
+  return <WorkspaceContext.Provider value={{ workspace, error, refreshing, refresh, mutate, login, loginGoogle, beginGoogleLogin, logout, setEditing, notify: setNotice, latestVersion }}>
     {active && workspace && refreshing && <div className="workspace-refresh" aria-hidden="true"><span className="busy-indicator" aria-hidden="true" /> Checking for updates…</div>}
     {children}
     <div className="save-announcement" role="status" aria-live="polite" aria-atomic="true"><AnimatePresence initial={false}>{notice && <motion.div className="save-message" key={typeof notice === 'object' ? notice.text : notice} initial={{ opacity: 0, y: reduced ? 0 : 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: reduced ? 0 : 4 }} transition={{ duration: reduced ? 0 : 0.18 }}><span>{typeof notice === 'object' ? notice.text : notice}</span>{typeof notice === 'object' && notice.action && <button type="button" className="save-message-action" onClick={() => { const { run } = notice.action; setNotice(''); run() }}>{notice.action.label}</button>}<button type="button" aria-label="Dismiss notification" onClick={() => setNotice('')}>Dismiss</button></motion.div>}</AnimatePresence></div>

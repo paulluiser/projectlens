@@ -5,6 +5,7 @@ import EditGlyph from '@atlaskit/icon/core/edit'
 import DeleteGlyph from '@atlaskit/icon/core/delete'
 import CrossGlyph from '@atlaskit/icon/core/cross'
 import { PersonIcon } from '@/components/ui/icons'
+import { GoogleEditorAccess } from './GoogleEditorAccess'
 import { ModalHeader } from '@/components/ui/modal-header'
 import { Button } from '@/components/ui/button'
 import { useWorkspace } from '@/lib/workspace'
@@ -302,6 +303,7 @@ export function EditorAccess({ onBusyChange }) {
   const [busy, setBusy] = useState(false)
   usePauseRefresh(open || busy)
   if (!workspace) return <p className="settings-account-note" role="status">Loading workspace access…</p>
+  if (workspace.authMode === 'google') return <GoogleEditorAccess onBusyChange={onBusyChange} />
   const shared = workspace.storageReady && workspace.authRequired
   const title = workspace.canEdit ? shared ? 'Editor access' : 'Local editor' : 'Read-only access'
   const detail = !workspace.storageReady ? 'Shared storage is not configured.' : workspace.canEdit ? shared ? 'You can manage projects and reports.' : 'Editing is enabled on this device.' : shared ? 'Sign in to manage projects and reports.' : 'Editor access is not configured.'

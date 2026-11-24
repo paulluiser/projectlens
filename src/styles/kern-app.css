@@ -1140,3 +1140,16 @@ html[data-reduced-motion=true] *, html[data-reduced-motion=true] *::before, html
   .settings-account-copy { flex-basis: 160px; }
   .settings-about { padding: 14px 16px; }
 }
+
+.google-sign-in { margin-top: 16px; }
+.google-sign-in-button { min-width: 0; min-height: 40px; }
+.settings-google-error { display: grid; justify-items: start; gap: 10px; margin-top: 12px; }
+.settings-editor-management { margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--border); }
+.settings-editor-management h4 { font-size: var(--t-sm); font-weight: 600; }
+.settings-editor-management ul { display: grid; gap: 0; margin: 12px 0; max-height: 220px; overflow-y: auto; }
+.settings-editor-management li { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; padding-block: 10px; border-bottom: 1px solid var(--border); font-size: var(--t-xs); }
+.editor-access-email { flex: 1 1 200px; overflow-wrap: anywhere; }
+.editor-access-role { color: var(--muted-foreground); font-size: var(--t-micro); }
+.settings-editor-management form { display: flex; flex-wrap: wrap; align-items: end; gap: 10px; }
+.settings-editor-management form .editor-field { flex: 1 1 230px; }
+.editor-removal-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }

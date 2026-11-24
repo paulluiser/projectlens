@@ -22,13 +22,13 @@ Deploy the project to Vercel using the Vite framework preset and `dist` output d
 | Variable | Purpose |
 | --- | --- |
 | `BLOB_READ_WRITE_TOKEN` | Access to the connected private Blob store |
-| `LENS_EDITOR_PASSWORD` | Shared editor password |
+| `LENS_EDITOR_PASSWORD` | Legacy shared editor password; ignored in Google mode |
 
 Use a long editor password and give it to the people who should manage reports. Open Settings beside global search, then use Editor sign-in in the Account section. Sign out is in the same section. The browser receives an HttpOnly session cookie valid for eight hours. Readers can open reports directly. Editor sessions authorize changes across the workspace.
 
 The shared workspace is stored as JSON at `project-lens/workspace.json` in the Blob store. Reads bypass the Blob cache. Conditional writes reject stale versions so one editor cannot silently overwrite another editor’s save. Open project pages refresh on focus and every 15 seconds while visible. Refresh pauses while an editor form is open. If a save conflicts, the form preserves its values and offers an explicit reload of the latest saved record. [Vercel Blob SDK](https://vercel.com/docs/vercel-blob/using-blob-sdk)
 
-Production editing becomes available after both variables are configured. The initial workspace comes from the versioned JSON files in `data/projects/`. Subsequent website changes save to the runtime JSON store. Keep the same Blob store connected across deployments to retain those changes.
+Legacy password editing becomes available after both variables are configured. Google authentication uses the additional variables described below and in the setup guide. The initial workspace comes from the versioned JSON files in `data/projects/`. Subsequent website changes save to the runtime JSON store. Keep the same Blob store connected across deployments to retain those changes.
 
 ## Reports and links
 
@@ -90,3 +90,10 @@ Versions use `buildnumber.MMDDYYYY.HHmm`, with date and time in Asia/Manila. Vit
 Weekly **Print** uses the same document typography and page setup, with a task register and owner workload table. If filters are active, the document states that only selected tasks are included. Documents contain selectable text rather than raster screenshots. Print CSS provides repeated table headings, page-break protection, A4 margins, and page-number footers in browsers that support page margin boxes. For PDF export, choose **Save as PDF** and disable the browser's own headers/footers to avoid adding URLs and dates. The formal layout uses Arial/Helvetica body text and a serif project heading independently of the application's typeface.
 
 Formatting was informed by Anthropic's [PDF skill](https://github.com/anthropics/skills/tree/main/skills/pdf), with rendered-PDF inspection using the installed PDF verification workflow. No document-generation service or runtime dependency was added.
+
+
+## Google sign-in and in-app editor management
+
+Google authentication can replace the shared editor password. Administrators configured through `LENS_ADMIN_EMAILS` can manage the specific-email editor allowlist directly in **Settings → Account → Manage editors**. Editor changes save to private Blob JSON and apply to the next server request without a deployment. Only administrators can see or modify this list; administrator emails remain in server configuration.
+
+See [Google authentication setup](docs/google-auth-setup.md) for Google Cloud, authorized origins, required Vercel variables, the one-time activation, and the distinction between Google's testing audience and the app's editor allowlist. Existing password access is preserved until Google configuration is introduced. Once Google mode is active, password sessions cannot bypass it.

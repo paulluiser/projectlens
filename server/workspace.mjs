@@ -5,6 +5,7 @@ import * as vercelBlob from '@vercel/blob'
 import { seedProjects } from './seed.mjs'
 import { importTimelineMilestones } from './milestone-import.mjs'
 import { importWeeklyPlans } from './weekly-import.mjs'
+import { createGoogleAuth, validateEditorEmails } from './google-auth.mjs'
 
 const MAX_BODY = 1024 * 1024
 const BLOB_PATH = 'project-lens/workspace.json'
@@ -192,8 +193,11 @@ function change(state, body, now) {
   if (typeof body.expectedVersion !== 'string' || !body.expectedVersion) throw failure(400,'expectedVersion is required.')
   if (body.expectedVersion !== state.version) throw failure(409,'The workspace changed. Reload and try again.')
   const { action, projectId, monthId, milestoneId, weekId, taskId, data } = body
-  if (!['createProject','updateProject','deleteProject','createReport','updateReport','publishReport','deleteReport','createMilestone','updateMilestone','deleteMilestone',...weeklyActions].includes(action)) throw failure(400,'Unknown action.')
-  if (action === 'createProject') {
+  if (!['updateEditors','createProject','updateProject','deleteProject','createReport','updateReport','publishReport','deleteReport','createMilestone','updateMilestone','deleteMilestone',...weeklyActions].includes(action)) throw failure(400,'Unknown action.')
+  if (action === 'updateEditors') {
+    object(data,'Editor access')
+    state.access = { editorEmails: validateEditorEmails(data.emails) }
+  } else if (action === 'createProject') {
     const fields = strings(data,['name'],['description'])
     if (fields.name.length > 120 || (fields.description?.length ?? 0) > 2000) throw failure(400,'Project text is too long.')
     const id = fields.name.normalize('NFKD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')
@@ -288,15 +292,17 @@ async function bodyOf(req) {
   return object(body,'Request')
 }
 
-export function createHandlers({ env = process.env, blob = vercelBlob, now = Date.now, projects = seedProjects } = {}) {
+export function createHandlers({ env = process.env, blob = vercelBlob, now = Date.now, projects = seedProjects, verifyGoogleToken } = {}) {
   const seed = { projects, version: createHash('sha256').update(JSON.stringify(projects)).digest('hex') }
   const production = env.VERCEL === '1'
   const storageReady = !production || Boolean(env.BLOB_READ_WRITE_TOKEN)
-  const authRequired = Boolean(env.LENS_EDITOR_PASSWORD)
+  const google = createGoogleAuth({env,now,verifyGoogleToken})
+  const authRequired = google.requested || Boolean(env.LENS_EDITOR_PASSWORD)
   const file = resolve(env.LENS_DATA_FILE || '.local/workspace.json')
   const secret = createHash('sha256').update(`project-lens-session:${env.LENS_EDITOR_PASSWORD || ''}:${env.BLOB_READ_WRITE_TOKEN || ''}`).digest()
   const sign = value => createHmac('sha256',secret).update(value).digest('base64url')
-  function authenticated(req) {
+  function authenticated(req,state) {
+    if (google.requested) return google.authorized(req,state)
     if (!env.LENS_EDITOR_PASSWORD) return !production
     const token = req.headers.cookie?.split(';').map(s=>s.trim()).find(s=>s.startsWith(`${COOKIE}=`))?.slice(COOKIE.length+1)
     if (!token) return false
@@ -305,10 +311,11 @@ export function createHandlers({ env = process.env, blob = vercelBlob, now = Dat
     const expected = Buffer.from(sign(expires)); const supplied = Buffer.from(signature || '')
     return expected.length === supplied.length && timingSafeEqual(expected,supplied)
   }
-  const flags = req => ({ canEdit:storageReady && authenticated(req), authRequired, storageReady })
+  const flags = (req,state) => ({ canEdit:storageReady && authenticated(req,state), authRequired, storageReady, ...(google.requested ? {...google.flags(req,state),authReady:storageReady && google.ready} : {authMode:authRequired ? 'password' : 'local',authReady:storageReady && (!production || authRequired)}) })
   function responseState(state, req) {
     const result = clone(state)
-    if (!authenticated(req)) {
+    delete result.access
+    if (!authenticated(req,state)) {
       for (const project of result.projects) {
         project.months = project.months.filter(month => !month.draftOnly && !(month.draft && !month.report)).map(month => {
           delete month.draft
@@ -318,7 +325,7 @@ export function createHandlers({ env = process.env, blob = vercelBlob, now = Dat
         })
       }
     }
-    return {...result,...flags(req)}
+    return {...result,...flags(req,state)}
   }
   async function readStoredState() {
     if (env.BLOB_READ_WRITE_TOKEN) {
@@ -369,11 +376,12 @@ export function createHandlers({ env = process.env, blob = vercelBlob, now = Dat
       if (req.method === 'GET') return responseState((await readState()).state,req)
       if (req.method !== 'POST') throw failure(405,'Method not allowed.')
       sameOrigin(req)
-      if (!storageReady || (production && !env.LENS_EDITOR_PASSWORD)) throw failure(503,'Editing is not configured.')
-      if (!authenticated(req)) throw failure(401,'Editor sign-in is required.')
+      if (!storageReady || (google.requested ? !google.ready : production && !env.LENS_EDITOR_PASSWORD)) throw failure(503,'Editing is not configured.')
       const body = await bodyOf(req)
       const update = async () => {
         const {state,etag} = await readState()
+        if (!authenticated(req,state)) throw failure(401,'Editor sign-in is required.')
+        if (body.action === 'updateEditors' && (!google.requested || !google.isAdministrator(req))) throw failure(403,'Only an administrator can change editor access.')
         const updated = change(state,body,now)
         await saveState(updated,etag)
         return responseState(updated,req)
@@ -381,15 +389,27 @@ export function createHandlers({ env = process.env, blob = vercelBlob, now = Dat
       return env.BLOB_READ_WRITE_TOKEN ? update() : serialize(file,update)
     }),
     session:wrap(async (req,res) => {
-      if (req.method === 'GET') return flags(req)
+      if (req.method === 'GET') {
+        if (!google.requested) return flags(req)
+        const {state}=await readState()
+        return {...flags(req,state),...(storageReady ? google.challenge(res) : {})}
+      }
       if (!['POST','DELETE'].includes(req.method)) throw failure(405,'Method not allowed.')
       sameOrigin(req)
       const attributes = `Path=/; HttpOnly; SameSite=Strict${production ? '; Secure' : ''}`
+      if (google.requested) {
+        const {state}=await readState()
+        if (req.method === 'DELETE') { google.logout(res); return {...flags(req,state),canEdit:false,isAdmin:false,editor:undefined,editorAccess:undefined} }
+        if (!storageReady || !google.ready) throw failure(503,'Google editor sign-in is not configured.')
+        const {credential}=await bodyOf(req)
+        const editor=await google.login(req,res,credential,state)
+        return {canEdit:true,editor}
+      }
       if (req.method === 'DELETE') {
         res.setHeader('Set-Cookie',`${COOKIE}=; ${attributes}; Max-Age=0`)
         return {...flags(req),canEdit:!authRequired && storageReady && !production}
       }
-      if (!storageReady || (production && !env.LENS_EDITOR_PASSWORD)) throw failure(503,'Editing is not configured.')
+      if (!storageReady || (google.requested ? !google.ready : production && !env.LENS_EDITOR_PASSWORD)) throw failure(503,'Editing is not configured.')
       const {password} = await bodyOf(req)
       if (typeof password !== 'string' || password.length > 1024) throw failure(400,'Password must be text.')
       const supplied = createHash('sha256').update(password).digest()
