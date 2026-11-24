@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { ModalHeader } from '@/components/ui/modal-header'
 import { useAnimationPreference } from '@/lib/motion'
 import { useWorkspace } from '@/lib/workspace'
+import { SecuritySettings } from './SecuritySettings'
 
 const SettingsIcon = SettingsGlyph.default ?? SettingsGlyph
 const RefreshIcon = RefreshGlyph.default ?? RefreshGlyph
@@ -28,6 +29,7 @@ export function WorkspaceSettings({ onOpen }) {
       <ModalHeader title="Settings" description="Workspace access and device preferences." icon={SettingsIcon} closeLabel="Close settings" busy={authBusy} />
       <div className="settings-content">
         <section className="settings-access" aria-labelledby="settings-access"><h3 id="settings-access">Account</h3><Suspense fallback={<p className="settings-account-note" role="status">Loading editor access…</p>}><EditorAccess onBusyChange={setAuthBusy} /></Suspense></section>
+        <SecuritySettings onBusyChange={setAuthBusy} />
         <section aria-labelledby="settings-display"><h3 id="settings-display">Preferences</h3>
           <div className="settings-preference"><div><label htmlFor="settings-reduce-motion">Reduce animations</label><p id="settings-motion-note">Keep transitions minimal. System preferences are always respected.</p></div><Switch.Root id="settings-reduce-motion" className="settings-switch" aria-label="Reduce animations" aria-describedby="settings-motion-note" checked={reduced} onCheckedChange={setReduced}><Switch.Thumb className="settings-switch-thumb" /></Switch.Root></div>
         </section>

@@ -13,7 +13,7 @@ function reportFor(upcomingMonth) {
 async function fixture(t, extra = {}) {
   const dir = await mkdtemp(join(tmpdir(), 'lens-'))
   t.after(() => rm(dir, { recursive: true, force: true }))
-  return createHandlers({ env: { LENS_DATA_FILE: join(dir, 'workspace.json'), ...extra }, projects: fixtureProjects })
+  return createHandlers({ env: { LENS_DATA_FILE: join(dir, 'workspace.json'), LENS_DEV_AUTH_BYPASS:'1', ...extra }, projects: fixtureProjects })
 }
 async function call(handler, method = 'GET', body, headers = {}) {
   const req = { method, body, headers: { host: 'localhost:5173', origin: 'http://localhost:5173', ...headers } }
@@ -92,31 +92,6 @@ test('validation rejects invalid data without changing state', async t => {
   assert.equal((await call(h.workspace)).body.version, body.version)
 })
 
-test('password sessions reject bad passwords, tampering, expiry, and missing origin', async t => {
-  let now = Date.now(); const h0 = await fixture(t, {LENS_EDITOR_PASSWORD:'secret'})
-  const h = createHandlers({env:h0.env,now:()=>now,projects:fixtureProjects})
-  const {body} = await call(h.workspace)
-  assert.equal(body.canEdit,false)
-  assert.equal((await mutate(h,'createProject',body.version,{name:'Locked'})).status,401)
-  assert.equal((await call(h.session,'POST',{password:'wrong'})).status,401)
-  const login = await call(h.session,'POST',{password:'secret'})
-  assert.equal(login.status,200)
-  const cookie = login.headers['set-cookie'].split(';')[0]
-  assert.equal((await call(h.workspace,'GET',undefined,{cookie})).body.canEdit,true)
-  assert.equal((await call(h.workspace,'GET',undefined,{cookie:cookie+'x'})).body.canEdit,false)
-  now += 9 * 60 * 60 * 1000
-  assert.equal((await call(h.workspace,'GET',undefined,{cookie})).body.canEdit,false)
-  assert.equal((await call(h.session,'POST',{password:'secret'},{origin:undefined})).status,403)
-  assert.match((await call(h.session,'DELETE')).headers['set-cookie'],/Max-Age=0/)
-})
-
-test('production without blob stays read-only even with password', async t => {
-  const h = await fixture(t,{VERCEL:'1',LENS_EDITOR_PASSWORD:'secret'})
-  const {body} = await call(h.workspace)
-  assert.equal(body.storageReady,false); assert.equal(body.canEdit,false)
-  assert.equal((await mutate(h,'createProject',body.version,{name:'No'})).status,503)
-})
-
 test('malformed and oversized bodies and invalid date strings fail as input errors', async t => {
   const h = await fixture(t); const {body} = await call(h.workspace)
   assert.equal((await call(h.workspace,'POST','{broken')).status,400)
@@ -140,10 +115,8 @@ test('private blob initialization and updates use conditional writes to preserve
       return {etag:String(revision)}
     },
   }
-  const h = createHandlers({env:{VERCEL:'1', BLOB_READ_WRITE_TOKEN:'fake-token',LENS_EDITOR_PASSWORD:'secret'},blob,projects:fixtureProjects})
-  const login = await call(h.session,'POST',{password:'secret'})
-  assert.match(login.headers['set-cookie'],/Secure/)
-  const cookie = login.headers['set-cookie'].split(';')[0]
+  const h = createHandlers({env:{LENS_DEV_AUTH_BYPASS:'1', BLOB_READ_WRITE_TOKEN:'fake-token'},blob,projects:fixtureProjects})
+  const cookie = ''
   const {body} = await call(h.workspace)
   const post = (version,name) => call(h.workspace,'POST',{action:'createProject',expectedVersion:version,data:{name}},{cookie})
   let results = await Promise.all([post(body.version,'First'),post(body.version,'Second')])
@@ -166,7 +139,8 @@ test('blank optional report text is accepted for a newly authored report', async
 
 test('unconfigured production editing offers no password login', async t => {
   const h=await fixture(t,{VERCEL:'1'})
-  assert.equal((await call(h.session)).body.authRequired,false)
+  assert.equal((await call(h.session)).body.authRequired,true)
+  assert.equal((await call(h.workspace)).status,401)
 })
 
 
@@ -206,54 +180,6 @@ test('action dates must fall in the next calendar month', async t => {
   assert.match(response.body.error,/upcoming month/i)
 })
 
-
-test('drafts remain private until publishing and later edits preserve the published snapshot', async t => {
-  const base = await fixture(t, {LENS_EDITOR_PASSWORD:'secret'})
-  const h = createHandlers({env:base.env,now:()=>Date.parse('2026-11-11T08:00:00Z'),projects:fixtureProjects})
-  const login = await call(h.session,'POST',{password:'secret'})
-  const headers = {cookie:login.headers['set-cookie'].split(';')[0]}
-  const post = (action,state,data,monthId='2026-12') => call(h.workspace,'POST',{action,expectedVersion:state.version,data,projectId:'simsdotnet',monthId},headers)
-  let state = (await call(h.workspace,'GET',undefined,headers)).body
-  let response = await post('createReport',state,{...reportFor('2027-01'),title:'Private draft',presenterNotes:'Secret speaking notes'})
-  assert.equal(response.status,200)
-  state = response.body
-  let month = state.projects[0].months.find(month=>month.id==='2026-12')
-  assert.equal(month.draft.title,'Private draft')
-  assert.equal(month.report,undefined)
-  assert.deepEqual(month.draft.carryForward,[])
-  let publicState = (await call(h.workspace)).body
-  assert.equal(publicState.projects[0].months.some(month=>month.id==='2026-12'),false)
-  assert.equal(publicState.projects[0].months.some(month=>month.id==='2026-10'),true)
-  assert.equal(JSON.stringify(publicState).includes('Secret speaking notes'),false)
-  response = await post('publishReport',state)
-  assert.equal(response.status,200)
-  state = response.body
-  month = state.projects[0].months.find(month=>month.id==='2026-12')
-  assert.equal(month.draft,undefined)
-  assert.equal(month.report.title,'Private draft')
-  assert.equal(month.publishedAt,'2026-11-11T08:00:00.000Z')
-  assert.equal(month.report.presenterNotes,'Secret speaking notes')
-  publicState = (await call(h.workspace)).body
-  assert.equal(publicState.projects[0].months.find(month=>month.id==='2026-12').report.presenterNotes,undefined)
-  assert.equal((await post('publishReport',state)).status,409)
-  const published = structuredClone(month.report)
-  response = await post('updateReport',state,{...reportFor('2027-01'),title:'Private revision',presenterNotes:'New notes'})
-  assert.equal(response.status,200)
-  const revisedState = response.body
-  month = revisedState.projects[0].months.find(month=>month.id==='2026-12')
-  assert.deepEqual(month.report,published)
-  assert.equal(month.draft.title,'Private revision')
-  assert.equal((await post('publishReport',state)).status,409)
-  publicState = (await call(h.workspace)).body
-  month = publicState.projects[0].months.find(month=>month.id==='2026-12')
-  assert.equal(month.report.title,'Private draft')
-  assert.equal(month.draft,undefined)
-  assert.equal(JSON.stringify(publicState).includes('New notes'),false)
-  response = await post('updateProject',revisedState,{name:'Updated name'},undefined)
-  assert.equal(response.status,200)
-  assert.equal(response.body.projects[0].months.find(month=>month.id==='2026-12').draft.title,'Private revision')
-  assert.equal((await call(h.workspace,'POST',{action:'publishReport',expectedVersion:response.body.version,projectId:'simsdotnet',monthId:'2026-12'})).status,401)
-})
 
 test('carry forward entries and presenter notes are validated and persisted', async t => {
   const h = await fixture(t)
@@ -330,13 +256,6 @@ test('milestone CRUD persists and isolates project records with conflict protect
   assert.equal((await call(h.workspace)).body.projects[0].milestones.some(m => m.id === item.id), false)
 })
 
-test('milestone writes require editor access', async t => {
-  const h = await fixture(t, { LENS_EDITOR_PASSWORD: 'secret' })
-  const { body } = await call(h.workspace)
-  const result = await call(h.workspace, 'POST', { action: 'createMilestone', projectId: 'simsdotnet', expectedVersion: body.version, data: { title: 'Locked', owner: 'Paul', dueDate: '2026-11-30', status: 'planned' } })
-  assert.equal(result.status, 401)
-})
-
 test('milestones preserve date windows, forecasts, and explicitly unscheduled work', async t => {
   const h = await fixture(t)
   const { body: state } = await call(h.workspace)
@@ -370,9 +289,8 @@ test('milestone saves use the strong Blob ETag instead of the compressed weak va
       return {etag:`"${revision}"`}
     },
   }
-  const h = createHandlers({env:{VERCEL:'1',BLOB_READ_WRITE_TOKEN:'fake-token',LENS_EDITOR_PASSWORD:'secret'},blob,projects})
-  const login = await call(h.session,'POST',{password:'secret'})
-  const cookie = login.headers['set-cookie'].split(';')[0]
+  const h = createHandlers({env:{LENS_DEV_AUTH_BYPASS:'1',BLOB_READ_WRITE_TOKEN:'fake-token'},blob,projects})
+  const cookie = ''
   const initial = (await call(h.workspace,'GET',undefined,{cookie})).body
   const update = (version, dueDate) => call(h.workspace,'POST',{action:'updateMilestone',projectId:'simsdotnet',milestoneId:milestone.id,expectedVersion:version,data:{...milestone,dueDate}},{cookie})
   const first = await update(initial.version,'2026-06-01')
@@ -471,11 +389,4 @@ test('tasks saved with a single owner string are read as an owner list', async (
   assert.equal(upgraded.projects[0].weeks[0].tasks[0].owner, undefined)
   assert.equal(upgraded.version, 'v')
   assert.equal(normalizeTaskOwners(upgraded), upgraded, 'already-upgraded state is returned unchanged')
-})
-
-test('weekly writes require editor access', async t => {
-  const h = await fixture(t, { LENS_EDITOR_PASSWORD: 'secret' })
-  const { body } = await call(h.workspace)
-  const result = await call(h.workspace, 'POST', { action: 'createWeek', projectId: 'simsdotnet', expectedVersion: body.version, data: { start: '2026-11-19', end: '2026-11-26' } })
-  assert.equal(result.status, 401)
 })

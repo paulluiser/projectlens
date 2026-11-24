@@ -1,3 +1,4 @@
+import { EditHistory } from './EditHistory'
 import { useEffect, useState } from 'react'
 import { Link, useParams, useSearchParams } from 'react-router-dom'
 import { Dialog, DropdownMenu } from 'radix-ui'
@@ -298,7 +299,7 @@ function MilestonePage() {
   return <main className="site-width milestone-page" id="main-content" tabIndex={-1}>
     <div className="page-heading directory-heading">
       <div><p className="page-eyebrow"><Link to={projectsPath}>Projects</Link><span aria-hidden="true"> / </span><span>Milestones</span></p><h1>{project.name}</h1><p>Milestones, owners and dates for this project.</p></div>
-      <div className="record-toolbar"><MilestoneDialog project={project} /></div>
+      <div className="record-toolbar"><EditHistory projectId={project.id} module="milestone" /><MilestoneDialog project={project} /></div>
     </div>
     <section className="milestone-overview" aria-label="Milestone progress">
       <div className="milestone-delivery">

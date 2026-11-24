@@ -4,6 +4,8 @@ import { Button } from '@/components/ui/button'
 import { landingPath, overviewPath, projectsPath, publicTabs } from '@/lib/routes.mjs'
 import { ArrowRightIcon, BlockerIcon, CalendarIcon, ChecklistIcon, FocusIcon, MilestoneIcon, ProgressIcon, SearchIcon, ShareIcon } from '@/components/ui/icons'
 import { ProjectBrand } from './ProjectBrand'
+import { WorkspaceLink } from './SignInDialog'
+import { useWorkspace } from '@/lib/workspace'
 import { PublicPage } from './PublicPage'
 
 /* The audiences named on the Use cases page; the headline retypes them like an edit in a terminal. */
@@ -106,7 +108,7 @@ function Landing() {
       </h1>
       <p className="lx-lede">Monthly project reviews in four chapters: what moved forward, what the team delivered, what got in the way, and the work ahead.</p>
       <div className="lx-actions">
-        <Button asChild size="lg" className="lx-primary"><Link to={overviewPath}>Open the workspace <ArrowRightIcon label="" /></Link></Button>
+        <Button asChild size="lg" className="lx-primary"><WorkspaceLink to={overviewPath}>Open the workspace <ArrowRightIcon label="" /></WorkspaceLink></Button>
         <Button asChild size="lg" variant="outline" className="lx-secondary"><Link to={`${landingPath}/how-it-works`}>See how it works</Link></Button>
       </div>
       <p className="lx-meta">Progress · Accomplishments · Blockers · Next month</p>
@@ -145,8 +147,8 @@ export function CallToAction() {
       <h2 id="lx-cta-title">Open this month’s review</h2>
       <p>Pick a project, choose a month and read the four chapters, or present them in the meeting.</p>
       <div className="lx-actions">
-        <Button asChild size="lg" className="lx-cta-primary"><Link to={overviewPath}>Open the workspace <ArrowRightIcon label="" /></Link></Button>
-        <Button asChild size="lg" variant="outline" className="lx-cta-secondary"><Link to={projectsPath}>Browse projects</Link></Button>
+        <Button asChild size="lg" className="lx-cta-primary"><WorkspaceLink to={overviewPath}>Open the workspace <ArrowRightIcon label="" /></WorkspaceLink></Button>
+        <Button asChild size="lg" variant="outline" className="lx-cta-secondary"><WorkspaceLink to={projectsPath}>Browse projects</WorkspaceLink></Button>
       </div>
     </div>
   </section>
@@ -157,7 +159,7 @@ function Footer() {
     <div className="lx-footer-grid">
       <div><p className="lx-footer-brand"><ProjectBrand size={22} /></p><p className="lx-footer-copy">Monthly project reviews for software teams: progress, accomplishments, blockers and the plan for next month.</p></div>
       <nav aria-label="Product"><p>Product</p>{publicTabs.filter(tab => tab.id !== 'home').map(tab => <Link key={tab.id} to={tab.path}>{tab.label}</Link>)}</nav>
-      <nav aria-label="Workspace"><p>Workspace</p><Link to={overviewPath}>Overview</Link><Link to={projectsPath}>Projects</Link></nav>
+      <nav aria-label="Workspace"><p>Workspace</p><WorkspaceLink to={overviewPath}>Overview</WorkspaceLink><WorkspaceLink to={projectsPath}>Projects</WorkspaceLink></nav>
       <div><p>Sharing</p><span>Drafts stay with editors</span><span>Shared links open the published review</span><Link to={`${landingPath}/privacy`}>Privacy notice</Link></div>
     </div>
     <p className="lx-copyright">© {new Date().getFullYear()} <span translate="no">Lens</span></p>
@@ -165,6 +167,7 @@ function Footer() {
 }
 
 export function Home({ page }) {
+  const { signedIn, requestSignIn } = useWorkspace()
   const main = useRef(null)
   const home = page.id === 'home'
 
@@ -184,7 +187,7 @@ export function Home({ page }) {
             {publicTabs.map(tab => <NavLink key={tab.id} to={tab.path} end
               aria-current={tab.id === page.id ? 'page' : undefined}>{tab.label}</NavLink>)}
           </nav>
-          <div className="lx-header-end"><Button asChild variant="outline" size="sm" className="lx-header-action"><Link to={overviewPath}>Open workspace</Link></Button></div>
+          <div className="lx-header-end">{signedIn ? <Button asChild variant="outline" size="sm" className="lx-header-action"><WorkspaceLink to={overviewPath}>Open workspace</WorkspaceLink></Button> : <Button variant="outline" size="sm" className="lx-header-action" onClick={() => requestSignIn(overviewPath)}>Sign in</Button>}</div>
         </div>
       </header>
       <main id="main-content" ref={main} tabIndex={-1} className={home ? 'public-landing' : 'public-inner'}>

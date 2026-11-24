@@ -3,6 +3,8 @@ import { AnimatePresence, MotionConfig, motion, useIsPresent } from 'framer-moti
 import { ArrowDownRightIcon, ArrowRightIcon, ProjectsIcon, HomeIcon, SidebarIcon, SearchIcon } from '@/components/ui/icons'
 import { Link, NavLink, Navigate, Route, Routes, useLocation, useNavigate, useParams } from 'react-router-dom'
 import { LoadingScreen, WorkspaceSpinner, SidebarSkeleton } from './components/LoadingScreen'
+import { AuthExperience } from './components/SignInDialog'
+import { ActiveViewers } from './components/ActiveViewers'
 import { Home } from './components/Home'
 import { ProjectBrand } from './components/ProjectBrand'
 import { Overview } from './components/Overview'
@@ -73,6 +75,7 @@ function Header({ expanded, onToggle, onNavigate, narrow }) {
           <ProjectBrand size={24} />
         </Link>
       </div>
+      <ActiveViewers />
       <button ref={searchToggle} type="button" className="icon-button mobile-search-toggle" aria-label={searchOpen ? 'Close search' : 'Open search'} aria-controls="global-search-form" aria-expanded={searchOpen} onClick={() => { onNavigate(); setSearchOpen(value => !value) }}><SearchIcon label="" /></button>
       <form id="global-search-form" className="global-search" role="search" onSubmit={findReports} onKeyDown={event => { if (event.key === 'Escape' && narrow) { event.preventDefault(); setSearchOpen(false); searchToggle.current?.focus() } }}>
         <SearchIcon label="" aria-hidden="true" />
@@ -166,7 +169,8 @@ function WorkspaceEntry() {
   )
 }
 
-export function App() {
+function AppContent() {
+  const { signedIn, session, sessionLoading, error, refresh } = useWorkspace()
   const location = useLocation()
   useEffect(() => {
     const pauseMotion = () => { document.documentElement.dataset.motionPaused = String(document.hidden) }
@@ -243,9 +247,12 @@ export function App() {
   if (path === `${landingPath}/privacy`) return <PrivacyNotice />
   const publicPage = publicTabs.find(tab => tab.path === (path === '/' ? landingPath : path))
   if (publicPage) return <Home key={publicPage.id} page={publicPage} />
+  if (sessionLoading) return null
+  if (error && !session) return <main className="auth-session-check"><div role="alert"><h1>Unable to check your account</h1><p>{error}</p><button type="button" className="text-link" onClick={() => refresh(true)}>Try again</button></div></main>
+  if (!signedIn) return <Navigate to={landingPath} state={{ signInPath: location.pathname + location.search }} replace />
+  if (session.needsName) return <Home page={publicTabs[0]} />
 
   return (
-    <WorkspaceProvider active={path === overviewPath || path === projectsPath || relative !== '' || path.startsWith('/reports')}>
     <MotionConfig reducedMotion={reduced ? 'always' : 'never'}>
       <a href="#main-content" className="skip-link">Skip to content</a>
       <div className="workspace" data-sidebar={expanded}>
@@ -258,6 +265,11 @@ export function App() {
         </AnimatePresence>
       </div>
     </MotionConfig>
-    </WorkspaceProvider>
   )
+}
+
+export function App() {
+  const { pathname } = useLocation()
+  const active = pathname === overviewPath || pathname.startsWith(projectsPath) || pathname.startsWith('/reports')
+  return <WorkspaceProvider active={active}><AppContent /><AuthExperience /></WorkspaceProvider>
 }

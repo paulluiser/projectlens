@@ -12,6 +12,9 @@ function workspaceApi(env) {
       const path = req.url?.split('?')[0]
       if (path === '/api/workspace') return handlers.workspace(req, res)
       if (path === '/api/session') return handlers.session(req, res)
+      if (path === '/api/security') return handlers.security(req, res)
+      if (path === '/api/history') return handlers.history(req, res)
+      if (path === '/api/presence') return handlers.presence(req, res)
       next()
     })
   }

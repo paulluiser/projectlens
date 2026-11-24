@@ -1,3 +1,4 @@
+import { EditHistory } from './EditHistory'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useParams, useSearchParams } from 'react-router-dom'
 import { Dialog, DropdownMenu } from 'radix-ui'
@@ -482,6 +483,7 @@ function WeeklyPage() {
         </div>
         <p className="week-bar-meta"><span>{bracketDays(week)} {bracketDays(week) === 1 ? 'day' : 'days'}</span><span aria-hidden="true">·</span><span>Week {index + 1} of {weeks.length}</span></p>
         <div className="record-toolbar">
+          <EditHistory projectId={project.id} module="weekly" entityId={week.id} />
           <Button variant="outline" className="action" onClick={() => window.print()}><PrinterIcon label="" />Print</Button>
           <WeekDialog project={project} week={week} intent="edit" trigger={<Button variant="outline" className="action"><EditIcon label="" />Edit</Button>} />
           <WeekDialog project={project} week={week} intent="delete" onSaved={() => setParam({ week: '' })} trigger={<Button variant="outline" className="action record-icon-action" aria-label={`Delete ${weekTitle(week)}`}><DeleteIcon label="" /></Button>} />

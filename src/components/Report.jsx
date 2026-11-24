@@ -1,3 +1,4 @@
+import { EditHistory } from './EditHistory'
 import { ProjectMark } from './ProjectMark'
 import { ProjectBrand } from './ProjectBrand'
 import { MonthlyReportDocument } from './ReportDocument'
@@ -301,7 +302,7 @@ function ReportReader({ project, month, report, chapterIndex, preview }) {
             navigate(reportPath(project.id, event.target.value, chapter.id) + (query.size ? `?${query}` : '')) }}>{project.months.map(item => <option key={item.id} value={item.id}>{item.label}{item.draft && !item.report ? ' (draft)' : ''}</option>)}</select></label>
           </div>
           <div className="record-toolbar">
-            {!presenting && <><RecordEditor kind="report" project={project} month={month} onSaved={(_, data, id) => navigate(reportPath(project.id, id, chapter.id) + '?preview=1')} />
+            {!presenting && <><EditHistory projectId={project.id} module="report" entityId={month.id} /><RecordEditor kind="report" project={project} month={month} onSaved={(_, data, id) => navigate(reportPath(project.id, id, chapter.id) + '?preview=1')} />
             <ShareReport projectId={project.id} monthId={month.id} chapterId={chapter.id} published={Boolean(month.report)} />
             <DeleteRecord project={project} month={month} onDeleted={() => navigate(projectPath(project.id))} />
             <Button type="button" variant="outline" className="action print-button" onClick={() => navigate(currentPath + (preview ? '?preview=1&print=1' : '?print=1'))}><PrinterIcon label="" />Print / PDF</Button></>}

@@ -1,3 +1,4 @@
+import { EditHistory } from './EditHistory'
 import { useEffect } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { ArrowRightIcon, CalendarIcon, ChevronRightIcon, FlagIcon, PlanIcon } from '@/components/ui/icons'
@@ -66,6 +67,7 @@ function OverviewPage() {
     <div className="page-heading directory-heading">
       <div><p className="page-eyebrow"><Link to={projectsPath}>Projects</Link><span aria-hidden="true"> / </span><span>Overview</span></p><h1>{project.name}</h1><p>{project.description || 'Where this project stands across reviews, milestones and the current week.'}</p></div>
       <div className="record-toolbar">
+        <EditHistory projectId={project.id} module="project" />
         {latest && <Button asChild variant="outline" className="action"><Link to={reportPath(project.id, latest.id) + '?present=1'}>Present latest</Link></Button>}
         <RecordEditor kind="project" project={project} />
         <DeleteRecord project={project} onDeleted={() => navigate(projectsPath)} />

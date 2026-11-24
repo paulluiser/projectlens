@@ -69,8 +69,8 @@ export function createGoogleAuth({env,now,verifyGoogleToken}) {
       `lens_editor=g.${pack({sub:payload.sub,email,expires:now()+28800000},'session')}; ${attributes}; Max-Age=28800`,
       `lens_google_nonce=; ${attributes}; Max-Age=0`,
     ])
-    return {email}
+    return {email,sub:payload.sub}
   }
   function logout(res) { res.setHeader('Set-Cookie',[`lens_editor=; ${attributes}; Max-Age=0`,`lens_google_nonce=; ${attributes}; Max-Age=0`]) }
-  return {requested,ready,authorized,isAdministrator,flags,challenge,login,logout}
+  return {requested,ready,authorized,isAdministrator,flags,challenge,login,logout,identity,allowed}
 }

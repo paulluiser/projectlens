@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button'
 import { PersonIcon } from '@/components/ui/icons'
 import { useWorkspace } from '@/lib/workspace'
 
+const idleBusyChange = () => {}
 let sdkPromise
 function googleSdk() {
   if (window.google?.accounts?.id) return Promise.resolve(window.google.accounts.id)
@@ -18,7 +19,7 @@ function googleSdk() {
   return sdkPromise
 }
 
-function GoogleSignIn({ onBusyChange }) {
+export function GoogleSignIn({ onBusyChange = idleBusyChange }) {
   const { beginGoogleLogin, loginGoogle } = useWorkspace()
   const holder=useRef(null)
   const [attempt,setAttempt]=useState(0)
@@ -85,10 +86,10 @@ export function GoogleEditorAccess({ onBusyChange }) {
   const [busy,setBusy]=useState(false)
   const [error,setError]=useState('')
   return <div className="settings-account">
-    <div className="settings-account-row"><span className="settings-account-icon" aria-hidden="true"><PersonIcon label="" /></span><div className="settings-account-copy"><strong>{workspace.canEdit?workspace.isAdmin?'Administrator access':'Editor access':'Read-only access'}</strong><p>{workspace.editor?.email || (workspace.authReady?'Use an approved Google account to edit.':'Google editor sign-in needs configuration.')}</p></div>
-      {workspace.canEdit && <Button variant="outline" className="action" loading={busy} onClick={async()=>{setBusy(true);onBusyChange(true);setError('');try{await logout();window.google?.accounts?.id?.disableAutoSelect()}catch(failure){setError(failure.message)}finally{setBusy(false);onBusyChange(false)}}}>{busy?'Signing out…':'Sign out'}</Button>}
+    <div className="settings-account-row"><span className="settings-account-icon" aria-hidden="true"><PersonIcon label="" /></span><div className="settings-account-copy"><strong>{workspace.isAdmin ? 'Administrator access' : workspace.canEdit ? 'Editor access' : workspace.signedIn ? 'Guest access' : 'Read-only access'}</strong><p>{[workspace.user?.firstName, workspace.user?.lastName].filter(Boolean).join(' ') || workspace.user?.email || workspace.editor?.email || (workspace.authReady?'Use an approved Google account to edit.':'Google editor sign-in needs configuration.')}</p></div>
+      {(workspace.signedIn || workspace.canEdit) && <Button variant="outline" className="action" loading={busy} onClick={async()=>{setBusy(true);onBusyChange(true);setError('');try{await logout();window.google?.accounts?.id?.disableAutoSelect()}catch(failure){setError(failure.message)}finally{setBusy(false);onBusyChange(false)}}}>{busy?'Signing out…':'Sign out'}</Button>}
     </div>
-    {!workspace.canEdit && workspace.authReady && <GoogleSignIn onBusyChange={onBusyChange} />}
+    {!workspace.signedIn && !workspace.canEdit && workspace.authReady && <GoogleSignIn onBusyChange={onBusyChange} />}
     {workspace.canEdit && workspace.isAdmin && workspace.editorAccess && <EditorAccessManager onBusyChange={onBusyChange} />}
     {error && <p className="editor-error" role="alert">{error}</p>}
   </div>

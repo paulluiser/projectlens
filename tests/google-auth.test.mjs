@@ -19,18 +19,20 @@ async function fixture(t, extra={}) {
 }
 async function call(h,method='GET',body,headers={}){
  let status=200;const result={headers:{}}
- await h({method,body,headers:{host:'localhost:5173',origin:'http://localhost:5173',...headers}}, {setHeader(k,v){result.headers[k.toLowerCase()]=v},set statusCode(v){status=v},end(value){result.body=JSON.parse(value)}})
+ await h({method,body,url:'/api/session?challenge=google',headers:{host:'localhost:5173',origin:'http://localhost:5173',...headers}}, {setHeader(k,v){result.headers[k.toLowerCase()]=v},set statusCode(v){status=v},end(value){result.body=JSON.parse(value)}})
  return {...result,status}
 }
 const cookies = response => [response.headers['set-cookie']].flat().filter(Boolean).map(value=>value.split(';')[0]).join('; ')
 async function signIn(f,email='owner@gmail.com',sub='google-user-123'){
  const challenge=await call(f.handlers.session)
  f.setPayload({email,sub,nonce:challenge.body.nonce})
- return call(f.handlers.session,'POST',{credential:'verified-test-token'},{cookie:cookies(challenge)})
+ const login=await call(f.handlers.session,'POST',{credential:'verified-test-token'},{cookie:cookies(challenge)})
+ if(login.status!==200)return login
+ return call(f.handlers.security,'POST',{action:'completeProfile',data:{firstName:'Test',lastName:'User'}},{cookie:cookies(login)})
 }
 test('Google mode fails closed when configuration is partial and never accepts the shared password',async t=>{
  const f=await fixture(t,{LENS_ADMIN_EMAILS:'',LENS_EDITOR_PASSWORD:'old-password'})
- const state=await call(f.handlers.workspace)
+ const state=await call(f.handlers.session)
  assert.equal(state.body.authMode,'google')
  assert.equal(state.body.authReady,false)
  assert.equal(state.body.canEdit,false)
@@ -46,9 +48,9 @@ test('verified approved Google identity receives a secure app session without di
  assert.equal(state.canEdit,true);assert.equal(state.isAdmin,true)
  assert.equal(state.editor.email,'owner@gmail.com')
  assert.deepEqual(state.editorAccess.administrators,['owner@gmail.com'])
- const reader=(await call(f.handlers.workspace)).body
- assert.equal(reader.canEdit,false);assert.equal(reader.editorAccess,undefined);assert.equal(reader.access,undefined)
- assert.equal(JSON.stringify(reader).includes('owner@gmail.com'),false)
+ const reader=await call(f.handlers.workspace)
+ assert.equal(reader.status,401)
+ assert.equal(JSON.stringify(reader.body).includes('owner@gmail.com'),false)
  const invalidChallenge=await call(f.handlers.session)
  assert.equal((await call(f.handlers.session,'POST',{credential:'bad-signature'},{cookie:cookies(invalidChallenge)})).status,401)
  assert.equal((await call(f.handlers.session,'POST',{password:'anything'})).status,400)
@@ -69,15 +71,20 @@ test('only administrators can change editors and removal immediately revokes an 
  const added=await update(adminCookie,[' Member@Gmail.com ']);assert.equal(added.status,200)
  assert.deepEqual(added.body.editorAccess.editors,['member@gmail.com'])
  const memberCookie=cookies(await signIn(f,'member@gmail.com','google-member-456'))
+ const remoteCode=(await call(f.handlers.security,'GET',undefined,{cookie:memberCookie})).body.remoteCode
+ const remoteCookie=cookies(await call(f.handlers.session,'POST',{code:remoteCode}))
+ assert.equal((await get(remoteCookie)).canEdit,true)
  const member=await get(memberCookie);assert.equal(member.canEdit,true);assert.equal(member.isAdmin,false);assert.equal(member.editorAccess,undefined);assert.equal(member.access,undefined)
  assert.equal((await update(memberCookie,['other@gmail.com'],member.version)).status,403)
  state=await get(adminCookie)
  assert.equal((await update(adminCookie,['*@gmail.com'])).status,400)
  const removed=await update(adminCookie,[]);assert.equal(removed.status,200)
- assert.equal((await get(memberCookie)).canEdit,false)
+ assert.equal((await call(f.handlers.workspace,'GET',undefined,{cookie:memberCookie})).status,401)
+ assert.equal((await call(f.handlers.workspace,'GET',undefined,{cookie:remoteCookie})).status,401)
+ assert.equal((await call(f.handlers.session,'POST',{code:remoteCode})).status,401)
  assert.equal((await call(f.handlers.workspace,'POST',{action:'createProject',data:{name:'Denied'},expectedVersion:removed.body.version},{cookie:memberCookie})).status,401)
  assert.equal((await get(adminCookie)).canEdit,true,'administrator cannot be removed through the editor list')
- assert.equal((await get(adminCookie.replace(/(lens_editor=[^;]+)/,'$1x'))).canEdit,false,'tampered session is rejected')
+ assert.equal((await call(f.handlers.workspace,'GET',undefined,{cookie:adminCookie.replace(/(lens_editor=[^;]+)/,'$1x')})).status,401,'tampered session is rejected')
 })
 
 test('Google challenges and sessions expire and cross-origin login is rejected',async t=>{
@@ -87,12 +94,12 @@ test('Google challenges and sessions expire and cross-origin login is rejected',
  f.advance(600001)
  assert.equal((await call(f.handlers.session,'POST',{credential:'verified-test-token'},{cookie:cookies(challenge)})).status,401)
  const fresh=await fixture(t);const response=await signIn(fresh);fresh.advance(28800001)
- assert.equal((await call(fresh.handlers.workspace,'GET',undefined,{cookie:cookies(response)})).body.canEdit,false)
+ assert.equal((await call(fresh.handlers.workspace,'GET',undefined,{cookie:cookies(response)})).status,401)
 })
 
 test('production Google mode without shared storage cannot offer sign-in',async t=>{
  const f=await fixture(t,{VERCEL:'1'})
- const state=(await call(f.handlers.workspace)).body
+ const state=(await call(f.handlers.session)).body
  assert.equal(state.authReady,false)
  assert.equal(state.canEdit,false)
  assert.equal((await call(f.handlers.session)).body.nonce,undefined)
