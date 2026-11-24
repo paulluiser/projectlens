@@ -159,7 +159,7 @@ function ProjectDashboard({ query }) {
         {query && <><span role="status">{projects.length} shown</span><Button variant="outline" className="action search-clear" onClick={() => navigate(projectsPath)}><SearchIcon label="" /> Clear “{query}”</Button></>}
       </div>
       {projects.length > 0 ? <table role="table" className="report-table" aria-label="Projects overview">
-        <thead role="rowgroup"><tr role="row"><th scope="col">Project</th><th scope="col">Progress</th><th scope="col">Milestones</th><th scope="col">Reports</th><th scope="col">Latest publication</th><th scope="col"><span className="sr-only">Open project</span></th></tr></thead>
+        <thead role="rowgroup"><tr role="row"><th scope="col">Project</th><th scope="col">Progress</th><th scope="col">Milestones</th><th scope="col">Reports</th><th scope="col">Latest report</th></tr></thead>
         <tbody role="rowgroup">{projects.map(project => {
           const published = project.months.filter(month => month.report).sort((first, second) => second.id.localeCompare(first.id))
           const drafts = project.months.filter(month => month.draft).length
@@ -167,13 +167,15 @@ function ProjectDashboard({ query }) {
           const completion = progress?.total ? Math.round(progress.projectCompleted / progress.total * 100) : 0
           const milestones = project.milestones ?? []
           const done = milestones.filter(item => item.status === 'completed').length
-          return <tr role="row" key={project.id}>
-            <td role="cell" data-label="Project"><Link className="project-cell" to={projectOverviewPath(project.id)}><ProjectMark project={project} /><strong>{project.name}</strong></Link>{project.description && <p className="project-description">{project.description}</p>}</td>
-            <td role="cell" data-label="Progress"><div className="project-index-progress">{progress ? <><span>{completion}% · {progress.projectCompleted} / {progress.total} tasks</span><progress value={completion} max="100" aria-label={`${project.name} completion`} />{progress.runningHours != null && <small>{new Intl.NumberFormat(undefined, { maximumFractionDigits: 2 }).format(progress.runningHours)} total hours</small>}</> : <span>Not reported</span>}</div></td>
-            <td role="cell" data-label="Milestones">{milestones.length ? `${done} / ${milestones.length} done` : 'No milestones'}</td>
-            <td role="cell" data-label="Reports"><span>{published.length} published</span>{workspace.canEdit && drafts > 0 && <span className="project-draft-count">{drafts} {drafts === 1 ? 'draft' : 'drafts'}</span>}</td>
-            <td role="cell" data-label="Latest publication">{published[0]?.label ?? 'No published reports'}</td>
-            <td role="cell" data-label="Open"><Link className="text-link" to={projectOverviewPath(project.id)} aria-label={`Open ${project.name}`}>Open project <ArrowRightIcon label="" /></Link></td>
+          return <tr role="row" key={project.id} className="project-open-row" onClick={event => {
+            if (!event.currentTarget.contains(event.target) || event.target.closest('a, button, input, select, textarea')) return
+            if (!event.defaultPrevented && !window.getSelection()?.toString()) navigate(projectOverviewPath(project.id))
+          }}>
+            <td role="cell" data-label="Project"><Link className="project-cell" to={projectOverviewPath(project.id)} aria-label={`Open ${project.name}`}><ProjectMark project={project} /><strong>{project.name}</strong></Link>{project.description && <p className="project-description">{project.description}</p>}</td>
+            <td role="cell" data-label="Progress"><div className="project-index-progress">{progress ? <><div className="project-progress-reading"><strong>{completion}%</strong><span>{progress.projectCompleted} / {progress.total} tasks</span></div><progress value={completion} max="100" aria-label={`${project.name} completion`} />{progress.runningHours != null && <small>{new Intl.NumberFormat(undefined, { maximumFractionDigits: 2 }).format(progress.runningHours)} h logged</small>}</> : <span className="project-unreported">No report yet</span>}</div></td>
+            <td role="cell" data-label="Milestones">{milestones.length ? <span className="project-milestone-reading"><strong>{done}</strong><span> / {milestones.length} done</span></span> : <span className="project-unreported">No milestones</span>}</td>
+            <td role="cell" data-label="Reports"><span className="project-publication-count" data-empty={!published.length || undefined}>{published.length > 0 && <SuccessIcon label="" size="small" />}{published.length} published</span>{workspace.canEdit && drafts > 0 && <span className="project-draft-count">{drafts} {drafts === 1 ? 'draft' : 'drafts'}</span>}</td>
+            <td role="cell" data-label="Latest report"><span className={published.length ? 'project-latest-report' : 'project-unreported'}>{published[0]?.label ?? 'No publication yet'}</span></td>
           </tr>
         })}</tbody>
       </table> : <div className="empty-state">{query ? <SearchIllustration /> : <ChartIllustration />}<h2>{query ? 'No matching projects' : 'Create your first project'}</h2><p>{query ? 'Try a different project name or report title.' : 'Use Create project above to start your first monthly review.'}</p>{query && <Button variant="outline" className="action" onClick={() => navigate(projectsPath)}>Clear search</Button>}</div>}
