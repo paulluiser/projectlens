@@ -1,7 +1,16 @@
 import { useEffect, useState } from 'react'
+import EyeGlyph from '@atlaskit/icon/core/eye-open'
+import MaskGlyph from '@atlaskit/icon/core/eye-open-strikethrough'
+import CopyGlyph from '@atlaskit/icon/core/copy'
+import RefreshGlyph from '@atlaskit/icon/core/refresh'
 import { Button } from '@/components/ui/button'
 import { useWorkspace } from '@/lib/workspace'
 import { ActivityEvents, securityRequest } from './EditHistory'
+
+const EyeIcon = EyeGlyph.default ?? EyeGlyph
+const MaskIcon = MaskGlyph.default ?? MaskGlyph
+const CopyIcon = CopyGlyph.default ?? CopyGlyph
+const RefreshIcon = RefreshGlyph.default ?? RefreshGlyph
 
 export function SecuritySettings({ onBusyChange, section = 'all' }) {
   const { workspace } = useWorkspace()
@@ -43,8 +52,13 @@ export function SecuritySettings({ onBusyChange, section = 'all' }) {
       {data && <>
         {(section === 'all' || section === 'account') && <div className="settings-remote-group"><h4>Remote login code</h4>
         <p className="settings-account-note">Sign in on another device. Keep this code private.</p>
-        {data.remoteCode ? <div className="security-code-row"><output className="security-code" aria-label={revealed ? 'Remote login code' : 'Remote login code hidden'}>{revealed ? data.remoteCode : '•••••••'}</output><Button variant="outline" className="action" disabled={busy} onClick={() => setRevealed(value => !value)}>{revealed ? 'Hide code' : 'Reveal code'}</Button><Button variant="outline" className="action" disabled={busy} onClick={() => copy(data.remoteCode)}>Copy code</Button></div> : <p className="settings-account-note">Generate your personal code to sign in on another device.</p>}
-        {confirming ? <div className="security-confirm"><p>Replace your remote login code? The previous code will stop working immediately.</p><div className="security-actions"><Button className="action action-primary" loading={busy} onClick={() => act('regenerateRemoteCode')}>Replace code</Button><Button variant="outline" className="action" disabled={busy} onClick={() => setConfirming(false)}>Cancel</Button></div></div> : <Button variant="outline" className="action" disabled={busy} onClick={() => setConfirming(true)}>{data.remoteCode ? 'Regenerate code' : 'Generate code'}</Button>}
+        <div className="remote-code-control">
+          <input aria-label="Remote login code" type={revealed ? 'text' : 'password'} value={data.remoteCode || ''} readOnly autoComplete="off" spellCheck={false} />
+          <button type="button" className="icon-button" aria-label={revealed ? 'Mask code' : 'Reveal code'} title={revealed ? 'Mask code' : 'Reveal code'} aria-pressed={revealed} disabled={busy || !data.remoteCode} onClick={() => setRevealed(value => !value)}>{revealed ? <MaskIcon label="" /> : <EyeIcon label="" />}</button>
+          <button type="button" className="icon-button" aria-label="Copy code" title="Copy code" disabled={busy || !data.remoteCode} onClick={() => copy(data.remoteCode)}><CopyIcon label="" /></button>
+          <button type="button" className="icon-button" aria-label={data.remoteCode ? 'Regenerate code' : 'Generate code'} title={data.remoteCode ? 'Regenerate code' : 'Generate code'} disabled={busy} onClick={() => setConfirming(true)}><RefreshIcon label="" /></button>
+        </div>
+        {confirming && <div className="security-confirm"><p>Replace your remote login code? The previous code will stop working immediately.</p><div className="security-actions"><Button className="action action-primary" loading={busy} onClick={() => act('regenerateRemoteCode')}>Replace code</Button><Button variant="outline" className="action" disabled={busy} onClick={() => setConfirming(false)}>Cancel</Button></div></div>}
         </div>}
         {workspace.isAdmin && (section === 'all' || section === 'access') && <div className="security-subsection"><h4>Guest access</h4><p className="settings-account-note">View only · Redeem within 3 days · Access lasts 7 days.</p>
           <div className="security-actions"><Button variant="outline" className="action" disabled={busy || Boolean(guestCode)} onClick={() => act('createGuestCode')}>Create guest code</Button></div>

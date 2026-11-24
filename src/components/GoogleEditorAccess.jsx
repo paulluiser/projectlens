@@ -1,7 +1,11 @@
+import { DropdownMenu } from 'radix-ui'
+import MoreGlyph from '@atlaskit/icon/core/show-more-horizontal'
 import { useEffect, useRef, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { PersonIcon } from '@/components/ui/icons'
 import { useWorkspace } from '@/lib/workspace'
+
+const MoreIcon = MoreGlyph.default ?? MoreGlyph
 
 const idleBusyChange = () => {}
 let sdkPromise
@@ -59,19 +63,36 @@ export function EditorAccessManager({ onBusyChange }) {
   const [busy,setBusy]=useState(false)
   const [removing,setRemoving]=useState(null)
   const form=useRef(null)
-  const {administrators,editors}=workspace.editorAccess
+  const verificationInput = useRef(null)
+  const [verification, setVerification] = useState('')
+  useEffect(() => { if (removing) verificationInput.current?.focus() }, [removing])
+  const {administrators = [],editors = []}=workspace?.editorAccess || {}
   async function save(emails,clearInput=false) {
     setBusy(true);onBusyChange(true);setError('')
     try {await mutate({action:'updateEditors',data:{emails}},workspace.version,{notice:'Editor access saved.'});if(clearInput){setEmail('');form.current?.reset()}setRemoving(null)}
     catch(failure){setError(failure.status===409?'The access list changed. Review the latest list and try again.':failure.message)}
     finally{setBusy(false);onBusyChange(false)}
   }
+  if (!workspace?.canEdit || !workspace?.isAdmin || !workspace.editorAccess) return null
   return <section className="settings-editor-management" aria-labelledby="manage-editors-heading">
     <h4 id="manage-editors-heading">Manage editors</h4>
     <ul aria-label="Accounts with editor access">{[...administrators,...editors].map(address=><li key={address}>
       <span className="editor-access-email">{address}</span>
-      {administrators.includes(address)?<span className="editor-access-role">Administrator</span>:removing===address?<div className="editor-removal-actions"><Button variant="outline" className="action" disabled={busy} onClick={()=>save(editors.filter(item=>item!==address))}>Confirm removal</Button><button type="button" className="text-link" disabled={busy} onClick={()=>setRemoving(null)}>Cancel</button></div>:<button type="button" className="text-link" disabled={busy} aria-label={`Remove editor ${address}`} onClick={()=>setRemoving(address)}>Remove</button>}
+      {administrators.includes(address) ? <span className="editor-access-role">Administrator</span> : <DropdownMenu.Root modal={false}>
+        <DropdownMenu.Trigger asChild><button type="button" className="icon-button editor-access-options" aria-label={`Options for ${address}`} title="Account options" disabled={busy}><MoreIcon label="" /></button></DropdownMenu.Trigger>
+        <DropdownMenu.Portal><DropdownMenu.Content className="editor-access-menu" align="end" sideOffset={6} collisionPadding={12} onCloseAutoFocus={event => { if (removing) event.preventDefault() }}>
+          <DropdownMenu.Item onSelect={() => { setVerification(''); setRemoving(address); setError('') }}>Remove access</DropdownMenu.Item>
+        </DropdownMenu.Content></DropdownMenu.Portal>
+      </DropdownMenu.Root>}
     </li>)}</ul>
+    {removing && <form className="editor-removal-verification" aria-label="Verify editor removal" onSubmit={event => {
+      event.preventDefault()
+      if (!busy && verification.trim().toLowerCase() === removing.toLowerCase()) save(editors.filter(item => item !== removing))
+    }}>
+      <strong>Remove access for {removing}?</strong>
+      <label className="editor-field"><span>Type their email to confirm</span><input ref={verificationInput} aria-label="Confirm editor email" type="email" autoComplete="off" spellCheck={false} required disabled={busy} value={verification} onChange={event => setVerification(event.target.value)} /></label>
+      <div className="security-actions"><Button type="submit" variant="destructive" className="action delete-confirm" loading={busy} disabled={verification.trim().toLowerCase() !== removing.toLowerCase()}>Confirm removal</Button><Button type="button" variant="outline" className="action" disabled={busy} onClick={() => { setRemoving(null); setVerification('') }}>Cancel</Button></div>
+    </form>}
     <form ref={form} onSubmit={event=>{event.preventDefault();const value=email.trim().toLowerCase();if([...administrators,...editors].includes(value)){setError('This account already has access.');return}save([...editors,value],true)}}>
       <label className="editor-field"><span>Editor email</span><input type="email" required maxLength={254} autoComplete="off" placeholder="name@example.com" value={email} disabled={busy} onChange={event=>{setEmail(event.target.value);setError('')}} /></label>
       <Button type="submit" className="action action-primary" loading={busy} disabled={!email.trim()}>Add editor</Button>

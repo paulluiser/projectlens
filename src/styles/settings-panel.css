@@ -30,3 +30,16 @@
   .settings-pane { padding: 20px 16px; }
   .workspace-settings .settings-about { flex-wrap: wrap; gap: 4px; }
 }
+.remote-code-control { display: flex; align-items: center; gap: 6px; margin-top: 12px; }
+.remote-code-control input { flex: 1; min-width: 0; width: 100%; height: 36px; padding: 6px 12px; border: 1px solid var(--border); border-radius: 6px; background: var(--card); color: var(--foreground); font-family: var(--font-mono); font-size: var(--t-sm); letter-spacing: .12em; }
+.remote-code-control input:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
+.remote-code-control .icon-button { flex: none; width: 34px; height: 34px; color: var(--muted-foreground); }
+.remote-code-control .icon-button:hover:not(:disabled) { color: var(--foreground); background: var(--muted); }
+.remote-code-control .icon-button:disabled { opacity: .4; cursor: not-allowed; }
+.editor-access-options { flex: none; width: 32px; height: 32px; }
+.editor-access-menu { z-index: 170; min-width: 160px; padding: 5px; border: 1px solid var(--border); border-radius: 8px; background: var(--card); box-shadow: var(--shadow-lg); font-size: var(--t-xs); }
+.editor-access-menu [role="menuitem"] { padding: 8px 10px; border-radius: 4px; color: var(--status-blocked); cursor: pointer; outline: none; }
+.editor-access-menu [data-highlighted] { background: var(--muted); }
+.settings-editor-management .editor-removal-verification { display: grid; gap: 12px; margin-block: 16px; padding: 14px; border: 1px solid var(--border); border-radius: 8px; background: var(--muted); }
+.editor-removal-verification strong { font-size: var(--t-xs); overflow-wrap: anywhere; }
+.editor-removal-verification .security-actions { flex-wrap: wrap; }
