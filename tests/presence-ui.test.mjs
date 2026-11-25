@@ -24,7 +24,7 @@ test('active viewer avatars vary and reveal only first names when clicked', asyn
   const vite = await createServer({ root: fileURLToPath(new URL('../', import.meta.url)), server: { middlewareMode: true } })
   const root = createRoot(document.getElementById('root'))
   try {
-    const { ViewerIcons } = await vite.ssrLoadModule('/src/components/ActiveViewers.jsx')
+    const { ViewerIcons, ActiveViewers } = await vite.ssrLoadModule('/src/components/ActiveViewers.jsx')
     const viewers = ['Paul', 'Rica', 'Miguel', 'Rose', 'KC'].map((firstName, index) => ({ id: `person-${index}`, firstName }))
     await React.act(async () => { root.render(React.createElement(ViewerIcons, { viewers })) })
     assert.equal(document.body.textContent.includes('Paul'), false, 'names are hidden before an avatar is opened')
@@ -42,6 +42,34 @@ test('active viewer avatars vary and reveal only first names when clicked', asyn
       await React.act(async () => { await new Promise(resolve => setTimeout(resolve, 10)) })
     }
     assert.deepEqual([...document.querySelectorAll('.viewer-list strong')].map(node => node.textContent), ['Miguel', 'Rose', 'KC'])
+    const originalFetch = globalThis.fetch
+    const originalSetInterval = globalThis.setInterval
+    const originalNow = Date.now
+    const intervals = []
+    let heartbeats = 0
+    const account = { signedIn: true, needsName: false, user: { id: 'viewer', firstName: 'Paul', lastName: 'User' } }
+    globalThis.fetch = async path => {
+      if (path === '/api/presence') heartbeats++
+      return { ok: true, json: async () => path === '/api/presence' ? { viewers } : { ...account, projects: [], version: 1 } }
+    }
+    globalThis.setInterval = (callback, delay, ...args) => { intervals.push({ callback, delay }); return originalSetInterval(callback, delay, ...args) }
+    try {
+      const { WorkspaceProvider } = await vite.ssrLoadModule('/src/lib/workspace.jsx')
+      await React.act(async () => { root.render(React.createElement(WorkspaceProvider, { active: false }, React.createElement(ActiveViewers))) })
+      assert.equal(heartbeats, 1, 'named viewers send an initial presence heartbeat')
+      assert.equal(intervals.filter(interval => interval.delay === 60000).length, 1, 'presence sends one heartbeat per minute')
+      assert.equal(intervals.some(interval => interval.delay === 20000), false, 'the previous 20-second heartbeat is removed')
+      await React.act(async () => { document.dispatchEvent(new Event('visibilitychange')); document.dispatchEvent(new Event('visibilitychange')) })
+      assert.equal(heartbeats, 1, 'rapid visibility events do not send duplicate presence requests')
+      Date.now = () => originalNow() + 61000
+      await React.act(async () => { await intervals.find(interval => interval.delay === 60000).callback() })
+      assert.equal(heartbeats, 2, 'the next minute renews presence')
+    } finally {
+      Date.now = originalNow
+      globalThis.fetch = originalFetch
+      globalThis.setInterval = originalSetInterval
+    }
+
   } finally {
     await React.act(async () => root.unmount())
     await vite.close()

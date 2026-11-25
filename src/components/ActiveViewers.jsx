@@ -37,8 +37,12 @@ export function ActiveViewers() {
     if (!signedIn) return
     let alive = true
     let controller
+    let lastHeartbeat = null
     async function heartbeat() {
       if (document.hidden) return
+      const now = Date.now()
+      if (lastHeartbeat !== null && now - lastHeartbeat < 10000) return
+      lastHeartbeat = now
       controller?.abort()
       controller = new AbortController()
       try {
@@ -48,7 +52,7 @@ export function ActiveViewers() {
       } catch (error) { if (alive && error.name !== 'AbortError') setViewers([]) }
     }
     heartbeat()
-    const timer = setInterval(heartbeat, 20000)
+    const timer = setInterval(heartbeat, 60000)
     document.addEventListener('visibilitychange', heartbeat)
     return () => { alive = false; controller?.abort(); clearInterval(timer); document.removeEventListener('visibilitychange', heartbeat) }
   }, [signedIn, identity])

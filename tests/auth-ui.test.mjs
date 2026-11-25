@@ -21,6 +21,9 @@ test('public entry, identity onboarding, account changes during saves and sessio
   globalThis.cancelAnimationFrame = window.cancelAnimationFrame.bind(window)
   globalThis.IS_REACT_ACT_ENVIRONMENT = true
   window.google = { accounts: { id: { initialize() {}, renderButton(holder) { holder.textContent = 'Continue with Google' } } } }
+  const originalSetInterval = globalThis.setInterval
+  const intervals = []
+  globalThis.setInterval = (callback, delay, ...args) => { intervals.push({ callback, delay }); return originalSetInterval(callback, delay, ...args) }
   const originalFetch = globalThis.fetch
   let session = { signedIn: false }
   const calls = []
@@ -38,7 +41,7 @@ test('public entry, identity onboarding, account changes during saves and sessio
     } else if (path === '/api/session' && options.method === 'DELETE') result = session = { signedIn: false }
     else if (path === '/api/security') result = session = { ...session, needsName: false, user: { ...session.user, ...body.data } }
     else if (path === '/api/workspace') {
-      result = { version: 1, canEdit: !!session.canEdit, projects: session.canEdit ? [{ id: 'private-editor-draft' }] : [] }
+      result = { ...session, version: 1, canEdit: !!session.canEdit, projects: session.canEdit ? [{ id: 'private-editor-draft' }] : [] }
       if (options.method === 'POST') {
         if (holdMutation) await holdMutation
         if (conflictMutation) { result = { error: 'The workspace changed.' }; status = 409 }
@@ -61,6 +64,10 @@ test('public entry, identity onboarding, account changes during saves and sessio
     await act(async () => root.render(React.createElement(MemoryRouter, null, React.createElement(WorkspaceProvider, { active: false }, React.createElement(Probe), React.createElement(AuthExperience)))))
     await settle()
     assert.equal(context.signedIn, false)
+    assert.equal(intervals.some(interval => interval.delay === 60000 || interval.delay === 15000), false, 'public pages do not schedule session polling')
+    const initialCalls = calls.length
+    await act(async () => { window.dispatchEvent(new Event('focus')); document.dispatchEvent(new Event('visibilitychange')) })
+    assert.equal(calls.length, initialCalls, 'rapid focus and visibility notifications reuse the recent session check')
     assert.equal(calls.some(call => call.path === '/api/workspace'), false)
     assert.equal(calls.some(call => call.path.includes('challenge')), false)
     await act(async () => document.querySelector('a').click())
@@ -97,6 +104,12 @@ test('public entry, identity onboarding, account changes during saves and sessio
     session = editor
     await act(async () => context.refresh(true))
     assert.equal(context.workspace.canEdit, true)
+    const readsBeforeIdleRefresh = calls.length
+    await act(async () => context.refresh())
+    assert.deepEqual(calls.slice(readsBeforeIdleRefresh).map(call => [call.path, call.method]), [['/api/workspace', 'GET']], 'an idle authenticated refresh gets workspace and session flags in one request')
+    await act(async () => root.render(React.createElement(MemoryRouter, null, React.createElement(WorkspaceProvider, { active: true }, React.createElement(Probe), React.createElement(AuthExperience)))))
+    assert.ok(intervals.some(interval => interval.delay === 60000), 'workspace polling runs once per minute')
+    assert.equal(intervals.some(interval => interval.delay === 15000), false, 'the previous 15-second workspace poll is removed')
     let releaseMutation
     holdMutation = new Promise(resolve => { releaseMutation = resolve })
     let pendingMutation
@@ -157,5 +170,6 @@ test('public entry, identity onboarding, account changes during saves and sessio
     await vite.close()
     dom.window.close()
     globalThis.fetch = originalFetch
+    globalThis.setInterval = originalSetInterval
   }
 })

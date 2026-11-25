@@ -175,8 +175,15 @@ try {
   }
   await operation('createReport',priorData)
   await operation('publishReport')
-  await act(async()=>window.dispatchEvent(new window.Event('focus')))
-  await settled()
+  // The external publication happens immediately in this accelerated test; returning focus after the refresh cooldown loads it.
+  const realNow = Date.now
+  const readsBeforeFocus = captured.filter(call => call.path === '/api/workspace').length
+  try {
+    Date.now = () => realNow() + 10001
+    await act(async()=>window.dispatchEvent(new window.Event('focus')))
+    await settled()
+  } finally { Date.now = realNow }
+  assert.ok(captured.filter(call => call.path === '/api/workspace').length > readsBeforeFocus, 'returning focus after the cooldown refreshes external publications')
   await act(async()=>{window.history.replaceState({},'', '/landing/projects/component-qa?month=2026-10&q=QA');window.dispatchEvent(new window.PopStateEvent('popstate'))})
   await settled()
   const creates=[...document.querySelectorAll('button')].filter(node=>node.textContent.trim()==='Create report')

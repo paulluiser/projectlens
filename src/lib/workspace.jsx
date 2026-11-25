@@ -53,6 +53,7 @@ export function WorkspaceProvider({ active, children }) {
   const accountIdentity = useRef(null)
   const writing = useRef(false)
   const editing = useRef(false)
+  const lastAutomaticRefresh = useRef(null)
   const setEditing = useCallback((value) => {
     editing.current = value
     if (value) { sequence.current++; setRefreshing(false) }
@@ -64,7 +65,9 @@ export function WorkspaceProvider({ active, children }) {
     setRefreshing(true)
     setError('')
     try {
-      const currentSession = await request('/api/session')
+      const workspaceOnly = force !== true && !preserveEdits && latest.current
+      const result = workspaceOnly ? await request('/api/workspace') : null
+      const currentSession = result || await request('/api/session')
       if (requestId !== sequence.current) return
       const identity = currentSession.signedIn ? currentSession.user?.id : null
       if (accountIdentity.current !== identity) {
@@ -77,12 +80,12 @@ export function WorkspaceProvider({ active, children }) {
       setSessionLoading(false)
       if (!currentSession.signedIn || currentSession.needsName) { setWorkspace(null); return currentSession }
       if (preserveEdits) return currentSession
-      const result = await request('/api/workspace')
+      const currentWorkspace = result || await request('/api/workspace')
       if (requestId === sequence.current) {
-        setWorkspace(result)
+        setWorkspace(currentWorkspace)
         setError('')
       }
-      return result
+      return currentWorkspace
     } catch (failure) {
       if (requestId === sequence.current) {
         if ([401, 403].includes(failure.status)) { setWorkspace(null); setSession({ signedIn: false }); setError('') }
@@ -92,15 +95,21 @@ export function WorkspaceProvider({ active, children }) {
   }, [])
 
   useEffect(() => {
-    refresh()
     const onVisible = () => {
-      if (!document.hidden) refresh()
+      if (document.hidden) return
+      const now = Date.now()
+      if (lastAutomaticRefresh.current !== null && now - lastAutomaticRefresh.current < 10000) return
+      lastAutomaticRefresh.current = now
+      refresh()
     }
-    const interval = setInterval(onVisible, 15000)
+    if (lastAutomaticRefresh.current === null && document.hidden) { lastAutomaticRefresh.current = Date.now(); refresh() }
+    else onVisible()
+    const interval = active ? setInterval(onVisible, 60000) : null
     window.addEventListener('focus', onVisible)
     document.addEventListener('visibilitychange', onVisible)
     return () => {
       sequence.current++
+      lastAutomaticRefresh.current = null
       clearInterval(interval)
       window.removeEventListener('focus', onVisible)
       document.removeEventListener('visibilitychange', onVisible)

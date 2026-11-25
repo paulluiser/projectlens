@@ -7,6 +7,7 @@ import { importTimelineMilestones } from './milestone-import.mjs'
 import { importWeeklyPlans } from './weekly-import.mjs'
 import { createGoogleAuth, validateEditorEmails } from './google-auth.mjs'
 import { createSecurity } from './security.mjs'
+import { createPostgresStore } from './postgres-store.mjs'
 
 const MAX_BODY = 1024 * 1024
 const BLOB_PATH = 'project-lens/workspace.json'
@@ -298,6 +299,7 @@ export function createHandlers({
   now = Date.now,
   projects = seedProjects,
   verifyGoogleToken,
+  postgresStore,
 } = {}) {
   const seed = {
     projects,
@@ -306,7 +308,13 @@ export function createHandlers({
       .digest('hex'),
   }
   const production = env.VERCEL === '1' || env.NODE_ENV === 'production'
-  const storageReady = !production || Boolean(env.BLOB_READ_WRITE_TOKEN)
+  const postgres =
+    env.LENS_STORAGE === 'postgres'
+      ? postgresStore || createPostgresStore({ env })
+      : null
+  const storageReady = postgres
+    ? Boolean(env.DATABASE_URL)
+    : !production || Boolean(env.BLOB_READ_WRITE_TOKEN)
   const google = createGoogleAuth({ env, now, verifyGoogleToken })
   const bypass =
     !production && env.LENS_DEV_AUTH_BYPASS === '1' && !google.requested
@@ -360,6 +368,7 @@ export function createHandlers({
     return { ...result, ...flags(req, state) }
   }
   async function readStoredState() {
+    if (postgres) return postgres.read()
     if (env.BLOB_READ_WRITE_TOKEN) {
       // Compression weakens the response ETag; If-Match writes require the original strong validator.
       const result = await blob.get(BLOB_PATH, {
@@ -395,6 +404,7 @@ export function createHandlers({
     }
   }
   async function saveState(state, etag) {
+    if (postgres) return postgres.save(state, etag)
     if (env.BLOB_READ_WRITE_TOKEN) {
       try {
         await blob.put(BLOB_PATH, JSON.stringify(state), {
@@ -449,10 +459,18 @@ export function createHandlers({
   }
   // All identity mutations use the same conditional write as business records. Retrying a
   // conflict rechecks permissions and single-use code state against the winning revision.
+  function requireWritable(state) {
+    if (state.storageMigration?.status === 'frozen')
+      throw failure(
+        503,
+        'The workspace is temporarily read-only during storage migration.',
+      )
+  }
   async function transaction(work) {
     const update = async () => {
       for (let attempt = 0; attempt < 5; attempt++) {
         const { state, etag } = await readState()
+        requireWritable(state)
         const result = await work(state)
         try {
           await saveState(state, etag)
@@ -462,7 +480,9 @@ export function createHandlers({
         }
       }
     }
-    return env.BLOB_READ_WRITE_TOKEN ? update() : serialize(file, update)
+    return postgres || env.BLOB_READ_WRITE_TOKEN
+      ? update()
+      : serialize(file, update)
   }
   function historyEvent(state, body, actor, before) {
     const module = /Report/.test(body.action)
@@ -573,6 +593,7 @@ export function createHandlers({
       const body = await bodyOf(req)
       const update = async () => {
         const { state, etag } = await readState()
+        requireWritable(state)
         const actor = requireUser(req, state, { edit: true })
         if (body.action === 'updateEditors' && !flags(req, state).isAdmin)
           throw failure(403, 'Only an administrator can change editor access.')
@@ -583,7 +604,9 @@ export function createHandlers({
         await saveState(updated, etag)
         return responseState(updated, req)
       }
-      return env.BLOB_READ_WRITE_TOKEN ? update() : serialize(file, update)
+      return postgres || env.BLOB_READ_WRITE_TOKEN
+        ? update()
+        : serialize(file, update)
     }),
     session: wrap(async (req, res) => {
       if (req.method === 'GET') {
@@ -600,14 +623,21 @@ export function createHandlers({
         throw failure(405, 'Method not allowed.')
       sameOrigin(req)
       if (req.method === 'DELETE') {
-        const { state } = await readState()
-        if (security.user(req, state) && storageReady)
-          await transaction((state) => {
-            const u = security.user(req, state)
-            if (u) security.audit(state, 'signOut', u)
-          })
-        google.logout(res)
-        return flags({ ...req, headers: { ...req.headers, cookie: '' } }, state)
+        try {
+          const { state } = await readState()
+          if (
+            security.user(req, state) &&
+            storageReady &&
+            state.storageMigration?.status !== 'frozen'
+          )
+            await transaction((state) => {
+              const u = security.user(req, state)
+              if (u) security.audit(state, 'signOut', u)
+            })
+          return flags({ ...req, headers: { ...req.headers, cookie: '' } }, state)
+        } finally {
+          google.logout(res)
+        }
       }
       if (!storageReady || !google.ready || !security.ready)
         throw failure(503, 'Sign-in is not configured.')
@@ -732,6 +762,12 @@ export function createHandlers({
       const { state } = await readState()
       const u = requireUser(req, state)
       if (req.method === 'POST') sameOrigin(req)
+      if (postgres)
+        return postgres.presence({
+          user: u,
+          write: req.method === 'POST',
+          now: now(),
+        })
       const path = 'project-lens/presence.json'
       const local = file + '.presence'
       async function read() {
@@ -759,7 +795,7 @@ export function createHandlers({
       const work = async () => {
         for (let attempt = 0; attempt < 5; attempt++) {
           const { data, etag } = await read()
-          let rows = data.filter((row) => row.seen > now() - 90000)
+          let rows = data.filter((row) => row.seen > now() - 180000)
           if (req.method === 'POST') {
             rows = rows.filter((row) => row.id !== u.id)
             rows.push({ id: u.id, firstName: u.firstName, seen: now() })
