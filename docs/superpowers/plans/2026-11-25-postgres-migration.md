@@ -8,14 +8,14 @@
 
 **Tech Stack:** Existing Vercel Node APIs, Neon Postgres, node-postgres, current React UI/authentication.
 
-- [ ] Reduce workspace and presence polling to 60 seconds, deduplicate visibility/focus events, and avoid periodic requests on public pages. Keep revocation and guest expiry checks.
-- [ ] Implement explicit `LENS_STORAGE=postgres` selection and normalized SQL persistence. Missing/uninitialized Postgres fails closed; it never silently switches to Blob or seed data.
-- [ ] Add migration freeze enforcement to existing Blob handlers and deploy the preparation release.
-- [ ] Provision the free Neon integration and database, subject to the browser's required terms confirmation. Keep existing session-signing secret unchanged.
-- [ ] Export a private Blob backup, apply SQL schema and test real database transactions/security rules in an isolated test schema.
-- [ ] Briefly freeze source mutations using Blob conditional writes; export the exact final snapshot, initialize Postgres and verify canonical equality and record counts.
-- [ ] Set the production storage selector, deploy and verify private API access, authenticated reads/writes, guest restrictions and no runtime Blob requests.
-- [ ] Keep the source snapshot frozen and document rollback/export procedures. Do not delete the Blob store or historical backups.
+- [x] Reduce workspace and presence polling to 60 seconds, deduplicate visibility/focus events, and avoid periodic requests on public pages. Keep revocation and guest expiry checks.
+- [x] Implement explicit `LENS_STORAGE=postgres` selection and normalized SQL persistence. Missing/uninitialized Postgres fails closed; it never silently switches to Blob or seed data.
+- [x] Add migration freeze enforcement to existing Blob handlers and deploy the preparation release.
+- [x] Provision the free Neon integration and database, subject to the browser's required terms confirmation. Keep existing session-signing secret unchanged.
+- [x] Export a private Blob backup, apply SQL schema and test real database transactions/security rules in an isolated test schema.
+- [x] Briefly freeze source mutations using Blob conditional writes; export the exact final snapshot, initialize Postgres and verify canonical equality and record counts.
+- [x] Set the production storage selector, deploy and verify private API access, authenticated reads/writes, guest restrictions and no runtime Blob requests.
+- [x] Keep the source snapshot frozen and document rollback/export procedures. Do not delete the Blob store or historical backups.
 
 ## Implementation boundaries
 

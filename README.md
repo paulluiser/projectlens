@@ -13,22 +13,23 @@ npm run dev
 
 Open the Vite URL. Go to **Projects**, create a project, then create a monthly report. The report editor includes progress counts, workstreams, compliance measures, accomplishments, blockers, next-month actions, milestones, and support. Delete controls ask for confirmation.
 
-Local development saves changes in `.local/workspace.json`. The file is created on the first change and survives server restarts. Set `LENS_DATA_FILE` to choose another path. Local editing is enabled by default. Set `LENS_EDITOR_PASSWORD` in `.env.local` to require editor sign-in locally.
+Local development can use a dedicated Postgres database through `DATABASE_URL` and `LENS_STORAGE=postgres`. Apply the schema and explicitly initialize a workspace before using it; never point local tests at production. The legacy local JSON adapter remains available with `LENS_STORAGE=blob` and `LENS_DATA_FILE`. Authentication is required by default. An explicit `LENS_DEV_AUTH_BYPASS=1` flag is available only for isolated non-production development/testing without Google configuration.
 
 ## Shared deployment
 
-Deploy the project to Vercel using the Vite framework preset and `dist` output directory. The `api` directory contains the server functions. Connect a **private Vercel Blob store** to the project and configure these server environment variables.
+Deploy using Vercel's Vite preset and `dist` output directory. The `api` directory contains the server functions. Production uses Neon Postgres connected to the Project Lens project.
 
 | Variable | Purpose |
 | --- | --- |
-| `BLOB_READ_WRITE_TOKEN` | Access to the connected private Blob store |
-| `LENS_EDITOR_PASSWORD` | Legacy shared editor password; ignored in Google mode |
+| `LENS_STORAGE` | `postgres` |
+| `DATABASE_URL` | Neon pooled connection string; server-only |
+| `LENS_GOOGLE_CLIENT_ID` | Google web client ID |
+| `LENS_ADMIN_EMAILS` | Administrator email addresses |
+| `LENS_SESSION_SECRET` | Existing signing/encryption secret; keep unchanged across deployments |
 
-Use a long editor password and give it to the people who should manage reports. Open Settings beside global search, then use Editor sign-in in the Account section. Sign out is in the same section. The browser receives an HttpOnly session cookie valid for eight hours. Readers can open reports directly. Editor sessions authorize changes across the workspace.
+The workspace requires sign-in. Administrators manage editor access under **Settings → Access**. Account owners can reveal, copy or regenerate their masked remote code under **Settings → Account**. Guest invitations can be redeemed once within three days; redeemed guest sessions are view-only and expire after seven days. Permanent-account sessions last eight hours.
 
-The shared workspace is stored as JSON at `project-lens/workspace.json` in the Blob store. Reads bypass the Blob cache. Conditional writes reject stale versions so one editor cannot silently overwrite another editor’s save. Open project pages refresh on focus and every 15 seconds while visible. Refresh pauses while an editor form is open. If a save conflicts, the form preserves its values and offers an explicit reload of the latest saved record. [Vercel Blob SDK](https://vercel.com/docs/vercel-blob/using-blob-sdk)
-
-Legacy password editing becomes available after both variables are configured. Google authentication uses the additional variables described below and in the setup guide. The initial workspace comes from the versioned JSON files in `data/projects/`. Subsequent website changes save to the runtime JSON store. Keep the same Blob store connected across deployments to retain those changes.
+Postgres stores domain records separately. Transactional revision checks reject stale saves, and only changed records are written. Visible workspace pages refresh every 60 seconds; session validity is still checked during editing. Presence uses a separate SQL table. Private Blob storage is retained as a frozen historical migration backup, not as the live database. See [Postgres storage and rollback](docs/postgres-storage.md) and [authentication setup](docs/google-auth-setup.md).
 
 ## Reports and links
 
@@ -46,7 +47,7 @@ npm run build
 npm run preview
 ```
 
-Tests cover CRUD, persistence, malformed input, count and date validation, password sessions, stale saves, and concurrent conditional writes. Vite preview includes the same local API as development.
+Tests cover CRUD, persistence, malformed input, count and date validation, Google/remote/guest sessions, stale saves, and concurrent transactional writes. Vite preview includes the same local API as development.
 
 See [the PRD](PRODUCT.md), [design system](DESIGN.md), and [.env.example](.env.example) for product constraints, visual rules, and server configuration.
 
@@ -62,7 +63,7 @@ Unsaved forms keep a recovery copy in this browser's local storage. Closing a ch
 
 In **Present**, arrow keys navigate chapters, Escape exits, and **Finish review** opens the end screen.
 
-The automated suite includes a JSDOM component/API review-cycle check using temporary server JSON, with no mutation of the sample workspace. This checks interactions and persistence, not browser layout. Live Blob verification remains separate from the local suite. Rendered desktop and mobile-width verification is recorded in docs/ui-ux-audit-2026-11-19.md.
+The automated suite includes a JSDOM component/API review-cycle check using temporary server JSON, with no mutation of the sample workspace. This checks interactions and persistence, not browser layout. Production database migration verification remains separate from the local suite. Rendered desktop and mobile-width verification is recorded in docs/ui-ux-audit-2026-11-19.md.
 
 The `@vercel/cli-config` Zod dependency is overridden to 4.6.6 to address the constrained-collection memory advisory without downgrading the Blob SDK. `npm audit` reports zero vulnerabilities after this override.
 
@@ -78,7 +79,7 @@ The component test holds requests to verify initial skeletons, busy-submit prote
 
 Click any project row in the Projects directory to open its Overview. The project name is also a native link for keyboard navigation and opening in a new tab. It shows the latest published task totals, remaining tasks, running hours, report hours, assigned team, milestone deadlines, and existing report/weekly charts. Figures come from saved records; missing figures are labelled as not reported. **Edit project** and **Delete project** are available to editors on Overview. Deletion lists the affected contents and requires typing the exact project name; report deletion keeps its separate confirmation. Reports has one **Create report** action above the table.
 
-The settings icon beside global search opens editor sign-in/sign-out, device motion preferences, workspace access/storage details, a manual refresh, and build information. Sign-in expands within the panel; cancelling or closing clears the password. Motion preferences are saved on this device; system reduced motion is always respected. The sidebar's **Last updated** timestamp refers to the app build. Settings' **Last saved** timestamp refers to the latest successful workspace write and appears once a write has recorded it. Reads and failed writes do not change that saved timestamp.
+The settings icon beside global search opens editor sign-in/sign-out, device motion preferences, workspace access/storage details, a manual refresh, and build information. The landing page offers Google or remote-code sign-in. Motion preferences are saved on this device; system reduced motion is always respected. The sidebar's **Last updated** timestamp refers to the app build. Settings' **Last saved** timestamp refers to the latest successful workspace write and appears once a write has recorded it. Reads and failed writes do not change that saved timestamp.
 
 Versions use `buildnumber.MMDDYYYY.HHmm`, with date and time in Asia/Manila. Vite embeds the build timestamp when it starts/builds, so every client receives the same deployment version. The build number follows the Git revision count, with `build-info.json` as a baseline for shallow deployment clones; update the baseline for future releases when building from shallow clones.
 
@@ -94,6 +95,6 @@ Formatting was informed by Anthropic's [PDF skill](https://github.com/anthropics
 
 ## Google sign-in and in-app editor management
 
-Google authentication can replace the shared editor password. Administrators configured through `LENS_ADMIN_EMAILS` can manage the specific-email editor allowlist directly in **Settings → Account → Manage editors**. Editor changes save to private Blob JSON and apply to the next server request without a deployment. Only administrators can see or modify this list; administrator emails remain in server configuration.
+Google authentication and personal remote login codes identify permanent accounts. Administrators configured through `LENS_ADMIN_EMAILS` can manage the specific-email editor allowlist directly in **Settings → Access → Manage editors**. Editor changes save to Postgres and apply to the next server request without a deployment. Only administrators can see or modify this list; administrator emails remain in server configuration.
 
-See [Google authentication setup](docs/google-auth-setup.md) for Google Cloud, authorized origins, required Vercel variables, the one-time activation, and the distinction between Google's testing audience and the app's editor allowlist. Existing password access is preserved until Google configuration is introduced. Once Google mode is active, password sessions cannot bypass it.
+See [Google authentication setup](docs/google-auth-setup.md) for Google Cloud, authorized origins, required Vercel variables, the one-time activation, and the distinction between Google's testing audience and the app's editor allowlist. Shared-password sessions cannot authorize production access.

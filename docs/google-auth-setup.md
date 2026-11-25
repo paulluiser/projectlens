@@ -4,7 +4,7 @@
 
 Administrators are bootstrapped from `LENS_ADMIN_EMAILS`, configured on the server. Only people who can manage the Vercel project's environment variables can change administrators. Ordinary editors cannot promote themselves. Administrators always retain access even if the editor list is emptied.
 
-Administrators open **Settings → Account → Manage editors** to add or remove exact Google-account email addresses. This list is saved in the private workspace JSON, with the same version and conditional-write protection as project content. No Git commit or deployment is needed to change editors. Removal denies editing and draft access on the next server request; an already-open browser refreshes its displayed access periodically or when focused. Removing an editor also denies workspace access, including remote-code sign-in. Published content is available only to signed-in accounts and authorized guests.
+Administrators open **Settings → Access → Manage editors** to add or remove exact Google-account email addresses. This list is saved in the private workspace database, with the same version and conditional-write protection as project content. No Git commit or deployment is needed to change editors. Removal denies editing and draft access on the next server request; an already-open browser refreshes its displayed access periodically or when focused. Removing an editor also denies workspace access, including remote-code sign-in. Published content is available only to signed-in accounts and authorized guests.
 
 The list is returned only to authenticated administrators. Editor access applies to all projects; this does not introduce per-project permissions. The current release does not add invitations or send email.
 
@@ -29,7 +29,9 @@ In the Project Lens project's environment-variable settings, configure these for
 | `LENS_GOOGLE_CLIENT_ID` | OAuth web client ID ending in `.apps.googleusercontent.com` |
 | `LENS_ADMIN_EMAILS` | Your exact Google-account email; multiple administrators can be comma-separated |
 | `LENS_SESSION_SECRET` | A randomly generated secret, at least 32 characters |
-| `BLOB_READ_WRITE_TOKEN` | Keep the existing private Blob store connected |
+| `LENS_STORAGE` | `postgres` after verified migration |
+| `DATABASE_URL` | Neon pooled connection string, server-only |
+| `BLOB_READ_WRITE_TOKEN` | Legacy backup access; not used by the live Postgres workspace |
 | `LENS_EDITOR_EMAILS` | Optional initial editors, comma-separated; unnecessary when starting with the administrator only |
 
 Generate a signing secret locally with `node -e "process.stdout.write(require('node:crypto').randomBytes(32).toString('hex'))"` and store it only as a server environment variable. Never prefix these settings with `VITE_` or commit actual values. Copy equivalent values into ignored `.env.local` to test locally.

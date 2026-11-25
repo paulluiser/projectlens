@@ -281,7 +281,9 @@ test('handler business and security changes use Postgres CAS without touching fi
       LENS_DATA_FILE: file,
       DATABASE_URL: 'postgres://test',
       LENS_DEV_AUTH_BYPASS: '1',
+      BLOB_READ_WRITE_TOKEN: 'must-not-be-used',
     },
+    blob: { get() { throw Error('Live Postgres must not read Blob') }, put() { throw Error('Live Postgres must not write Blob') } },
     postgresStore: store,
     projects: [],
   })

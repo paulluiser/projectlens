@@ -27,3 +27,14 @@ A visible signed-in workspace checks data every 60 seconds; idle checks use the 
 ## Verification
 
 The adapter tests cover normalized round-trip identity, duplicate initialization, transaction rollback, stale/concurrent writes, unchanged-record preservation and presence independence. The optional real SQL test uses `TEST_DATABASE_URL` and an isolated temporary schema; never point it at a production schema. Browser tests retain account-change race, revocation, guest expiry and published-report privacy checks.
+
+
+## Completed production migration — 25 November 2026
+
+The free `project-lens-postgres` Neon database in iad1 is connected only to Project Lens Production. Auth and Realtime add-ons were left off; the existing application authentication is preserved.
+
+The final transfer preserved 7 projects, 4 reporting months, 47 milestones, 9 weekly plans, 38 tasks, 3 accounts, 62 audit events and 49 history events. No guest invitations existed at cutover. Exact canonical equality was verified before and after the storage switch, including encrypted credentials and access settings. The sole intentional difference is the completed migration marker.
+
+The private frozen-source backup checksum is `82f18f029fc14b622e23ec1535fca33b69a1f6b18172a6c05f0ede32eea6c546`. The verified imported state checksum is `10f8b0c65e7d029a450ddfe1183f7d84f6ea878974e2ffee4a7767f3b5d5e745`. Later user edits will naturally change the live checksum.
+
+The temporary migration HTTP endpoint, remote runner and operator credentials were retired after cutover. Preparation code remains in Git commit `90edfad` for review; it is not an active production maintenance interface. Current backups use the database provider or the offline migration CLI with an authorized database connection. The Blob snapshot remains frozen and is never used as an automatic runtime fallback.
